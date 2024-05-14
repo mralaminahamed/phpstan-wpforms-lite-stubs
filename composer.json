@@ -1,13 +1,13 @@
 {
-    "name": "mralaminahamed/wpforms-stubs",
-    "description": "WPForms function and class declaration stubs for static analysis.",
+    "name": "mralaminahamed/wpforms-lite-stubs",
+    "description": "WPForms Lite function and class declaration stubs for static analysis.",
     "keywords": [
         "wpforms",
         "wordpress",
         "static analysis",
         "phpstan"
     ],
-    "homepage": "https://github.com/mralaminahamed/phpstan-wpforms-stubs",
+    "homepage": "https://github.com/mralaminahamed/phpstan-wpforms-lite-stubs",
     "license": "MIT",
     "require": {
         "php-stubs/wordpress-stubs": "^5.3 || ^6.0"
