@@ -1,0 +1,39 @@
+# TravisCI configuration for php-stubs/phpstan-wpforms-stubs
+
+language: "php"
+os:
+  - "linux"
+dist: "bionic"
+
+cache:
+  directories:
+    - "$HOME/.composer/cache"
+
+php:
+  - "8.1"
+  - "8.0"
+  - "7.4"
+
+before_install:
+  - "phpenv config-rm xdebug.ini"
+  - "composer validate --strict"
+
+install:
+  - "composer update --no-interaction"
+  ## Reinstall sub-packages into /packages/
+  #- "composer update --no-interaction"
+  - |
+    LATEST="$(jq -r '."require"."wpforms-lite/wpforms"' source/composer.json)"
+    wget -P source/ "https://downloads.wordpress.org/plugin/wpforms-lite.${LATEST}.zip"
+    unzip -q -d source/ "source/wpforms-lite.${LATEST}.zip"
+
+before_script:
+  - "cat ./source/wpforms-lite/wpforms.php"
+
+script:
+  - "bash -x ./generate.sh"
+  - "php -l wpforms-constants-stubs.php"
+  - "php -l wpforms-stubs.php"
+  - "git diff --exit-code"
+  - |
+    php -r 'require "vendor/php-stubs/wordpress-stubs/wordpress-stubs.php"; require "vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php"; require "wpforms-constants-stubs.php"; require "wpforms-stubs.php";'
