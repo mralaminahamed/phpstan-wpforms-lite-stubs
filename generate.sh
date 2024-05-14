@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
-# Generate WPForms Lite stubs from the source directory.
+# Generate WPForms stubs from the source directory.
 #
 
-HEADER=$'/**\n * Generated stub declarations for WPForms Lite.\n * @see https://wpforms.com\n * @see https://github.com/mralaminahamed/phpstan-wpforms-stubs\n */'
+HEADER=$'/**\n * Generated stub declarations for WPForms.\n * @see https://wpforms.com\n * @see https://github.com/mralaminahamed/phpstan-wpforms-stubs\n */'
 
 FILE="wpforms-stubs.php"
 FILE_CONSTANTS="wpforms-constants-stubs.php"
