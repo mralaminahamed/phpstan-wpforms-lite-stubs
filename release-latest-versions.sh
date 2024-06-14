@@ -13,10 +13,9 @@ WC_JSON="$(wget -q -O- "https://api.wordpress.org/plugins/info/1.0/wpforms-lite.
 #         4.0 4.1 4.2 4.3 4.4 4.5 4.6     4.8 4.9 \
 #         5.0 5.1 5.2 5.3 5.4 5.5 5.6 5.7 5.8 5.9; do
 for V in  1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9; do
-    # Find latest version
-    #printf -v JQ_FILTER '."package"."versions"[]."version" | select(test("^%s\\\\.%s\\\\.\\\\d+$"))' "${V%.*}" "${V#*.}"
-    printf -v JQ_FILTER '."versions" | keys[] | select(test("^%s\\\\.%s\\\\.\\\\d+$"))' "${V%.*}" "${V#*.}"
-    LATEST="$(jq -r "$JQ_FILTER" <<<"$WC_JSON" | sort -t "." -k 3 -g | tail -n 1)"
+    # Find latest version including four-param versions
+    printf -v JQ_FILTER '."versions" | keys[] | select(test("^%s\\\\.%s\\\\.\\\\d+(\\\\.\\\\d+)?$"))' "${V%.*}" "${V#*.}"
+    LATEST="$(jq -r "$JQ_FILTER" <<<"$WC_JSON" | sort -t "." -k 3,4 -g | tail -n 1)"
     if [ -z "$LATEST" ]; then
         echo "No version for ${V}!"
         continue
@@ -33,10 +32,6 @@ for V in  1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9; do
     git status --ignored --short -- source/ | sed -n -e 's#^!! ##p' | xargs --no-run-if-empty -- rm -rf
     # Get new version
     printf -v SED_EXP 's#\\("wpforms-lite/wpforms"\\): "[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+"#\\1: "%s"#' "${LATEST}"
-    # sed -i -e "$SED_EXP" source/composer.json
-    #composer run-script post-install-cmd
-    ## FIXME https://github.com/getwpforms/wpforms/issues/29078#issuecomment-777706511
-    #composer run-script post-install-cmd
     wget -P source/ "https://downloads.wordpress.org/plugin/wpforms-lite.${LATEST}.zip"
     unzip -q -d source/ source/wpforms-lite.*.zip
 
