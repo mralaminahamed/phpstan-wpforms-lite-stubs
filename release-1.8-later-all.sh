@@ -6,7 +6,7 @@
 set -e
 
 # Fetch plugin information from WordPress.org.
-WC_JSON="$(wget -q -O- "https://api.wordpress.org/plugins/info/1.0/wpforms-lite.json")"
+PLUGIN_JSON="$(wget -q -O- "https://api.wordpress.org/plugins/info/1.0/wpforms-lite.json")"
 
 # Specify the minimum version to start collecting from.
 MIN_VERSION="1.8"
@@ -16,7 +16,7 @@ OUTPUT_FILE="wpforms_versions.txt"
 > "$OUTPUT_FILE"
 
 # Extract and filter versions.
-VERSIONS=$(jq -r '."versions" | keys[]' <<<"$WC_JSON" | grep -v "trunk" | sort -V)
+VERSIONS=$(jq -r '."versions" | keys[]' <<<"$PLUGIN_JSON" | grep -v "trunk" | sort -V)
 
 # Iterate through versions and collect those from 1.8 onwards.
 collect_versions=false
@@ -42,19 +42,25 @@ while IFS= read -r VERSION; do
     fi
 
     # Clean up source/ directory
-    git status --ignored --short -- source/ | sed -n -e 's#^!! ##p' | xargs --no-run-if-empty -- rm -rf
-    
-    # Get new version
-    wget -P source/ "https://downloads.wordpress.org/plugin/wpforms-lite.${VERSION}.zip"
-    unzip -q -d source/ source/wpforms-lite.*.zip
+    git status --ignored --short -- source/ | sed -n -e 's#^!! ##p' | xargs --no-run-if-empty rm -rf
+
+    # Download and unzip the new version
+    wget -q -P source/ "https://downloads.wordpress.org/plugin/wpforms-lite.${VERSION}.zip"
+    unzip -q -d source/ source/wpforms-lite.${VERSION}.zip
+    rm source/wpforms-lite.${VERSION}.zip  # Clean up the downloaded zip file
 
     # Generate stubs
     echo "Generating stubs ..."
     ./generate.sh
 
-    # Tag version
-    git commit --all -m "Generate stubs for WPForms ${VERSION}"
-    git tag "v${VERSION}"
+    # Check if there are changes to commit
+    if [ -n "$(git status --porcelain)" ]; then
+        git add .
+        git commit -m "Generate stubs for WPForms ${VERSION}"
+        git tag "v${VERSION}"
+    else
+        echo "No changes to commit for version ${VERSION}"
+    fi
 done < "$OUTPUT_FILE"
 
 echo "All versions processed."
