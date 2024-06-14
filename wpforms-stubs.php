@@ -986,9 +986,10 @@ namespace {
         {
         }
         /**
-         * Load and init the base field class.
+         * Initialize hooks.
          *
          * @since 1.2.8
+         * @since 1.8.2 Moved base class loading to \WPForms\WPForms::includes.
          */
         public function init()
         {
@@ -1084,6 +1085,15 @@ namespace {
          * @param array  $meta    Meta data. Used to set initial site options.
          */
         public function new_multisite_blog($blog_id, $user_id, $domain, $path, $site_id, $meta)
+        {
+        }
+        /**
+         * Create database tables if they do not exist.
+         * It covers new installations.
+         *
+         * @since 1.8.2
+         */
+        private function maybe_create_tables()
         {
         }
     }
@@ -1195,7 +1205,7 @@ namespace WPForms {
          *
          * @since 1.8.0
          */
-        const CLASSES = [];
+        const CLASSES = ['WPForms\\Pro\\Admin\\Entries\\DefaultScreen' => '1.8.2'];
         /**
          * Inform clients that the class is removed.
          *
@@ -1271,6 +1281,18 @@ namespace WPForms {
 }
 namespace WPForms\Forms {
     class Loader extends \WPForms\Removed
+    {
+    }
+}
+namespace WPForms\Pro\Admin\Entries {
+    /**
+     * Default Entries screen showed a chart and the form entries stats.
+     * Replaced with "WPForms\Pro\Admin\Entries\Overview".
+     *
+     * @since 1.5.5
+     * @deprecated 1.8.2
+     */
+    class DefaultScreen extends \WPForms\Removed
     {
     }
 }
@@ -1915,6 +1937,19 @@ namespace {
         {
         }
         /**
+         * Get field data for the field.
+         *
+         * @since 1.8.2
+         *
+         * @param array $field     Current field.
+         * @param array $form_data Form data and settings.
+         *
+         * @return array
+         */
+        public function field_data($field, $form_data)
+        {
+        }
+        /**
          * Create the button for the 'Add Fields' tab, inside the form editor.
          *
          * @since 1.0.0
@@ -2130,6 +2165,20 @@ namespace {
         {
         }
         /**
+         * Exclude empty dynamic choices from the entry preview.
+         *
+         * @since 1.8.2
+         *
+         * @param bool  $hide      Whether to hide the field.
+         * @param array $field     Field data.
+         * @param array $form_data Form data.
+         *
+         * @return bool
+         */
+        public function exclude_empty_dynamic_choices($hide, $field, $form_data)
+        {
+        }
+        /**
          * Enqueue Choicesjs script and config.
          *
          * @param array $forms Forms on the current page.
@@ -2162,6 +2211,65 @@ namespace {
          * @return object
          */
         private function get_object($class)
+        {
+        }
+        /**
+         * Add allowed HTML tags for field labels.
+         *
+         * @since 1.8.2
+         *
+         * @param array $strings Array of strings.
+         *
+         * @return array
+         */
+        public function add_allowed_label_html_tags($strings)
+        {
+        }
+        /**
+         * Whether a field has dynamic choices.
+         *
+         * @since 1.8.2
+         *
+         * @param array $field Field settings.
+         *
+         * @return bool
+         */
+        protected function is_dynamic_choices($field)
+        {
+        }
+        /**
+         * Whether a field has dynamic choices and they are empty.
+         *
+         * @since 1.8.2
+         *
+         * @param array $field     Field settings.
+         * @param array $form_data Form data and settings.
+         *
+         * @return bool
+         */
+        protected function is_dynamic_choices_empty($field, $form_data)
+        {
+        }
+        /**
+         * Get empty dynamic choices message.
+         *
+         * @since 1.8.2
+         *
+         * @param array $field Field data and settings.
+         *
+         * @return string
+         */
+        protected function get_empty_dynamic_choices_message($field)
+        {
+        }
+        /**
+         * Display empty dynamic choices message.
+         *
+         * @since 1.8.2
+         *
+         * @param array $field Field data and settings.
+         */
+        protected function display_empty_dynamic_choices_message($field)
         {
         }
     }
@@ -2238,7 +2346,7 @@ namespace {
         {
         }
         /**
-         * Field display on the form front-end.
+         * Field display on the form front-end and admin entry edit page.
          *
          * @since 1.0.0
          *
@@ -2254,9 +2362,9 @@ namespace {
          *
          * @since 1.5.2
          *
-         * @param int   $field_id       field ID.
-         * @param array $field_submit   submitted data.
-         * @param array $form_data      form data.
+         * @param int   $field_id     Field ID.
+         * @param array $field_submit Submitted field value (selected option).
+         * @param array $form_data    Form data.
          */
         public function validate($field_id, $field_submit, $form_data)
         {
@@ -3635,7 +3743,7 @@ namespace {
         {
         }
         /**
-         * Field display on the form front-end.
+         * Field display on the form front-end and admin entry edit page.
          *
          * @since 1.0.0
          *
@@ -3644,6 +3752,18 @@ namespace {
          * @param array $form_data  Form data and settings.
          */
         public function field_display($field, $deprecated, $form_data)
+        {
+        }
+        /**
+         * Validate field.
+         *
+         * @since 1.8.2
+         *
+         * @param int          $field_id     Field ID.
+         * @param string|array $field_submit Submitted field value (selected option).
+         * @param array        $form_data    Form data and settings.
+         */
+        public function validate($field_id, $field_submit, $form_data)
         {
         }
         /**
@@ -3732,7 +3852,7 @@ namespace {
         {
         }
         /**
-         * Field display on the form front-end.
+         * Field display on the form front-end and admin entry edit page.
          *
          * @since 1.0.0
          * @since 1.5.0 Converted to a new format, where all the data are taken not from $deprecated, but field properties.
@@ -3743,6 +3863,18 @@ namespace {
          * @param array $form_data  Form data and settings.
          */
         public function field_display($field, $deprecated, $form_data)
+        {
+        }
+        /**
+         * Validate field.
+         *
+         * @since 1.8.2
+         *
+         * @param int          $field_id     Field ID.
+         * @param string|array $field_submit Submitted field value (selected option).
+         * @param array        $form_data    Form data and settings.
+         */
+        public function validate($field_id, $field_submit, $form_data)
         {
         }
         /**
@@ -4821,25 +4953,30 @@ namespace {
          * Increase entries count once a form is submitted.
          *
          * @since 1.5.9
+         * @since 1.8.2 Added Payment ID.
          *
-         * @param array      $fields  Set of form fields.
-         * @param array      $entry   Entry contents.
-         * @param int|string $form_id Form ID.
+         * @param array $fields     Set of form fields.
+         * @param array $entry      Entry contents.
+         * @param array $form_data  Form data.
+         * @param int   $entry_id   Entry ID.
+         * @param int   $payment_id Payment ID for the payment form.
          */
-        public function update_entry_count($fields, $entry, $form_id)
+        public function update_entry_count($fields, $entry, $form_data, $entry_id, $payment_id)
         {
         }
         /**
          * Submit entry to the Lite Connect API.
          *
          * @since 1.7.4
+         * @since 1.8.2 Added Payment ID.
          *
-         * @param array $fields    Set of form fields.
-         * @param array $entry     Entry contents.
-         * @param int   $form_id   Form ID.
-         * @param array $form_data Form data.
+         * @param array $fields     Set of form fields.
+         * @param array $entry      Entry contents.
+         * @param array $form_data  Form data.
+         * @param int   $entry_id   Entry ID.
+         * @param int   $payment_id Payment ID for the payment form.
          */
-        public function entry_submit($fields, $entry, $form_id, $form_data = [])
+        public function entry_submit($fields, $entry, $form_data, $entry_id, $payment_id)
         {
         }
         /**
@@ -5016,6 +5153,14 @@ namespace WPForms {
         {
         }
         /**
+         * Populate Fields related classes.
+         *
+         * @since 1.8.2
+         */
+        private function populate_fields()
+        {
+        }
+        /**
          * Populate Forms Overview admin page related classes.
          *
          * @since 1.7.5
@@ -5029,6 +5174,14 @@ namespace WPForms {
          * @since 1.6.8
          */
         private function populate_builder()
+        {
+        }
+        /**
+         * Populate database classes.
+         *
+         * @since 1.8.2
+         */
+        private function populate_db()
         {
         }
         /**
@@ -6306,6 +6459,10 @@ namespace {
     }
     /**
      * Update plugin settings option and allow it to be filterable.
+     *
+     * The purpose of this function is to save settings when the "Save Settings" button is clicked.
+     * If you are programmatically saving setting in the database in cases not triggered by user,
+     * use update_option() instead.
      *
      * @since 1.6.6
      *
