@@ -1818,6 +1818,7 @@ namespace {
          * Display field input sublabel if present.
          *
          * @since 1.3.7
+         * @since 1.8.9 Ability to skip for attribute.
          *
          * @param string $key      Input key.
          * @param string $position Sublabel position.
@@ -1832,7 +1833,7 @@ namespace {
          * @since 1.0.0
          *
          * @param int   $field_id     Field ID.
-         * @param mixed $field_submit Field value that was submitted.
+         * @param mixed $field_submit Submitted field value (raw data).
          * @param array $form_data    Form data and settings.
          */
         public function validate($field_id, $field_submit, $form_data)
@@ -1869,13 +1870,15 @@ namespace {
          * Return HTML for a field value.
          *
          * @since 1.8.4.1
+         * @since 1.8.9 Add $form_data parameter.
          *
          * @param array  $field Field settings.
          * @param string $value Field value.
+         * @param array  $form_data Form data.
          *
          * @return string
          */
-        private function get_field_html($field, $value)
+        private function get_field_html($field, $value, $form_data)
         {
         }
         /**
@@ -1906,16 +1909,19 @@ namespace {
         {
         }
         /**
-         * Get field name for ajax error message.
+         * Get field name for an ajax error message.
          *
          * @since 1.6.3
          *
-         * @param string $name  Field name for error triggered.
-         * @param array  $field Field settings.
-         * @param array  $props List of properties.
-         * @param string $error Error message.
+         * @param string|mixed    $name  Field name for error triggered.
+         * @param array           $field Field settings.
+         * @param array           $props List of properties.
+         * @param string|string[] $error Error message.
          *
          * @return string
+         * @noinspection PhpMissingReturnTypeInspection
+         * @noinspection ReturnTypeCanBeDeclaredInspection
+         * @noinspection PhpMissingParamTypeInspection
          */
         public function ajax_error_field_name($name, $field, $props, $error)
         {
@@ -1974,11 +1980,11 @@ namespace {
          *
          * @since 1.8.1
          *
-         * @param string $class Class name, for example `Frontend`.
+         * @param string $class_name Class name, for example `Frontend`.
          *
          * @return object
          */
-        private function get_object($class)
+        protected function get_object($class_name)
         {
         }
         /**
@@ -2044,13 +2050,15 @@ namespace {
          * Get checkbox, choices and select field options label.
          *
          * @since 1.8.6
+         * @since 1.8.9 Added the `$field` parameter.
          *
          * @param string $label Choice option label.
          * @param int    $key   Choice number.
+         * @param array  $field Field data and settings.
          *
          * @return string
          */
-        protected function get_choices_label($label, int $key)
+        protected function get_choices_label($label, int $key, array $field)
         {
         }
         /**
@@ -2177,7 +2185,7 @@ namespace {
          * @since 1.5.2
          *
          * @param int   $field_id     Field ID.
-         * @param array $field_submit Submitted field value (selected option).
+         * @param array $field_submit Submitted field value (raw data).
          * @param array $form_data    Form data.
          */
         public function validate($field_id, $field_submit, $form_data)
@@ -2351,7 +2359,7 @@ namespace {
          * @since 1.0.0
          *
          * @param int   $field_id     Field ID.
-         * @param mixed $field_submit Field value that was submitted.
+         * @param mixed $field_submit Submitted field value (raw data).
          * @param array $form_data    Form data and settings.
          */
         public function validate($field_id, $field_submit, $form_data)
@@ -2927,6 +2935,16 @@ namespace {
         {
         }
         /**
+         * Add hidden input with code identifier.
+         *
+         * @since 1.8.9
+         *
+         * @param array $field Field data and settings.
+         */
+        private function field_code($field)
+        {
+        }
+        /**
          * Add CSS class to hide field settings when field is not editable.
          *
          * @since 1.7.6
@@ -3007,15 +3025,15 @@ namespace {
         {
         }
         /**
-         * Hide column from the entries list table.
+         * Hide column from the entry list table.
          *
          * @since 1.7.6
          *
-         * @param array $disallowed Table columns.
+         * @param array|mixed $disallowed Table columns.
          *
          * @return array
          */
-        public function hide_column_in_entries_table($disallowed)
+        public function hide_column_in_entries_table($disallowed) : array
         {
         }
         /**
@@ -3239,7 +3257,7 @@ namespace {
          * @since 1.0.0
          *
          * @param int          $field_id     Field id.
-         * @param array|string $field_submit Field submit.
+         * @param array|string $field_submit Submitted field value (raw data).
          * @param array        $form_data    Form data.
          */
         public function validate($field_id, $field_submit, $form_data)
@@ -3395,7 +3413,7 @@ namespace {
          * @since 1.5.7
          *
          * @param int              $field_id     Field ID.
-         * @param int|float|string $field_submit Submitted field value.
+         * @param int|float|string $field_submit Submitted field value (raw data).
          * @param array            $form_data    Form data and settings.
          */
         public function validate($field_id, $field_submit, $form_data)
@@ -3479,7 +3497,7 @@ namespace {
          * @since 1.0.0
          *
          * @param int    $field_id     Field id.
-         * @param string $field_submit Submitted value.
+         * @param string $field_submit Submitted field value (raw data).
          * @param array  $form_data    Form data.
          */
         public function validate($field_id, $field_submit, $form_data)
@@ -3585,7 +3603,7 @@ namespace {
          * @since 1.8.2
          *
          * @param int          $field_id     Field ID.
-         * @param string|array $field_submit Submitted field value (selected option).
+         * @param string|array $field_submit Submitted field value (raw data).
          * @param array        $form_data    Form data and settings.
          */
         public function validate($field_id, $field_submit, $form_data)
@@ -3696,7 +3714,7 @@ namespace {
          * @since 1.8.2
          *
          * @param int          $field_id     Field ID.
-         * @param string|array $field_submit Submitted field value (selected option).
+         * @param string|array $field_submit Submitted field value (raw data).
          * @param array        $form_data    Form data and settings.
          */
         public function validate($field_id, $field_submit, $form_data)
@@ -3757,16 +3775,18 @@ namespace {
         {
         }
         /**
-         * Get field name for ajax error message.
+         * Get field name for an ajax error message.
          *
          * @since 1.6.3
          *
-         * @param string $name  Field name for error triggered.
-         * @param array  $field Field settings.
-         * @param array  $props List of properties.
-         * @param string $error Error message.
+         * @param string|mixed $name Field name for error triggered.
+         * @param array $field Field settings.
+         * @param array $props List of properties.
+         * @param string|string[] $error Error message.
          *
          * @return string
+         * @noinspection PhpMissingReturnTypeInspection
+         * @noinspection ReturnTypeCanBeDeclaredInspection
          */
         public function ajax_error_field_name($name, $field, $props, $error)
         {
@@ -3897,7 +3917,7 @@ namespace {
          * @since 1.6.2
          *
          * @param int   $field_id     Field ID.
-         * @param mixed $field_submit Field value that was submitted.
+         * @param mixed $field_submit Submitted field value (raw data).
          * @param array $form_data    Form data and settings.
          */
         public function validate($field_id, $field_submit, $form_data)
@@ -3995,7 +4015,7 @@ namespace {
          * @since 1.6.2
          *
          * @param int   $field_id     Field ID.
-         * @param mixed $field_submit Field value that was submitted.
+         * @param mixed $field_submit Submitted field value (raw data).
          * @param array $form_data    Form data and settings.
          */
         public function validate($field_id, $field_submit, $form_data)
@@ -4687,11 +4707,11 @@ namespace {
         {
         }
         /**
-         * Include files.
+         * Register hooks.
          *
-         * @since 1.0.0
+         * @since 1.8.9
          */
-        private function includes()
+        private function hooks()
         {
         }
         /**
@@ -4749,11 +4769,27 @@ namespace {
         {
         }
         /**
-         * Notify user that entries is a pro feature.
+         * Display sample data and notify user that entries is a pro feature.
          *
          * @since 1.0.0
          */
         public function entries_page()
+        {
+        }
+        /**
+         * Display the Entries List page with sample data.
+         *
+         * @since 1.8.9
+         */
+        private function entries_list_page()
+        {
+        }
+        /**
+         * Display the Single Entry page with sample data.
+         *
+         * @since 1.8.9
+         */
+        private function entry_single_page()
         {
         }
         /**
@@ -4847,6 +4883,26 @@ namespace {
          * @since 1.7.4
          */
         public function install()
+        {
+        }
+        /**
+         * Retrieve UTM parameters for Entries pages.
+         *
+         * @since 1.8.9
+         *
+         * @return array
+         */
+        private function get_entries_utm() : array
+        {
+        }
+        /**
+         * Retrieve dummy data for the Entries List page.
+         *
+         * @since 1.8.9
+         *
+         * return array
+         */
+        private function get_entries_list_data() : array
         {
         }
     }
@@ -6044,7 +6100,7 @@ namespace {
      *
      * @param string $title   Title of a log message.
      * @param mixed  $message Content of a log message.
-     * @param array  $args    Expected keys: form_id, meta, parent.
+     * @param array  $args    Expected keys: type, form_id, meta, parent, force.
      */
     function wpforms_log($title = '', $message = '', $args = [])
     {
@@ -6455,6 +6511,68 @@ namespace {
     {
     }
     /**
+     * Validate field ID for repeater field.
+     *
+     * @since 1.8.9
+     *
+     * @param mixed $field_id Field ID.
+     *
+     * @return int|string
+     */
+    function wpforms_validate_field_id($field_id)
+    {
+    }
+    /**
+     * Check if field ID is a repeater field.
+     *
+     * @since 1.8.9
+     *
+     * @param int|string|array $field Field.
+     *
+     * @return bool
+     */
+    function wpforms_is_repeater_child_field($field) : bool
+    {
+    }
+    /**
+     * Get repeater field IDs.
+     *
+     * @since 1.8.9
+     *
+     * @param int|string|array $field Field ID.
+     *
+     * @return array
+     */
+    function wpforms_get_repeater_field_ids($field) : array
+    {
+    }
+    /**
+     * Get the correct value for field with raw value available.
+     *
+     * @since 1.8.9
+     *
+     * @param array $field     Entry field.
+     * @param array $form_data Form data and settings.
+     *
+     * @return string
+     */
+    function wpforms_get_choices_value(array $field, array $form_data) : string
+    {
+    }
+    /**
+     * Determine if the field was repeated.
+     *
+     * @since 1.8.9
+     *
+     * @param int   $field_id Field ID.
+     * @param array $fields   List of fields.
+     *
+     * @return bool
+     */
+    function wpforms_is_repeated_field(int $field_id, array $fields) : bool
+    {
+    }
+    /**
      * Helper functions to work with forms and form data.
      *
      * @since 1.8.0
@@ -6780,13 +6898,44 @@ namespace {
      *
      * @since 1.5.8
      *
-     * @param array  $array Array where to insert.
-     * @param string $key   Insert after key.
-     * @param array  $new   Array to insert.
+     * @param array  $target Array where to insert.
+     * @param string $key    Insert after key.
+     * @param array  $data   Array to insert.
      *
      * @return array
      */
-    function wpforms_list_insert_after($array, $key, $new)
+    function wpforms_list_insert_after(array $target, string $key, array $data) : array
+    {
+    }
+    /**
+     * Insert a value or key/value pair before a specific key in an array.
+     * If key doesn't exist, value is prepended to the beginning of the array.
+     *
+     * @since 1.8.9
+     *
+     * @param array  $target Array where to insert.
+     * @param string $key    Insert before key.
+     * @param array  $data   Array to insert.
+     *
+     * @return array
+     */
+    function wpforms_list_insert_before(array $target, string $key, array $data) : array
+    {
+    }
+    /**
+     * Insert a value or key/value pair before or after a specific key in an array.
+     * If key doesn't exist, value is appended to the end of the array.
+     *
+     * @since 1.8.9
+     *
+     * @param array  $target   Array where to insert.
+     * @param string $key      Insert before/after key.
+     * @param array  $data     Array to insert.
+     * @param string $position Position to insert before/after.
+     *
+     * @return array
+     */
+    function wpforms_list_insert(array $target, string $key, array $data, string $position) : array
     {
     }
     /**
