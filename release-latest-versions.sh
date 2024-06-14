@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Generate wpforms stubs from all the latest versions.
+# Generate WP Forms Lite stubs from all the latest versions.
 #
 
 set -e
@@ -40,6 +40,6 @@ for V in  1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9; do
     ./generate.sh
 
     # Tag version
-    git commit --all -m "Generate stubs for wpforms ${LATEST}"
+    git commit --all -m "Generate stubs for WP Forms Lite ${LATEST}"
     git tag "v${LATEST}"
 done
