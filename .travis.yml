@@ -23,7 +23,7 @@ install:
   ## Reinstall sub-packages into /packages/
   #- "composer update --no-interaction"
   - |
-    LATEST="$(jq -r '."require"."wpforms/wpforms"' source/composer.json)"
+    LATEST="$(jq -r '."require"."wpforms-lite/wpforms"' source/composer.json)"
     wget -P source/ "https://downloads.wordpress.org/plugin/wpforms-lite.${LATEST}.zip"
     unzip -q -d source/ "source/wpforms-lite.${LATEST}.zip"
 
