@@ -1323,6 +1323,11 @@ namespace {
      * Heavily influenced by the great AffiliateWP plugin by Pippin Williamson.
      * https://github.com/AffiliateWP/AffiliateWP/blob/master/includes/emails/class-affwp-emails.php
      *
+     * Note that this mailer class is no longer in active use and has been replaced with the "WPForms\Emails\Notifications" class.
+     * Please refer to the new mailer wrapper extension to extend or add further customizations.
+     *
+     * @deprecated 1.8.5
+     *
      * @since 1.1.3
      */
     class WPForms_WP_Emails
@@ -2788,7 +2793,7 @@ namespace {
          *
          * @since 1.6.9
          *
-         * @return \TrueBV\Punycode
+         * @return WPForms\Vendor\TrueBV\Punycode
          */
         private function get_punycode()
         {
@@ -5079,6 +5084,21 @@ namespace {
         {
         }
         /**
+         * Upgrade link used within the various admin pages.
+         *
+         * TODO: This is a duplicate of the function in the WPForms class. We should refactor this to use the same function.
+         *
+         * @since 1.8.5.1
+         *
+         * @param string $medium  URL parameter: utm_medium.
+         * @param string $content URL parameter: utm_content.
+         *
+         * @return string
+         */
+        private function admin_upgrade_link(string $medium = 'link', string $content = '') : string
+        {
+        }
+        /**
          * Handle plugin installation upon activation.
          *
          * @since 1.7.4
@@ -5417,6 +5437,14 @@ namespace WPForms {
          * @since 1.0.0
          */
         private function includes()
+        {
+        }
+        /**
+         * Include the error handler to suppress deprecated messages from vendor folders.
+         *
+         * @since 1.8.5
+         */
+        private function error_handler()
         {
         }
         /**
@@ -5926,12 +5954,56 @@ namespace {
      * Convert hex color value to RGB.
      *
      * @since 1.7.9
+     * @since 1.8.5 New param and return type were added.
      *
-     * @param string $hex Color value in hex format.
+     * @param string $hex       Color value in hex format.
+     * @param bool   $as_string Whether to return the RGB value as a string or array.
      *
-     * @return string Color value in RGB format.
+     * @return string|array Color value in RGB format.
      */
-    function wpforms_hex_to_rgb($hex)
+    function wpforms_hex_to_rgb($hex, $as_string = \true)
+    {
+    }
+    /**
+     * Get a lighter color hex value.
+     *
+     * @since 1.8.5
+     *
+     * @param string $color  Color hex value.
+     * @param int    $factor Factor to lighten the color.
+     *
+     * @return string Lighter color hex value.
+     */
+    function wpforms_hex_lighter($color, $factor = 30)
+    {
+    }
+    /**
+     * Get a darker color hex value.
+     *
+     * @since 1.8.5
+     *
+     * @param string $color  Color hex value.
+     * @param int    $factor Factor to darken the color.
+     *
+     * @return string Darker color hex value.
+     */
+    function wpforms_hex_darker($color, $factor = 30)
+    {
+    }
+    /**
+     * Generate a contrasting color based on the given color.
+     *
+     * This function calculates a contrasting color to ensure readability based on the provided color.
+     *
+     * @since 1.8.5
+     *
+     * @param string $color        The original color value. Color hex value.
+     * @param int    $light_factor The factor to lighten the color.
+     * @param int    $dark_factor  The factor to darken the color.
+     *
+     * @return string The contrasting color value.
+     */
+    function wpforms_generate_contrasting_color($color, $light_factor = 30, $dark_factor = 30)
     {
     }
     /**
@@ -6030,6 +6102,20 @@ namespace {
      * @return string
      */
     function wpforms_date_format($date, $format = '', $gmt_offset = \false)
+    {
+    }
+    /**
+     * Return time formatted as expected.
+     *
+     * @since 1.8.5
+     *
+     * @param string|int $date       Date to format.
+     * @param string     $format     Optional. Format for the time.
+     * @param bool       $gmt_offset Optional. GTM offset.
+     *
+     * @return string
+     */
+    function wpforms_time_format($date, $format = '', $gmt_offset = \false)
     {
     }
     /**
@@ -6479,6 +6565,28 @@ namespace {
     {
     }
     /**
+     * Return available builder fields.
+     *
+     * @since 1.8.5
+     *
+     * @param string $group Group name.
+     *
+     * @return array
+     */
+    function wpforms_get_builder_fields($group = '')
+    {
+    }
+    /**
+     * Get payments fields.
+     *
+     * @since 1.8.5
+     *
+     * @return array
+     */
+    function wpforms_get_payments_fields()
+    {
+    }
+    /**
      * Helper functions to work with forms and form data.
      *
      * @since 1.8.0
@@ -6620,14 +6728,14 @@ namespace {
      * Retrieve actual fields from a form.
      *
      * Non-posting elements such as section divider, page break, and HTML are
-     * automatically excluded. Optionally a white list can be provided.
+     * automatically excluded. Optionally, a whitelist can be provided.
      *
      * @since 1.0.0
      *
      * @param mixed $form      Form data.
      * @param array $allowlist A list of allowed fields.
      *
-     * @return mixed boolean or array
+     * @return mixed boolean false or array
      */
     function wpforms_get_form_fields($form = \false, $allowlist = [])
     {

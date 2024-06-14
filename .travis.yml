@@ -28,7 +28,7 @@ install:
     unzip -q -d source/ "source/wpforms-lite.${LATEST}.zip"
 
 before_script:
-  - "cat ./source/wpforms/wpforms.php"
+  - "cat ./source/wpforms-lite/wpforms.php"
 
 script:
   - "bash -x ./generate.sh"
