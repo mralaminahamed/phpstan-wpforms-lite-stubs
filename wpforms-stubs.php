@@ -519,7 +519,7 @@ namespace {
         {
         }
         /**
-         * Pre-footer promotion block.
+         * Pre-footer promotion block, displayed on all WPForms admin pages except Form Builder.
          *
          * @since 1.8.0
          */
