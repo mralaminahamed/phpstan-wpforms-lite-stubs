@@ -78,14 +78,6 @@ namespace {
         {
         }
         /**
-         * Enqueue assets for the the page.
-         *
-         * @since 1.5.0
-         */
-        public function enqueues()
-        {
-        }
-        /**
          * Output the basic page structure.
          *
          * @since 1.5.0
@@ -213,9 +205,19 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param string $editor_id
+         * @param string $editor_id Editor Id.
          */
         public function media_button($editor_id)
+        {
+        }
+        /**
+         * Check if we are on the post editor admin page.
+         *
+         * @since 1.6.2
+         *
+         * @returns boolean True if it is post editor admin page.
+         */
+        public function is_post_editor_page()
         {
         }
         /**
@@ -228,38 +230,6 @@ namespace {
          * @since 1.0.0
          */
         public function shortcode_modal()
-        {
-        }
-    }
-    /**
-     * Load the different form importers.
-     *
-     * @since 1.4.2
-     */
-    class WPForms_Importers
-    {
-        /**
-         * Primary class constructor.
-         *
-         * @since 1.4.2
-         */
-        public function __construct()
-        {
-        }
-        /**
-         * Load and init the base importer class.
-         *
-         * @since 1.4.2
-         */
-        public function init()
-        {
-        }
-        /**
-         * Load default form importers.
-         *
-         * @since 1.4.2
-         */
-        public function load()
         {
         }
     }
@@ -323,6 +293,23 @@ namespace {
         {
         }
         /**
+         * Alias method for backward compatibility.
+         *
+         * @since 1.7.4
+         * @deprecated 1.7.8
+         */
+        public function style_upgrade_pro_link()
+        {
+        }
+        /**
+         * Add the PRO badge to left sidebar menu item.
+         *
+         * @since 1.7.8
+         */
+        public function adjust_pro_menu_item_class()
+        {
+        }
+        /**
          * Wrapper for the hook to render our custom settings pages.
          *
          * @since 1.0.0
@@ -335,11 +322,32 @@ namespace {
          *
          * @since 1.3.9
          *
-         * @param array $links Plugin row links.
+         * @param array  $links       Plugin row links.
+         * @param string $plugin_file Path to the plugin file relative to the plugins directory.
+         * @param array  $plugin_data An array of plugin data. See `get_plugin_data()`.
+         * @param string $context     The plugin context.
          *
          * @return array $links
          */
-        public function settings_link($links)
+        public function settings_link($links, $plugin_file, $plugin_data, $context)
+        {
+        }
+        /**
+         * Get the HTML for the "NEW!" badge.
+         *
+         * @since 1.7.8
+         *
+         * @return string
+         */
+        private function get_new_badge_html()
+        {
+        }
+        /**
+         * Output inline styles for the admin menu.
+         *
+         * @since 1.7.8
+         */
+        public function admin_menu_styles()
         {
         }
     }
@@ -352,10 +360,8 @@ namespace {
      * @example
      * WPForms_Admin_Notice::warning( 'Do something please.' );
      *
-     * @todo Persistent, dismissible notices.
-     * @link https://gist.github.com/monkeymonk/2ea17e2260daaecd0049c46c8d6c85fd
-     *
      * @since 1.3.9
+     * @deprecated 1.7.2
      */
     class WPForms_Admin_Notice
     {
@@ -404,7 +410,7 @@ namespace {
          * @since 1.3.9
          *
          * @param string $message Message to display.
-         * @param string $type Type of the notice (default: '').
+         * @param string $type    Type of the notice (default: '').
          */
         public static function add($message, $type = '')
         {
@@ -490,7 +496,9 @@ namespace {
         {
         }
         /**
-         * Dismiss the review admin notice
+         * Dismiss the review admin notice.
+         *
+         * @deprecated 1.6.7.1
          *
          * @since 1.3.2
          */
@@ -503,185 +511,11 @@ namespace {
          *
          * @since 1.3.2
          *
-         * @param string $text
+         * @param string $text Footer text.
          *
          * @return string
          */
         public function admin_footer($text)
-        {
-        }
-    }
-    /**
-     * Tools admin page class.
-     *
-     * @since 1.3.9
-     */
-    class WPForms_Tools
-    {
-        /**
-         * The current active tab.
-         *
-         * @since 1.3.9
-         *
-         * @var string
-         */
-        public $view;
-        /**
-         * Template code if generated.
-         *
-         * @since 1.3.9
-         *
-         * @var string
-         */
-        private $template = \false;
-        /**
-         * Registered importers.
-         *
-         * @since 1.4.2
-         *
-         * @var array
-         */
-        public $importers = array();
-        /**
-         * Available forms for a specific importer.
-         *
-         * @since 1.4.2
-         *
-         * @var array
-         */
-        public $importer_forms = array();
-        /**
-         * The available forms.
-         *
-         * @since 1.3.9
-         *
-         * @var array
-         */
-        public $forms = \false;
-        /**
-         * The core views.
-         *
-         * @since 1.4.3
-         *
-         * @var array
-         */
-        public $views = array();
-        /**
-         * Primary class constructor.
-         *
-         * @since 1.3.9
-         */
-        public function __construct()
-        {
-        }
-        /**
-         * Determining if the user is viewing the tools page, if so, party on.
-         *
-         * @since 1.3.9
-         */
-        public function init()
-        {
-        }
-        /**
-         * Build the output for the Tools admin page.
-         *
-         * @since 1.3.9
-         */
-        public function output()
-        {
-        }
-        /**
-         * Import tab contents.
-         *
-         * @since 1.4.2
-         */
-        public function import_tab()
-        {
-        }
-        /**
-         * Importer tab contents.
-         *
-         * @since 1.4.2
-         */
-        public function importer_tab()
-        {
-        }
-        /**
-         * Various Underscores templates for form importing.
-         *
-         * @since 1.4.2
-         */
-        public function importer_templates()
-        {
-        }
-        /**
-         * Export tab contents.
-         *
-         * @since 1.4.2
-         */
-        public function export_tab()
-        {
-        }
-        /**
-         * Export tab contents.
-         *
-         * @since 1.5.8
-         */
-        public function export_tab_html()
-        {
-        }
-        /**
-         * System Info tab contents.
-         *
-         * @since 1.3.9
-         */
-        public function system_info_tab()
-        {
-        }
-        /**
-         * Import/Export processing.
-         *
-         * @since 1.3.9
-         */
-        public function import_export_process()
-        {
-        }
-        /**
-         * Import processing.
-         *
-         * @since 1.5.8
-         */
-        protected function import_process()
-        {
-        }
-        /**
-         * Export processing.
-         *
-         * @since 1.5.8
-         */
-        protected function export_process()
-        {
-        }
-        /**
-         * Export template processing.
-         *
-         * @since 1.5.8
-         */
-        protected function export_template_process()
-        {
-        }
-        /**
-         * Get system information.
-         *
-         * Based on a function from Easy Digital Downloads by Pippin Williamson.
-         *
-         * @link https://github.com/easydigitaldownloads/easy-digital-downloads/blob/master/includes/admin/tools.php#L470
-         *
-         * @since 1.3.9
-         *
-         * @return string
-         */
-        public function get_system_info()
         {
         }
     }
@@ -758,416 +592,7 @@ namespace {
         }
     }
     /**
-     * Interface WPForms_Importer_Interface to handle common methods for all importers.
-     *
-     * @since 1.4.2
-     */
-    interface WPForms_Importer_Interface
-    {
-        /**
-         * Define required properties.
-         *
-         * @since 1.4.2
-         */
-        public function init();
-        /**
-         * Get ALL THE FORMS.
-         *
-         * @since 1.4.2
-         */
-        public function get_forms();
-        /**
-         * Get a single form.
-         *
-         * @since 1.4.2
-         *
-         * @param int $id Form ID.
-         */
-        public function get_form($id);
-        /**
-         * Import a single form using AJAX.
-         *
-         * @since 1.4.2
-         */
-        public function import_form();
-        /**
-         * Replace 3rd-party form provider tags/shortcodes with our own Smart Tags.
-         *
-         * @since 1.4.2
-         *
-         * @param string $string Text to look for Smart Tags in.
-         * @param array  $fields List of fields to process Smart Tags in.
-         *
-         * @return string
-         */
-        public function get_smarttags($string, $fields);
-    }
-    /**
-     * Base Importer class.
-     *
-     * @since 1.4.2
-     */
-    abstract class WPForms_Importer implements \WPForms_Importer_Interface
-    {
-        /**
-         * Importer name.
-         *
-         * @since 1.4.2
-         *
-         * @var string
-         */
-        public $name;
-        /**
-         * Importer name in slug format.
-         *
-         * @since 1.4.2
-         *
-         * @var string
-         */
-        public $slug;
-        /**
-         * Importer plugin path.
-         *
-         * @since 1.4.2
-         *
-         * @var string
-         */
-        public $path;
-        /**
-         * Primary class constructor.
-         *
-         * @since 1.4.2
-         */
-        public function __construct()
-        {
-        }
-        /**
-         * Add to list of registered importers.
-         *
-         * @since 1.4.2
-         *
-         * @param array $importers List of supported importers.
-         *
-         * @return array
-         */
-        public function register($importers = array())
-        {
-        }
-        /**
-         * If the importer source is available.
-         *
-         * @since 1.4.2
-         *
-         * @return bool
-         */
-        protected function is_active()
-        {
-        }
-        /**
-         * Add the new form to the database and return AJAX data.
-         *
-         * @since 1.4.2
-         *
-         * @param array $form Form to import.
-         * @param array $unsupported List of unsupported fields.
-         * @param array $upgrade_plain List of fields, that are supported inside the paid WPForms, but not in Lite.
-         * @param array $upgrade_omit No field alternative in WPForms.
-         */
-        public function add_form($form, $unsupported = array(), $upgrade_plain = array(), $upgrade_omit = array())
-        {
-        }
-        /**
-         * After a form has been successfully imported we track it, so that in the
-         * future we can alert users if they try to import a form that has already
-         * been imported.
-         *
-         * @since 1.4.2
-         *
-         * @param int $source_id Imported plugin form ID.
-         * @param int $wpforms_id WPForms form ID.
-         */
-        public function track_import($source_id, $wpforms_id)
-        {
-        }
-    }
-    /**
-     * Contact Form 7 Importer class.
-     *
-     * @since 1.4.2
-     */
-    class WPForms_Contact_Form_7 extends \WPForms_Importer
-    {
-        /**
-         * @inheritdoc
-         */
-        public function init()
-        {
-        }
-        /**
-         * @inheritdoc
-         */
-        public function get_forms()
-        {
-        }
-        /**
-         * Get a single form.
-         *
-         * @since 1.4.2
-         *
-         * @param int $id Form ID.
-         *
-         * @return WPCF7_ContactForm|bool
-         */
-        public function get_form($id)
-        {
-        }
-        /**
-         * @inheritdoc
-         */
-        public function import_form()
-        {
-        }
-        /**
-         * Lookup and return the placeholder or default value.
-         *
-         * @since 1.4.2
-         *
-         * @param object $field Field object.
-         * @param string $type Type of the field.
-         *
-         * @return string
-         */
-        public function get_field_placeholder_default($field, $type = 'placeholder')
-        {
-        }
-        /**
-         * Get the field label.
-         *
-         * @since 1.4.2
-         *
-         * @param string $form Form data and settings.
-         * @param string $type Field type.
-         * @param string $name Field name.
-         *
-         * @return string
-         */
-        public function get_field_label($form, $type, $name = '')
-        {
-        }
-        /**
-         * @inheritdoc
-         */
-        public function get_smarttags($string, $fields)
-        {
-        }
-        /**
-         * Find Reply-To in headers if provided.
-         *
-         * @since 1.4.2
-         *
-         * @param string $headers CF7 email headers.
-         * @param array  $fields List of fields.
-         *
-         * @return string
-         */
-        public function get_replyto($headers, $fields)
-        {
-        }
-        /**
-         * Sender information.
-         *
-         * @since 1.4.2
-         *
-         * @param string $sender Sender strings in "Name <email@example.com>" format.
-         * @param array  $fields List of fields.
-         *
-         * @return bool|array
-         */
-        public function get_sender_details($sender, $fields)
-        {
-        }
-    }
-    /**
-     * Ninja Forms Importer class.
-     *
-     * @since 1.4.2
-     */
-    class WPForms_Ninja_Forms extends \WPForms_Importer
-    {
-        /**
-         * @inheritdoc
-         */
-        public function init()
-        {
-        }
-        /**
-         * Get ALL THE FORMS.
-         *
-         * @since 1.4.2
-         *
-         * @return NF_Database_Models_Form[]
-         */
-        public function get_forms()
-        {
-        }
-        /**
-         * @inheritdoc
-         */
-        public function get_form($id)
-        {
-        }
-        /**
-         * @inheritdoc
-         */
-        public function import_form()
-        {
-        }
-        /**
-         * Get the field label.
-         *
-         * @since 1.4.2
-         *
-         * @param array $field
-         *
-         * @return string
-         */
-        public function get_field_label($field)
-        {
-        }
-        /**
-         * @inheritdoc
-         */
-        public function get_smarttags($string, $fields)
-        {
-        }
-    }
-    /**
-     * Pirate Forms Importer class.
-     *
-     * @since 1.4.9
-     */
-    class WPForms_Pirate_Forms extends \WPForms_Importer
-    {
-        /**
-         * Direct URL to download the latest version of WP Mail SMTP plugin from WP.org repo.
-         *
-         * @since 1.4.9
-         *
-         * @var string
-         */
-        const URL_SMTP_ZIP = 'https://downloads.wordpress.org/plugin/wp-mail-smtp.zip';
-        /**
-         * WP Mail SMTP plugin basename.
-         *
-         * @since 1.4.9
-         *
-         * @var string
-         */
-        const SLUG_SMTP_PLUGIN = 'wp-mail-smtp/wp_mail_smtp.php';
-        /**
-         * Default PirateForms smart tags.
-         *
-         * @var array
-         */
-        public static $tags = array('[email]');
-        /**
-         * Define required properties.
-         *
-         * @since 1.4.9
-         */
-        public function init()
-        {
-        }
-        /**
-         * Get ALL THE FORMS.
-         * We need only ID's and names here.
-         *
-         * @since 1.4.9
-         *
-         * @return array
-         */
-        public function get_forms()
-        {
-        }
-        /**
-         * Pirate Forms has a default form, which doesn't have an ID.
-         *
-         * @since 1.4.9
-         *
-         * @return array
-         */
-        protected function get_default_forms()
-        {
-        }
-        /**
-         * Copy-paste from Pro plugin code, it doesn't have API to get this data easily.
-         *
-         * @since 1.4.9
-         *
-         * @return array
-         */
-        protected function get_pro_forms()
-        {
-        }
-        /**
-         * Get a single form options.
-         *
-         * @since 1.4.9
-         *
-         * @param int $id Form ID.
-         *
-         * @return array
-         */
-        public function get_form($id)
-        {
-        }
-        /**
-         * Import a single form using AJAX.
-         *
-         * @since 1.4.9
-         */
-        public function import_form()
-        {
-        }
-        /**
-         * Replace 3rd-party form provider tags/shortcodes with our own Smart Tags.
-         * See: PirateForms_Util::get_magic_tags() for all PF tags.
-         *
-         * @since 1.4.9
-         *
-         * @param string $string String to process the smart tag in.
-         * @param array  $fields List of fields for the form.
-         *
-         * @return string
-         */
-        public function get_smarttags($string, $fields)
-        {
-        }
-        /**
-         * Import SMTP settings from Default form only.
-         *
-         * @since 1.4.9
-         *
-         * @param int   $pf_form_id PirateForms form ID.
-         * @param array $form WPForms form array.
-         */
-        protected function import_smtp($pf_form_id, $form)
-        {
-        }
-        /**
-         * Do all the voodoo to install and activate the WP Mail SMTP plugin behind the scene.
-         * No user interaction is needed.
-         *
-         * @since 1.4.9
-         *
-         * @return bool
-         */
-        protected function install_activate_smtp()
-        {
-        }
-    }
-    /**
-     * Generates the table on the plugin overview page.
+     * Generate the table on the plugin overview page.
      *
      * @since 1.0.0
      */
@@ -1182,11 +607,35 @@ namespace {
          */
         public $per_page;
         /**
+         * Number of forms in different views.
+         *
+         * @since 1.7.2
+         *
+         * @var array
+         */
+        private $count;
+        /**
+         * Current view.
+         *
+         * @since 1.7.3
+         *
+         * @var string
+         */
+        private $view;
+        /**
          * Primary class constructor.
          *
          * @since 1.0.0
          */
         public function __construct()
+        {
+        }
+        /**
+         * Get the instance of a class and store it in itself.
+         *
+         * @since 1.7.5
+         */
+        public static function get_instance()
         {
         }
         /**
@@ -1204,7 +653,7 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param WP_Post $form
+         * @param WP_Post $form Form.
          *
          * @return string
          */
@@ -1212,12 +661,12 @@ namespace {
         {
         }
         /**
-         * Renders the columns.
+         * Render the columns.
          *
          * @since 1.0.0
          *
-         * @param WP_Post $form
-         * @param string $column_name
+         * @param WP_Post $form        CPT object as a form representation.
+         * @param string  $column_name Column Name.
          *
          * @return string
          */
@@ -1225,15 +674,40 @@ namespace {
         {
         }
         /**
+         * Filter the default list of hidden columns.
+         *
+         * @since 1.7.2
+         *
+         * @param string[]  $hidden Array of IDs of columns hidden by default.
+         * @param WP_Screen $screen WP_Screen object of the current screen.
+         *
+         * @return string[]
+         */
+        public function default_hidden_columns($hidden, $screen)
+        {
+        }
+        /**
          * Render the form name column with action links.
          *
          * @since 1.0.0
          *
-         * @param WP_Post $form
+         * @param WP_Post $form Form.
          *
          * @return string
          */
-        public function column_form_name($form)
+        public function column_name($form)
+        {
+        }
+        /**
+         * Render the form tags column.
+         *
+         * @since 1.7.5
+         *
+         * @param WP_Post $form Form.
+         *
+         * @return string
+         */
+        public function column_tags($form)
         {
         }
         /**
@@ -1245,7 +719,7 @@ namespace {
          *
          * @return string
          */
-        protected function get_column_form_name_title($form)
+        protected function get_column_name_title($form)
         {
         }
         /**
@@ -1257,7 +731,7 @@ namespace {
          *
          * @return string
          */
-        protected function get_column_form_name_row_actions($form)
+        protected function get_column_name_row_actions($form)
         {
         }
         /**
@@ -1271,6 +745,26 @@ namespace {
         {
         }
         /**
+         * Generate the table navigation above or below the table.
+         *
+         * @since 1.7.2
+         *
+         * @param string $which The location of the table navigation: 'top' or 'bottom'.
+         */
+        protected function display_tablenav($which)
+        {
+        }
+        /**
+         * Extra controls to be displayed between bulk actions and pagination.
+         *
+         * @since 1.7.3
+         *
+         * @param string $which The location of the table navigation: 'top' or 'bottom'.
+         */
+        protected function extra_tablenav($which)
+        {
+        }
+        /**
          * Message to be displayed when there are no forms.
          *
          * @since 1.0.0
@@ -1279,11 +773,31 @@ namespace {
         {
         }
         /**
-         * Fetch and setup the final data for the table.
+         * Fetch and set up the final data for the table.
          *
          * @since 1.0.0
          */
         public function prepare_items()
+        {
+        }
+        /**
+         * Calculate and update form counts.
+         *
+         * @since 1.7.2
+         *
+         * @param array $args Get forms arguments.
+         */
+        private function update_count($args)
+        {
+        }
+        /**
+         * Display the pagination.
+         *
+         * @since 1.7.2
+         *
+         * @param string $which The location of the table pagination: 'top' or 'bottom'.
+         */
+        protected function pagination($which)
         {
         }
         /**
@@ -1294,6 +808,25 @@ namespace {
         public function display_rows()
         {
         }
+        /**
+         * Forms search markup.
+         *
+         * @since 1.7.2
+         *
+         * @param string $text     The 'submit' button label.
+         * @param string $input_id ID attribute value for the search input field.
+         */
+        public function search_box($text, $input_id)
+        {
+        }
+        /**
+         * Get the list of views available on forms overview table.
+         *
+         * @since 1.7.3
+         */
+        protected function get_views()
+        {
+        }
     }
     /**
      * Primary overview page inside the admin which lists all forms.
@@ -1302,6 +835,14 @@ namespace {
      */
     class WPForms_Overview
     {
+        /**
+         * Overview Table instance.
+         *
+         * @since 1.7.2
+         *
+         * @var WPForms_Overview_Table
+         */
+        private $overview_table;
         /**
          * Primary class constructor.
          *
@@ -1319,6 +860,22 @@ namespace {
         {
         }
         /**
+         * Init overview table class.
+         *
+         * @since 1.7.2
+         */
+        public function init_overview_table()
+        {
+        }
+        /**
+         * Remove previous `_wp_http_referer` variable from the REQUEST_URI.
+         *
+         * @since 1.7.2
+         */
+        private function remove_referer()
+        {
+        }
+        /**
          * Add per-page screen option to the Forms table.
          *
          * @since 1.0.0
@@ -1327,7 +884,7 @@ namespace {
         {
         }
         /**
-         * Forms table per-page screen option value.
+         * Form table per-page screen option value.
          *
          * @since 1.0.0
          *
@@ -1349,6 +906,14 @@ namespace {
         {
         }
         /**
+         * Determine if it is an empty state.
+         *
+         * @since 1.7.5
+         */
+        private function is_empty_state()
+        {
+        }
+        /**
          * Build the output for the overview page.
          *
          * @since 1.0.0
@@ -1357,9 +922,10 @@ namespace {
         {
         }
         /**
-         * Add admin action notices and process bulk actions.
+         * Admin notices.
          *
          * @since 1.5.7
+         * @deprecated 1.7.3
          */
         public function notices()
         {
@@ -1368,156 +934,22 @@ namespace {
          * Process the bulk table actions.
          *
          * @since 1.5.7
+         * @deprecated 1.7.3
          */
         public function process_bulk_actions()
-        {
-        }
-        /**
-         * Delete forms.
-         *
-         * @since 1.5.7
-         *
-         * @param array $ids Form ids to delete.
-         *
-         * @return array List of deleted forms.
-         */
-        private function bulk_action_delete_forms($ids)
-        {
-        }
-        /**
-         * Duplicate forms.
-         *
-         * @since 1.5.7
-         *
-         * @param array $ids Form ids to duplicate.
-         *
-         * @return array List of duplicated forms.
-         */
-        private function bulk_action_duplicate_forms($ids)
         {
         }
         /**
          * Remove certain arguments from a query string that WordPress should always hide for users.
          *
          * @since 1.5.7
+         * @deprecated 1.7.3
          *
          * @param array $removable_query_args An array of parameters to remove from the URL.
          *
          * @return array Extended/filtered array of parameters to remove from the URL.
          */
         public function removable_query_args($removable_query_args)
-        {
-        }
-    }
-    /**
-     * Conditional logic core.
-     *
-     * Contains functionality for using conditional logic in the form builder as
-     * well as a global processing method that can be leveraged by all types of
-     * conditional logic.
-     *
-     * This was contained in an addon until version 1.3.8 when it was rolled into
-     * core.
-     *
-     * @since 1.3.8
-     */
-    class WPForms_Conditional_Logic_Core
-    {
-        /**
-         * One is the loneliest number that you'll ever do.
-         *
-         * @since 1.1.0
-         * @var WPForms_Conditional_Logic_Core
-         */
-        private static $instance;
-        /**
-         * Main Instance.
-         *
-         * @since 1.1.0
-         * @return WPForms_Conditional_Logic_Core
-         */
-        public static function instance()
-        {
-        }
-        /**
-         * Initialize.
-         *
-         * @since 1.0.0
-         */
-        public function init()
-        {
-        }
-        /**
-         * Enqueue assets for the builder.
-         *
-         * @since 1.0.0
-         */
-        public function builder_assets()
-        {
-        }
-        /**
-         * Outputs footer scripts inside the form builder.
-         *
-         * @since 1.3.8
-         */
-        public function builder_footer_scripts()
-        {
-        }
-        /**
-         * Build the conditional logic settings to display in the form builder.
-         *
-         * @since 1.3.8
-         *
-         * @param array $args Data needed for a block to be generated properly.
-         * @param bool  $echo Whether to return or print. Default: print.
-         *
-         * @return string
-         */
-        public function builder_block($args = array(), $echo = \true)
-        {
-        }
-        /**
-         * Alias method for backwards compatibility.
-         *
-         * @since 1.1.0
-         * @deprecated 1.3.8 Use wpforms_conditional_logic()->builder_block() instead.
-         *
-         * @param array $args Data needed for a block to be generated properly.
-         * @param bool  $echo Whether to return or print. Default: print.
-         *
-         * @return string
-         */
-        public function conditionals_block($args = array(), $echo = \true)
-        {
-        }
-        /**
-         * Process conditional rules.
-         *
-         * Check if a form passes the conditional logic rules that are provided.
-         *
-         * @since 1.3.8
-         *
-         * @param array $fields       List of fields with data and settings.
-         * @param array $form_data    Form data and settings.
-         * @param array $conditionals List of conditionals.
-         *
-         * @return bool
-         */
-        public function process($fields, $form_data, $conditionals)
-        {
-        }
-        /**
-         * Alias function for backwards compatibility.
-         *
-         * @since 1.0.0
-         *
-         * @param array $fields       List of fields with data and settings.
-         * @param array $form_data    Form data and settings.
-         * @param array $conditionals List of conditionals.
-         *
-         * @return bool
-         */
-        public function conditionals_process($fields, $form_data, $conditionals)
         {
         }
     }
@@ -1545,6 +977,14 @@ namespace {
         {
         }
         /**
+         * Hooks.
+         *
+         * @since 1.7.7
+         */
+        private function hooks()
+        {
+        }
+        /**
          * Load default field types.
          *
          * @since 1.0.0
@@ -1561,14 +1001,15 @@ namespace {
     class WPForms_Frontend
     {
         /**
-         * Contains form data to be referenced later.
+         * Store form data to be referenced later.
          *
          * @since 1.0.0
+         *
          * @var array
          */
         public $forms;
         /**
-         * Contains information for multi-page forms.
+         * Store information for multi-page forms.
          *
          * Forms that do not contain pages return false, otherwise returns an array
          * that contains the number of total pages and page counter used when
@@ -1580,9 +1021,10 @@ namespace {
          */
         public $pages = \false;
         /**
-         * Contains a form confirmation message.
+         * Store a form confirmation message.
          *
          * @since 1.4.8
+         *
          * @todo Remove in favor of \WPForms_Process::$confirmation_message().
          *
          * @var string
@@ -1597,6 +1039,16 @@ namespace {
          */
         public $confirmation_message_scroll = \false;
         /**
+         * Whether ChoiceJS library has already been enqueued on the front end.
+         * This lib is used in different fields that can enqueue it separately,
+         * and we use this property to avoid config duplication.
+         *
+         * @since 1.6.3
+         *
+         * @var bool
+         */
+        public $is_choicesjs_enqueued = \false;
+        /**
          * Primary class constructor.
          *
          * @since 1.0.0
@@ -1605,9 +1057,20 @@ namespace {
         {
         }
         /**
+         * Register hooks.
+         *
+         * @since 1.7.7
+         */
+        private function hooks()
+        {
+        }
+        /**
          * Get the amp-state ID for a given form.
          *
+         * @since 1.5.4.2
+         *
          * @param int $form_id Form ID.
+         *
          * @return string State ID.
          */
         protected function get_form_amp_state_id($form_id)
@@ -1633,8 +1096,8 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param int  $id Form ID.
-         * @param bool $title Whether to display form title.
+         * @param int  $id          Form ID.
+         * @param bool $title       Whether to display form title.
          * @param bool $description Whether to display form description.
          */
         public function output($id, $title = \false, $description = \false)
@@ -1650,6 +1113,40 @@ namespace {
          * @param int   $entry_id  Entry id.
          */
         public function confirmation($form_data, $fields = array(), $entry_id = 0)
+        {
+        }
+        /**
+         * Form container classes.
+         *
+         * @since 1.7.9
+         *
+         * @param array $form_data Form data and settings.
+         *
+         * @return array
+         */
+        private function get_container_classes($form_data)
+        {
+        }
+        /**
+         * Display the opening container markup for a form.
+         *
+         * @since 1.7.9
+         *
+         * @param array   $form_data Form data and settings.
+         * @param WP_Post $form      Form post type.
+         */
+        private function form_container_open($form_data, $form)
+        {
+        }
+        /**
+         * Display the closing container markup for a form.
+         *
+         * @since 1.7.9
+         *
+         * @param array   $form_data Form data and settings.
+         * @param WP_Post $form      Form post type.
+         */
+        private function form_container_close($form_data, $form)
         {
         }
         /**
@@ -1778,9 +1275,10 @@ namespace {
         {
         }
         /**
-         * Google reCAPTCHA output if configured.
+         * CAPTCHA output if configured.
          *
          * @since 1.0.0
+         * @since 1.6.4 Added hCaptcha support.
          *
          * @param array $form_data   Form data and settings.
          * @param null  $deprecated  Deprecated in v1.3.7, previously was $form object.
@@ -1856,11 +1354,35 @@ namespace {
         {
         }
         /**
+         * Load the assets needed for the CAPTCHA.
+         *
+         * @since 1.6.2
+         * @since 1.6.4 Added hCaptcha support.
+         */
+        public function assets_recaptcha()
+        {
+        }
+        /**
+         * Retrieve the string containing the CAPTCHA inline javascript.
+         *
+         * @since 1.6.4
+         *
+         * @param array $captcha_settings The CAPTCHA settings.
+         *
+         * @return string
+         */
+        protected function get_captcha_inline_script($captcha_settings)
+        {
+        }
+        /**
          * Load the necessary assets for the confirmation message.
          *
          * @since 1.1.2
+         * @since 1.7.9 Added $form_data argument.
+         *
+         * @param array $form_data Form data and settings.
          */
-        public function assets_confirmation()
+        public function assets_confirmation($form_data = [])
         {
         }
         /**
@@ -1872,9 +1394,20 @@ namespace {
         {
         }
         /**
-         * Hook at fires at a later priority in wp_footer
+         * Get strings to localize.
+         *
+         * @since 1.6.0
+         *
+         * @return array Array of strings to localize.
+         */
+        public function get_strings()
+        {
+        }
+        /**
+         * Hook at fires at a later priority in wp_footer.
          *
          * @since 1.0.5
+         * @since 1.7.0 Load wpforms_settings on the confirmation page for a non-ajax form.
          */
         public function footer_end()
         {
@@ -1887,6 +1420,7 @@ namespace {
          * specific pages, etc.
          *
          * @since 1.4.5
+         * @since 1.6.4 Added hCaptcha support.
          */
         public function recaptcha_noconflict()
         {
@@ -1903,9 +1437,48 @@ namespace {
         public function shortcode($atts)
         {
         }
+        /**
+         * Inline a script to check if our main js is loaded and display a warning message otherwise.
+         *
+         * @since 1.6.4.1
+         */
+        public function missing_assets_error_js()
+        {
+        }
+        /**
+         * Get missing assets error script.
+         *
+         * @since 1.6.4.1
+         *
+         * @return string
+         */
+        private function get_missing_assets_error_script()
+        {
+        }
+        /**
+         * Get missing assets error message.
+         *
+         * @since 1.6.4.1
+         *
+         * @return string
+         */
+        private function get_missing_assets_error_message()
+        {
+        }
+        /**
+         * Render the single field.
+         *
+         * @since 1.7.7
+         *
+         * @param array $form_data Form data.
+         * @param array $field     Field data.
+         */
+        public function render_field($form_data, $field)
+        {
+        }
     }
     /**
-     * Handles plugin installation upon activation.
+     * Handle plugin installation upon activation.
      *
      * @since 1.0.0
      */
@@ -1924,8 +1497,8 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param boolean $network_wide Whether to enable the plugin for all sites in the network
-         *                              or just the current site. Multisite only. Default is false.
+         * @param bool $network_wide Whether to enable the plugin for all sites in the network
+         *                           or just the current site. Multisite only. Default is false.
          */
         public function install($network_wide = \false)
         {
@@ -1982,147 +1555,6 @@ namespace {
         }
     }
     /**
-     * Class for logging events and errors
-     *
-     * This class is forked from Easy Digital Downloads / Pippin Williamson.
-     *
-     * @link https://github.com/easydigitaldownloads/Easy-Digital-Downloads/blob/master/includes/class-edd-logging.php
-     *
-     * @since 1.0.0
-     */
-    class WPForms_Logging
-    {
-        /**
-         * Set up the logging class.
-         *
-         * @since 1.0.0
-         */
-        public function __construct()
-        {
-        }
-        /**
-         * Registers the log post type.
-         *
-         * @since 1.0.0
-         */
-        public function register_post_type()
-        {
-        }
-        /**
-         * Registers the Log Type taxonomy.
-         *
-         * @since 1.0.0
-         */
-        public function register_taxonomy()
-        {
-        }
-        /**
-         * Log types.
-         *
-         * @since 1.0.0
-         * @return array
-         */
-        public function log_types()
-        {
-        }
-        /**
-         * Check if a log type is valid.
-         *
-         * @since 1.0.0
-         * @param string $type
-         * @return bool
-         */
-        function valid_type($type)
-        {
-        }
-        /**
-         * Create new log entry.
-         *
-         * This is just a simple and fast way to log something. Use $this->insert_log()
-         * if you need to store custom meta data
-         *
-         * @since 1.0.0
-         * @param string $title Log entry title
-         * @param string $message Log entry message
-         * @param int $parent Log entry parent
-         * @param string $type Log type (default: null)
-         * @return int Log ID
-         */
-        public function add($title = '', $message = '', $parent = 0, $type = \null, $meta = '')
-        {
-        }
-        /**
-         * Easily retrieves log items for a particular object ID.
-         *
-         * @since 1.0.0
-         * @param int $object_id (default: 0)
-         * @param string $type Log type (default: null)
-         * @param int $paged Page number (default: null)
-         * @return array Array of the connected logs
-         */
-        public function get_logs($object_id = 0, $type = \null, $paged = \null)
-        {
-        }
-        /**
-         * Stores a log entry.
-         *
-         * @since 1.0.0
-         * @param array $log_data Log entry data
-         * @param array $log_meta Log entry meta
-         * @return int The ID of the newly created log item
-         */
-        function insert_log($log_data = array(), $log_meta = array())
-        {
-        }
-        /**
-         * Update and existing log item.
-         *
-         * @since 1.0.0
-         * @param array $log_data Log entry data
-         * @param array $log_meta Log entry meta
-         * @return bool True if successful, false otherwise
-         */
-        public function update_log($log_data = array(), $log_meta = array())
-        {
-        }
-        /**
-         * Retrieve all connected logs.
-         *
-         * Used for retrieving logs related to particular items, such as a specific purchase.
-         *
-         * @since 1.0.0
-         * @param array $args Query arguments
-         * @return mixed array if logs were found, false otherwise
-         */
-        public function get_connected_logs($args = array())
-        {
-        }
-        /**
-         * Retrieves number of log entries connected to particular object ID
-         *
-         * @since 1.0.0
-         * @param int $object_id (default: 0)
-         * @param string $type Log type (default: null)
-         * @param array $meta_query Log meta query (default: null)
-         * @param array $date_query Log data query (default: null) (since 1.9)
-         * @return int Log count
-         */
-        public function get_log_count($object_id = 0, $type = \null, $meta_query = \null, $date_query = \null)
-        {
-        }
-        /**
-         * Delete a log.
-         *
-         * @since 1.0.0
-         * @param int $object_id (default: 0)
-         * @param string $type Log type (default: null)
-         * @param array $meta_query Log meta query (default: null)
-         */
-        public function delete_logs($object_id = 0, $type = \null, $meta_query = \null)
-        {
-        }
-    }
-    /**
      * Load the providers.
      *
      * @since 1.3.6
@@ -2155,63 +1587,6 @@ namespace {
         }
     }
     /**
-     * Smart tag functionality.
-     *
-     * @since 1.0.0
-     */
-    class WPForms_Smart_Tags
-    {
-        /**
-         * Primary class constructor.
-         *
-         * @since 1.0.0
-         */
-        public function __construct()
-        {
-        }
-        /**
-         * Approved smart tags.
-         *
-         * @since 1.0.0
-         *
-         * @param string $return Type of data to return.
-         *
-         * @return string|array
-         */
-        public function get($return = 'array')
-        {
-        }
-        /**
-         * Process and parse smart tags.
-         *
-         * @since 1.0.0
-         *
-         * @param string $content      The string to preprocess.
-         * @param array $form_data     Form data and settings.
-         * @param string|array $fields Form fields.
-         * @param int|string $entry_id Entry ID.
-         *
-         * @return string
-         */
-        public function process($content, $form_data, $fields = '', $entry_id = '')
-        {
-        }
-        /**
-         * Replace a found smart tag with the final value.
-         *
-         * @since 1.5.9
-         *
-         * @param string $tag     The tag.
-         * @param string $value   The value.
-         * @param string $content Content.
-         *
-         * @return string
-         */
-        public function parse($tag, $value, $content)
-        {
-        }
-    }
-    /**
      * WPForms widget.
      *
      * @since 1.0.2
@@ -2219,9 +1594,10 @@ namespace {
     class WPForms_Widget extends \WP_Widget
     {
         /**
-         * Holds widget settings defaults, populated in constructor.
+         * Hold widget settings defaults, populated in constructor.
          *
          * @since 1.0.2
+         *
          * @var array
          */
         protected $defaults;
@@ -2234,18 +1610,18 @@ namespace {
         {
         }
         /**
-         * Outputs the HTML for this widget.
+         * Output the HTML for this widget.
          *
          * @since 1.0.2
          *
-         * @param array $args An array of standard parameters for widgets in this theme.
+         * @param array $args     An array of standard parameters for widgets in this theme.
          * @param array $instance An array of settings for this widget instance.
          */
         public function widget($args, $instance)
         {
         }
         /**
-         * Deals with the settings when they are saved by the admin. Here is
+         * Deal with the settings when they are saved by the admin. Here is
          * where any validation should be dealt with.
          *
          * @since 1.0.2
@@ -2259,13 +1635,11 @@ namespace {
         {
         }
         /**
-         * Displays the form for this widget on the Widgets page of the WP Admin area.
+         * Display the form for this widget on the Widgets page of the WP Admin area.
          *
          * @since 1.0.2
          *
          * @param array $instance An array of the current settings for this widget.
-         *
-         * @return void
          */
         public function form($instance)
         {
@@ -2284,7 +1658,7 @@ namespace {
     class WPForms_WP_Emails
     {
         /**
-         * Holds the from address.
+         * Store the from address.
          *
          * @since 1.1.3
          *
@@ -2292,7 +1666,7 @@ namespace {
          */
         private $from_address;
         /**
-         * Holds the from name.
+         * Store the from name.
          *
          * @since 1.1.3
          *
@@ -2300,15 +1674,23 @@ namespace {
          */
         private $from_name;
         /**
-         * Holds the reply-to address.
+         * Store the reply-to address.
          *
          * @since 1.1.3
          *
-         * @var string
+         * @var bool|string
          */
         private $reply_to = \false;
         /**
-         * Holds the carbon copy addresses.
+         * Store the reply-to name.
+         *
+         * @since 1.7.9
+         *
+         * @var bool|string
+         */
+        private $reply_to_name = \false;
+        /**
+         * Store the carbon copy addresses.
          *
          * @since 1.3.1
          *
@@ -2316,7 +1698,7 @@ namespace {
          */
         private $cc = \false;
         /**
-         * Holds the email content type.
+         * Store the email content type.
          *
          * @since 1.1.3
          *
@@ -2324,7 +1706,7 @@ namespace {
          */
         private $content_type;
         /**
-         * Holds the email headers.
+         * Store the email headers.
          *
          * @since 1.1.3
          *
@@ -2502,7 +1884,7 @@ namespace {
         {
         }
         /**
-         * Converts text formatted HTML. This is primarily for turning line breaks
+         * Convert text formatted HTML. This is primarily for turning line breaks
          * into <p> and <br/> tags.
          *
          * @since 1.1.3
@@ -2516,16 +1898,18 @@ namespace {
         }
         /**
          * Process a smart tag.
+         * Decodes entities and sanitized (keeping line breaks) by default.
+         *
+         * @uses wpforms_decode_string()
          *
          * @since 1.1.3
+         * @since 1.6.0 Deprecated 2 params: $sanitize, $linebreaks.
          *
-         * @param string $string     String that may contain tags.
-         * @param bool   $sanitize   Toggle to maybe sanitize.
-         * @param bool   $linebreaks Toggle to process linebreaks.
+         * @param string $string String that may contain tags.
          *
          * @return string
          */
-        public function process_tag($string = '', $sanitize = \true, $linebreaks = \false)
+        public function process_tag($string = '')
         {
         }
         /**
@@ -2533,11 +1917,11 @@ namespace {
          *
          * @since 1.1.3
          *
-         * @param bool $html Toggle to use HTML or plaintext.
+         * @param bool $is_html_email Toggle to use HTML or plaintext.
          *
          * @return string
          */
-        public function wpforms_html_field_value($html = \true)
+        public function wpforms_html_field_value($is_html_email = \true)
         {
         }
         /**
@@ -2561,7 +1945,7 @@ namespace {
         {
         }
         /**
-         * Retrieves a template part. Taken from bbPress.
+         * Retrieve a template part. Taken from bbPress.
          *
          * @since 1.1.3
          *
@@ -2605,6 +1989,30 @@ namespace {
         public function get_theme_template_paths()
         {
         }
+        /**
+         * Perform email subject preparation: process tags, remove new lines, etc.
+         *
+         * @since 1.6.1
+         *
+         * @param string $subject Email subject to post-process.
+         *
+         * @return string
+         */
+        private function get_prepared_subject($subject)
+        {
+        }
+        /**
+         * If CL is enabled and the field is conditionally hidden, hide it from message.
+         *
+         * @since 1.7.9
+         *
+         * @param int $field_id Field ID.
+         *
+         * @return bool
+         */
+        private function is_field_conditionally_hidden($field_id)
+        {
+        }
     }
     /**
      * Base field template.
@@ -2642,7 +2050,7 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @var integer
+         * @var int
          */
         public $order = 1;
         /**
@@ -2712,7 +2120,7 @@ namespace {
         public abstract function init();
         /**
          * Prefill field value with either fallback or dynamic data.
-         * Needs to be public (although internal) to be used in WordPress hooks.
+         * This needs to be public (although internal) to be used in WordPress hooks.
          *
          * @since 1.5.0
          *
@@ -2734,7 +2142,7 @@ namespace {
          * @param array $field      Field data and settings.
          * @param array $properties Properties we are modifying.
          */
-        protected function field_prefill_remove_choices_defaults($field, &$properties)
+        public function field_prefill_remove_choices_defaults($field, &$properties)
         {
         }
         /**
@@ -2769,6 +2177,21 @@ namespace {
         {
         }
         /**
+         * Public version of get_field_populated_single_property_value() to use by external classes.
+         *
+         * @since 1.6.0.1
+         *
+         * @param string $raw_value  Value from a GET param, always a string.
+         * @param string $input      Represent a subfield inside the field. May be empty.
+         * @param array  $properties Field properties.
+         * @param array  $field      Current field specific data.
+         *
+         * @return array Modified field properties.
+         */
+        public function get_field_populated_single_property_value_public($raw_value, $input, $properties, $field)
+        {
+        }
+        /**
          * Get the value, that is used to prefill via dynamic or fallback population.
          * Based on field data and current properties.
          *
@@ -2782,6 +2205,49 @@ namespace {
          * @return array Modified field properties.
          */
         protected function get_field_populated_single_property_value($raw_value, $input, $properties, $field)
+        {
+        }
+        /**
+         * Get the value, that is used to prefill via dynamic or fallback population.
+         * Based on field data and current properties.
+         * Dynamic choices section.
+         *
+         * @since 1.6.0
+         *
+         * @param string $get_value  Value from a GET param, always a string, sanitized, stripped slashes.
+         * @param array  $properties Field properties.
+         *
+         * @return array Modified field properties.
+         */
+        protected function get_field_populated_single_property_value_dynamic_choices($get_value, $properties)
+        {
+        }
+        /**
+         * Fill choices without labels.
+         *
+         * @since 1.6.2
+         *
+         * @param array $form_data Form data.
+         *
+         * @return array
+         */
+        public function field_fill_empty_choices($form_data)
+        {
+        }
+        /**
+         * Get the value, that is used to prefill via dynamic or fallback population.
+         * Based on field data and current properties.
+         * Normal choices section.
+         *
+         * @since 1.6.0
+         *
+         * @param string $get_value  Value from a GET param, always a string, sanitized.
+         * @param array  $properties Field properties.
+         * @param array  $field      Current field specific data.
+         *
+         * @return array Modified field properties.
+         */
+        protected function get_field_populated_single_property_value_normal_choices($get_value, $properties, $field)
         {
         }
         /**
@@ -2848,10 +2314,10 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param string  $option Field option to render.
-         * @param array   $field  Field data and settings.
-         * @param array   $args   Field preview arguments.
-         * @param boolean $echo   Print or return the value. Print by default.
+         * @param string $option Field option to render.
+         * @param array  $field  Field data and settings.
+         * @param array  $args   Field preview arguments.
+         * @param bool   $echo   Print or return the value. Print by default.
          *
          * @return mixed echo or return string
          */
@@ -2859,18 +2325,34 @@ namespace {
         {
         }
         /**
+         * Create field option toggle element.
+         *
+         * @since 1.6.8
+         *
+         * @param array   $args  Arguments.
+         * @param integer $id    Field ID.
+         * @param string  $slug  Field slug.
+         * @param string  $attrs Attributes.
+         * @param string  $class Class.
+         *
+         * @return string
+         */
+        private function field_element_toggle($args, $id, $slug, $attrs, $class)
+        {
+        }
+        /**
          * Helper function to create common field options that are used frequently.
          *
          * @since 1.0.0
          *
-         * @param string  $option Field option to render.
-         * @param array   $field  Field data and settings.
-         * @param array   $args   Field preview arguments.
-         * @param boolean $echo   Print or return the value. Print by default.
+         * @param string $option Field option to render.
+         * @param array  $field  Field data and settings.
+         * @param array  $args   Field preview arguments.
+         * @param bool   $echo   Print or return the value. Print by default.
          *
          * @return mixed echo or return string
          */
-        public function field_option($option, $field, $args = array(), $echo = \true)
+        public function field_option($option, $field, $args = [], $echo = \true)
         {
         }
         /**
@@ -2879,11 +2361,12 @@ namespace {
          *
          * @since 1.0.0
          * @since 1.5.0 Added support for <select> HTML tag for choices.
+         * @since 1.6.1 Added multiple select support.
          *
-         * @param string  $option Field option to render.
-         * @param array   $field  Field data and settings.
-         * @param array   $args   Field preview arguments.
-         * @param boolean $echo   Print or return the value. Print by default.
+         * @param string $option Field option to render.
+         * @param array  $field  Field data and settings.
+         * @param array  $args   Field preview arguments.
+         * @param bool   $echo   Print or return the value. Print by default.
          *
          * @return mixed Print or return a string.
          */
@@ -2954,6 +2437,43 @@ namespace {
          * @param array $form_data    Form data and settings.
          */
         public function format($field_id, $field_submit, $form_data)
+        {
+        }
+        /**
+         * Get field name for ajax error message.
+         *
+         * @since 1.6.3
+         *
+         * @param string $name  Field name for error triggered.
+         * @param array  $field Field settings.
+         * @param array  $props List of properties.
+         * @param string $error Error message.
+         *
+         * @return string
+         */
+        public function ajax_error_field_name($name, $field, $props, $error)
+        {
+        }
+        /**
+         * Enqueue Choicesjs script and config.
+         *
+         * @param array $forms Forms on the current page.
+         *
+         * @since 1.6.3
+         */
+        protected function enqueue_choicesjs_once($forms)
+        {
+        }
+        /**
+         * Whether a Choicesjs search area should be shown.
+         *
+         * @since 1.6.4
+         *
+         * @param int $choices_count Choices amount.
+         *
+         * @return bool
+         */
+        protected function is_choicesjs_search_enabled($choices_count)
         {
         }
     }
@@ -3066,6 +2586,24 @@ namespace {
     class WPForms_Field_Email extends \WPForms_Field
     {
         /**
+         * Encoding.
+         *
+         * @since 1.6.9
+         */
+        const ENCODING = 'UTF-8';
+        /**
+         * Email type of sanitization.
+         *
+         * @since 1.7.5
+         */
+        const EMAIL = 'email';
+        /**
+         * Rules type of sanitization.
+         *
+         * @since 1.7.5
+         */
+        const RULES = 'rules';
+        /**
          * Primary class constructor.
          *
          * @since 1.0.0
@@ -3077,12 +2615,42 @@ namespace {
          * Define additional field properties.
          *
          * @since 1.3.7
-         * @param array $properties
-         * @param array $field
-         * @param array $form_data
+         *
+         * @param array $properties List field properties.
+         * @param array $field      Field data and settings.
+         * @param array $form_data  Form data and settings.
+         *
          * @return array
          */
         public function field_properties($properties, $field, $form_data)
+        {
+        }
+        /**
+         * Define the confirmation field properties.
+         *
+         * @since 1.6.3
+         *
+         * @param array $properties List field properties.
+         * @param array $field      Field data and settings.
+         * @param array $form_data  Form data and settings.
+         *
+         * @return array
+         */
+        public function confirmation_field_properties($properties, $field, $form_data)
+        {
+        }
+        /**
+         * Define the filter field properties.
+         *
+         * @since 1.6.3
+         *
+         * @param array $properties List field properties.
+         * @param array $field      Field data and settings.
+         * @param array $form_data  Form data and settings.
+         *
+         * @return array
+         */
+        public function filter_type_field_properties($properties, $field, $form_data)
         {
         }
         /**
@@ -3102,8 +2670,8 @@ namespace {
          *
          * @since 1.3.0
          *
-         * @param string $class
-         * @param array $field
+         * @param string $class Class strings.
+         * @param array  $field Current field.
          *
          * @return string
          */
@@ -3154,11 +2722,330 @@ namespace {
         /**
          * Validate field on form submit.
          *
+         * @since 1.0.0
+         *
          * @param int   $field_id     Field ID.
          * @param mixed $field_submit Field value that was submitted.
          * @param array $form_data    Form data and settings.
          */
         public function validate($field_id, $field_submit, $form_data)
+        {
+        }
+        /**
+         * Ajax handler to detect restricted email.
+         *
+         * @since 1.6.3
+         */
+        public function ajax_check_restricted_email()
+        {
+        }
+        /**
+         * Sanitize restricted rules.
+         *
+         * @since 1.6.3
+         */
+        public function ajax_sanitize_restricted_rules()
+        {
+        }
+        /**
+         * Sanitize default email.
+         *
+         * @since 1.7.5
+         */
+        public function ajax_sanitize_default_email()
+        {
+        }
+        /**
+         * Sanitize email options input.
+         *
+         * @since 1.7.5
+         *
+         * @param string $type Type of sanitization.
+         *
+         * @return void
+         */
+        private function ajax_sanitize($type)
+        {
+        }
+        /**
+         * Verify that an email pattern is valid.
+         *
+         * @since 1.7.5
+         *
+         * @param string $pattern Email pattern.
+         *
+         * @return string|false
+         */
+        private function is_email_pattern($pattern)
+        {
+        }
+        /**
+         * Sanitize the local or domain part of the email pattern.
+         *
+         * @since 1.7.5
+         *
+         * @param string $part    Local or domain part of the email pattern.
+         * @param string $pattern Sanitization pattern.
+         *
+         * @return string
+         */
+        private function sanitize_part_pattern($part, $pattern)
+        {
+        }
+        /**
+         * Sanitize the local part of the email pattern.
+         *
+         * @since 1.7.5
+         *
+         * @param string $local Local part of the email pattern.
+         *
+         * @return string
+         */
+        private function sanitize_local_pattern($local)
+        {
+        }
+        /**
+         * Sanitize the domain part of the email pattern.
+         *
+         * @since 1.7.5
+         *
+         * @param string $domain Domain part of the email pattern.
+         *
+         * @return string
+         */
+        private function sanitize_domain_pattern($domain)
+        {
+        }
+        /**
+         * Maybe replace empty subdomains with templates.
+         *
+         * @since 1.7.5
+         *
+         * @param string $domain Email domain.
+         *
+         * @return string
+         */
+        private function maybe_adjust_domain($domain)
+        {
+        }
+        /**
+         * Get pattern from local and domain parts.
+         *
+         * @since 1.7.5
+         *
+         * @param string $local  Local part.
+         * @param string $domain Domain part.
+         *
+         * @return string
+         */
+        private function get_pattern($local, $domain = '')
+        {
+        }
+        /**
+         * Sanitize restricted rules.
+         *
+         * @since 1.6.3
+         *
+         * @param string $content Content.
+         *
+         * @return array
+         */
+        private function sanitize_restricted_rules($content)
+        {
+        }
+        /**
+         * The check is a restricted email.
+         *
+         * @since 1.6.3
+         *
+         * @param string $email Email string.
+         * @param array  $field Field data.
+         *
+         * @return bool
+         */
+        private function is_restricted_email($email, $field)
+        {
+        }
+        /**
+         * Sanitize from email patter a REGEX pattern.
+         *
+         * @since 1.6.3
+         *
+         * @param string $pattern Pattern line.
+         *
+         * @return string
+         */
+        private function sanitize_email_pattern($pattern)
+        {
+        }
+        /**
+         * Sanitize allow/deny list and default value before saving.
+         *
+         * @since 1.6.8
+         *
+         * @param array $form Form array which is usable with `wp_update_post()`.
+         * @param array $data Data retrieved from $_POST and processed.
+         * @param array $args Empty by default, may contain custom data not intended to be saved, but used for processing.
+         *
+         * @return array
+         */
+        public function save_form_args($form, $data, $args)
+        {
+        }
+        /**
+         * Add a custom JS i18n strings for the builder.
+         *
+         * @since 1.7.5
+         *
+         * @param array $strings List of strings.
+         * @param array $form    Current form.
+         *
+         * @return array
+         */
+        public function add_builder_strings($strings, $form)
+        {
+        }
+        /**
+         * Get Punycode lib class.
+         *
+         * @since 1.6.9
+         *
+         * @return \TrueBV\Punycode
+         */
+        private function get_punycode()
+        {
+        }
+        /**
+         * Get email patterns parts splitted by @ and *.
+         *
+         * @since 1.6.9
+         *
+         * @param string $email_pattern Email pattern.
+         *
+         * @return array
+         */
+        private function get_email_pattern_parts($email_pattern)
+        {
+        }
+        /**
+         * Glue email patterns parts.
+         *
+         * @since 1.6.9
+         *
+         * @param array $parts Email pattern parts.
+         *
+         * @return string
+         */
+        private function glue_email_pattern_parts($parts)
+        {
+        }
+        /**
+         * Decode email patterns rules array.
+         *
+         * @since 1.7.5
+         *
+         * @param array $rules_arr Patterns rules array.
+         *
+         * @return string
+         */
+        private function decode_email_patterns_rules_array($rules_arr)
+        {
+        }
+        /**
+         * Decode email patterns rules list.
+         *
+         * @since 1.6.9
+         *
+         * @param string $rules Patterns rules list.
+         *
+         * @return string
+         */
+        private function decode_email_patterns_rules_list($rules)
+        {
+        }
+        /**
+         * Encode email.
+         *
+         * @since 1.7.3
+         *
+         * @param string $email Email.
+         *
+         * @return string
+         */
+        private function email_encode_punycode($email)
+        {
+        }
+        /**
+         * Is email encoded.
+         *
+         * @since 1.7.5
+         *
+         * @param string $email Email.
+         *
+         * @return bool
+         */
+        private function is_encoded_punycode($email)
+        {
+        }
+        /**
+         * Encode email pattern.
+         *
+         * @since 1.6.9
+         *
+         * @param string $email_pattern Email pattern.
+         *
+         * @return string
+         */
+        private function encode_punycode($email_pattern)
+        {
+        }
+        /**
+         * Decode email pattern.
+         *
+         * @since 1.6.9
+         *
+         * @param string $email_pattern Email pattern.
+         *
+         * @return string
+         */
+        private function decode_punycode($email_pattern)
+        {
+        }
+        /**
+         * Transform email pattern.
+         *
+         * @since 1.6.9
+         *
+         * @param string   $email_pattern Email pattern.
+         * @param callable $callback      Punycode callback.
+         *
+         * @return string
+         */
+        private function transform_punycode($email_pattern, callable $callback)
+        {
+        }
+        /**
+         * Parse email pattern and return local and domain parts (maybe empty).
+         *
+         * @since 1.7.5
+         *
+         * @param string $pattern Email pattern.
+         *
+         * @return array
+         */
+        private function parse_email_pattern($pattern)
+        {
+        }
+        /**
+         * Verify that an email pattern without @ is valid.
+         *
+         * @since 1.7.5
+         *
+         * @param string $pattern Local part.
+         *
+         * @return false|string
+         */
+        private function is_email_pattern_without_at($pattern)
         {
         }
     }
@@ -3252,6 +3139,362 @@ namespace {
          * @param array $form_data    Form data and settings.
          */
         public function format($field_id, $field_submit, $form_data)
+        {
+        }
+    }
+    /**
+     * Internal information field class.
+     *
+     * @since 1.7.6
+     */
+    class WPForms_Field_Internal_Information extends \WPForms_Field
+    {
+        /**
+         * The key used to save form checkboxes in post meta table.
+         *
+         * @since 1.7.6
+         *
+         * @var string
+         */
+        const CHECKBOX_META_KEY = 'wpforms_iif_checkboxes';
+        /**
+         * Class initialization method.
+         *
+         * @since 1.7.6
+         */
+        public function init()
+        {
+        }
+        /**
+         * Register hooks.
+         *
+         * @since 1.7.6
+         *
+         * @noinspection PhpUnnecessaryCurlyVarSyntaxInspection
+         */
+        private function hooks()
+        {
+        }
+        /**
+         * Whether current field can be populated dynamically.
+         *
+         * @since 1.7.6
+         *
+         * @param array $properties Field properties.
+         * @param array $field      Current field specific data.
+         *
+         * @return bool
+         */
+        public function is_dynamic_population_allowed($properties, $field)
+        {
+        }
+        /**
+         * Whether current field can be populated using a fallback.
+         *
+         * @since 1.7.6
+         *
+         * @param array $properties Field properties.
+         * @param array $field      Current field specific data.
+         *
+         * @return bool
+         */
+        public function is_fallback_population_allowed($properties, $field)
+        {
+        }
+        /**
+         * Define field options to display in left panel.
+         *
+         * @since 1.7.6
+         *
+         * @param array $field Field data and settings.
+         */
+        public function field_options($field)
+        {
+        }
+        /**
+         * Define field preview on the right side on builder.
+         *
+         * @since 1.7.6
+         *
+         * @param array $field Field data and settings.
+         */
+        public function field_preview($field)
+        {
+        }
+        /**
+         * Checks if button is displayable.
+         *
+         * @since 1.7.6
+         *
+         * @param array $field Field data.
+         *
+         * @return bool
+         */
+        private function is_button_displayable($field)
+        {
+        }
+        /**
+         * Stub to make the field not visible in the front-end.
+         *
+         * @since 1.7.6
+         *
+         * @param array $field      Field data and settings.
+         * @param array $field_atts Field attributes.
+         * @param array $form_data  Form data.
+         */
+        public function field_display($field, $field_atts, $form_data)
+        {
+        }
+        /**
+         * Heading option.
+         *
+         * @since 1.7.6
+         *
+         * @param array $field Field data and settings.
+         */
+        private function heading_option($field)
+        {
+        }
+        /**
+         * Expanded description option.
+         *
+         * @since 1.7.6
+         *
+         * @param array $field Field data and settings.
+         */
+        private function expanded_description_option($field)
+        {
+        }
+        /**
+         * CTA label option.
+         *
+         * @since 1.7.6
+         *
+         * @param array $field Field data and settings.
+         */
+        private function cta_label_option($field)
+        {
+        }
+        /**
+         * CTA link option.
+         *
+         * @since 1.7.6
+         *
+         * @param array $field Field data and settings.
+         */
+        private function cta_link_option($field)
+        {
+        }
+        /**
+         * Add CSS class to hide field settings when field is not editable.
+         *
+         * @since 1.7.6
+         *
+         * @param string $option Field option to render.
+         * @param array  $field  Field data and settings.
+         * @param array  $args   Field preview arguments.
+         * @param bool   $echo   Print or return the value. Print by default.
+         *
+         * @return string
+         */
+        public function field_element($option, $field, $args = [], $echo = \true)
+        {
+        }
+        /**
+         * Render custom option preview on the right side of builder.
+         *
+         * @since 1.7.6
+         *
+         * @param string $option Field option to render.
+         * @param array  $field  Field data and settings.
+         * @param array  $args   Field arguments.
+         *
+         * @return string
+         */
+        private function render_custom_preview($option, $field, $args = [])
+        {
+        }
+        /**
+         * Display field button in left panel only if the field is editable.
+         *
+         * @since 1.7.6
+         *
+         * @param array $fields All fields to display in the left panel.
+         *
+         * @return array
+         */
+        public function field_button($fields)
+        {
+        }
+        /**
+         * When the form is going to be displayed on front-end, remove internal information fields.
+         *
+         * @since 1.7.6
+         *
+         * @param array $form_data Form data.
+         *
+         * @return array
+         */
+        public function remove_internal_fields_on_front_end($form_data)
+        {
+        }
+        /**
+         * Remove field from form data before processing the form submit.
+         *
+         * @since 1.7.6
+         *
+         * @param array $form_data Form data.
+         * @param array $entry     Form submission raw data ($_POST).
+         *
+         * @return array
+         */
+        public function process_before_form_data($form_data, $entry)
+        {
+        }
+        /**
+         * Do not display the duplicate button.
+         *
+         * @since 1.7.6
+         *
+         * @param bool  $is_visible If true, the duplicate button will be displayed.
+         * @param array $field      Field data and settings.
+         * @param array $form_data  Form data and settings.
+         *
+         * @return bool
+         */
+        public function display_duplicate_button($is_visible, $field, $form_data)
+        {
+        }
+        /**
+         * Hide column from the entries list table.
+         *
+         * @since 1.7.6
+         *
+         * @param array $disallowed Table columns.
+         *
+         * @return array
+         */
+        public function hide_column_in_entries_table($disallowed)
+        {
+        }
+        /**
+         * Add CSS class for the field parent div informing about mode (editable or not).
+         *
+         * @since 1.7.6
+         *
+         * @param string $css   CSS classes.
+         * @param array  $field Field data and settings.
+         *
+         * @return string
+         */
+        public function add_css_class_for_field_wrapper($css, $field)
+        {
+        }
+        /**
+         * Save checkbox state to the post meta table.
+         *
+         * @since 1.7.6
+         */
+        public function save_internal_information_checkbox()
+        {
+        }
+        /**
+         * Localized strings for wpforms-internal-information-field JS script.
+         *
+         * @since 1.7.6
+         *
+         * @param array $strings Localized strings.
+         * @param array $form    The form element.
+         *
+         * @return array
+         * @noinspection PhpUnusedParameterInspection
+         */
+        public function builder_strings($strings, $form)
+        {
+        }
+        /**
+         * Enqueue wpforms-internal-information-field script.
+         *
+         * @since 1.7.6
+         *
+         * @param string $view Current view.
+         *
+         * @noinspection PhpUnusedParameterInspection, PhpUnnecessaryCurlyVarSyntaxInspection
+         */
+        public function builder_enqueues($view)
+        {
+        }
+        /**
+         * Checks if user is allowed to edit the field's content.
+         *
+         * @since 1.7.6
+         *
+         * @return bool
+         */
+        private function is_editable()
+        {
+        }
+        /**
+         * Check if the field has type internal-information.
+         *
+         * @since 1.7.6
+         *
+         * @param array $field Field data.
+         *
+         * @return bool
+         */
+        private function is_internal_information_field($field)
+        {
+        }
+        /**
+         * Render result of field_preview_option into custom div.
+         *
+         * If field has no value, do not echo anything.
+         *
+         * @since 1.7.6
+         *
+         * @param string $label Field label.
+         * @param array  $field Field settings and data.
+         * @param array  $args  Field arguments.
+         */
+        private function render_preview($label, $field, $args = [])
+        {
+        }
+        /**
+         * Replace `[] some text` with checkboxes.
+         *
+         * Additionally, generates input name by hashing the line of text where the checkbox is.
+         *
+         * @since 1.7.6
+         *
+         * @param string $description Expanded description.
+         * @param array  $field       Field data and settings.
+         *
+         * @return string
+         */
+        private function replace_checkboxes($description, array $field)
+        {
+        }
+        /**
+         * Return allowed tags specific to internal information field content.
+         *
+         * @since 1.7.6
+         *
+         * @return array
+         */
+        private function get_allowed_tags()
+        {
+        }
+        /**
+         * Add UTM parameters to the CTA button link.
+         *
+         * @since 1.7.6
+         *
+         * @param array $field Field data.
+         *
+         * @return string
+         */
+        private function add_url_utm($field)
         {
         }
     }
@@ -3388,6 +3631,18 @@ namespace {
         {
         }
         /**
+         * Add Builder strings.
+         *
+         * @since 1.6.2.3
+         *
+         * @param array $strings Form Builder strings.
+         *
+         * @return array Form Builder strings.
+         */
+        public function add_builder_strings($strings)
+        {
+        }
+        /**
          * Customize format for HTML email notifications.
          *
          * @since 1.5.7
@@ -3410,6 +3665,16 @@ namespace {
          * @param array $field Field settings.
          */
         public function field_options($field)
+        {
+        }
+        /**
+         * Get default display value.
+         *
+         * @since 1.7.1
+         *
+         * @return string
+         */
+        private function get_default_display_value()
         {
         }
         /**
@@ -3652,6 +3917,28 @@ namespace {
     class WPForms_Field_Select extends \WPForms_Field
     {
         /**
+         * Choices JS version.
+         *
+         * @since 1.6.3
+         */
+        const CHOICES_VERSION = '9.0.1';
+        /**
+         * Classic (old) style.
+         *
+         * @since 1.6.1
+         *
+         * @var string
+         */
+        const STYLE_CLASSIC = 'classic';
+        /**
+         * Modern style.
+         *
+         * @since 1.6.1
+         *
+         * @var string
+         */
+        const STYLE_MODERN = 'modern';
+        /**
          * Primary class constructor.
          *
          * @since 1.0.0
@@ -3687,6 +3974,7 @@ namespace {
          * Field preview inside the builder.
          *
          * @since 1.0.0
+         * @since 1.6.1 Added a `Modern` style select support.
          *
          * @param array $field Field settings.
          */
@@ -3698,6 +3986,7 @@ namespace {
          *
          * @since 1.0.0
          * @since 1.5.0 Converted to a new format, where all the data are taken not from $deprecated, but field properties.
+         * @since 1.6.1 Added a multiple select support.
          *
          * @param array $field      Field data and settings.
          * @param array $deprecated Deprecated array of field attributes.
@@ -3710,12 +3999,61 @@ namespace {
          * Format and sanitize field.
          *
          * @since 1.0.2
+         * @since 1.6.1 Added a support for multiple values.
          *
-         * @param int    $field_id     Field ID.
-         * @param string $field_submit Submitted field value (selected option).
-         * @param array  $form_data    Form data and settings.
+         * @param int          $field_id     Field ID.
+         * @param string|array $field_submit Submitted field value (selected option).
+         * @param array        $form_data    Form data and settings.
          */
         public function format($field_id, $field_submit, $form_data)
+        {
+        }
+        /**
+         * Form frontend CSS enqueues.
+         *
+         * @since 1.6.1
+         *
+         * @param array $forms Forms on the current page.
+         */
+        public function enqueue_frontend_css($forms)
+        {
+        }
+        /**
+         * Form frontend JS enqueues.
+         *
+         * @since 1.6.1
+         *
+         * @param array $forms Forms on the current page.
+         */
+        public function enqueue_frontend_js($forms)
+        {
+        }
+        /**
+         * Whether the provided form has a dropdown field with a specified style.
+         *
+         * @since 1.6.1
+         *
+         * @param array  $form  Form data.
+         * @param string $style Desired field style.
+         *
+         * @return bool
+         */
+        protected function is_field_style($form, $style)
+        {
+        }
+        /**
+         * Get field name for ajax error message.
+         *
+         * @since 1.6.3
+         *
+         * @param string $name  Field name for error triggered.
+         * @param array  $field Field settings.
+         * @param array  $props List of properties.
+         * @param string $error Error message.
+         *
+         * @return string
+         */
+        public function ajax_error_field_name($name, $field, $props, $error)
         {
         }
     }
@@ -3772,6 +4110,19 @@ namespace {
         {
         }
         /**
+         * Define additional field properties for the inputmask on AMP pages.
+         *
+         * @since 1.7.6
+         *
+         * @param array $properties Field properties.
+         * @param array $field      Field settings.
+         *
+         * @return array
+         */
+        private function get_amp_input_mask_properties($properties, $field)
+        {
+        }
+        /**
          * Field options panel inside the builder.
          *
          * @since 1.0.0
@@ -3825,6 +4176,18 @@ namespace {
         public function format($field_id, $field_submit, $form_data)
         {
         }
+        /**
+         * Validate field on form submit.
+         *
+         * @since 1.6.2
+         *
+         * @param int   $field_id     Field ID.
+         * @param mixed $field_submit Field value that was submitted.
+         * @param array $form_data    Form data and settings.
+         */
+        public function validate($field_id, $field_submit, $form_data)
+        {
+        }
     }
     /**
      * Paragraph text field.
@@ -3839,6 +4202,22 @@ namespace {
          * @since 1.0.0
          */
         public function init()
+        {
+        }
+        /**
+         * Get the value, that is used to prefill via dynamic or fallback population.
+         * Based on field data and current properties.
+         *
+         * @since 1.6.4
+         *
+         * @param string $raw_value  Value from a GET param, always a string.
+         * @param string $input      Represent a subfield inside the field. May be empty.
+         * @param array  $properties Field properties.
+         * @param array  $field      Current field specific data.
+         *
+         * @return array Modified field properties.
+         */
+        protected function get_field_populated_single_property_value($raw_value, $input, $properties, $field)
         {
         }
         /**
@@ -3895,6 +4274,18 @@ namespace {
         public function format($field_id, $field_submit, $form_data)
         {
         }
+        /**
+         * Validate field on form submit.
+         *
+         * @since 1.6.2
+         *
+         * @param int   $field_id     Field ID.
+         * @param mixed $field_submit Field value that was submitted.
+         * @param array $form_data    Form data and settings.
+         */
+        public function validate($field_id, $field_submit, $form_data)
+        {
+        }
     }
     /**
      * Provider class.
@@ -3936,7 +4327,7 @@ namespace {
          */
         public $priority = 10;
         /**
-         * Holds the API connections.
+         * Store the API connections.
          *
          * @since 1.0.0
          *
@@ -3976,11 +4367,11 @@ namespace {
         {
         }
         /**
-         * All systems go. Used by subclasses.
+         * Hooks.
          *
-         * @since 1.0.0
+         * @since 1.6.8
          */
-        public function init()
+        private function hooks()
         {
         }
         /**
@@ -4229,17 +4620,17 @@ namespace {
         {
         }
         /**
-         * Provider connection conditional options HTML
+         * Provider connection conditional options HTML.
          *
          * @since 1.0.0
          *
-         * @param string $connection_id
-         * @param array $connection
-         * @param string|array $form
+         * @param string       $connection_id Unique connection ID.
+         * @param array        $connection    Configured connection properties.
+         * @param string|array $form          Form properties.
          *
          * @return string
          */
-        public function output_conditionals($connection_id = '', $connection = array(), $form = '')
+        public function output_conditionals($connection_id = '', $connection = [], $form = '')
         {
         }
         /**
@@ -4275,6 +4666,14 @@ namespace {
         {
         }
         /**
+         * Get provider configured status.
+         *
+         * @since 1.6.8
+         */
+        private function get_configured()
+        {
+        }
+        /**
          * Display content inside the panel sidebar area.
          *
          * @since 1.0.0
@@ -4283,7 +4682,7 @@ namespace {
         {
         }
         /**
-         * Wraps the builder content with the required markup.
+         * Wrap the builder content with the required markup.
          *
          * @since 1.0.0
          */
@@ -4369,6 +4768,7 @@ namespace {
          * Provider access token.
          *
          * @since 1.3.6
+         *
          * @var string
          */
         public $access_token;
@@ -4376,6 +4776,7 @@ namespace {
          * Provider API key.
          *
          * @since 1.3.6
+         *
          * @var string
          */
         public $api_key = 'c58xq3r27udz59h9rrq7qnvf';
@@ -4383,6 +4784,7 @@ namespace {
          * Sign up link.
          *
          * @since 1.3.6
+         *
          * @var string
          */
         public $sign_up = 'https://constant-contact.evyy.net/c/11535/341874/3411?sharedid=wpforms';
@@ -4402,7 +4804,7 @@ namespace {
          * @param array $fields    List of fields with their data and settings.
          * @param array $entry     Submitted entry values.
          * @param array $form_data Form data and settings.
-         * @param int $entry_id    Saved entry ID.
+         * @param int   $entry_id  Saved entry ID.
          *
          * @return void
          */
@@ -4417,12 +4819,22 @@ namespace {
          *
          * @since 1.3.6
          *
-         * @param array $data
-         * @param string $form_id
+         * @param array  $data    Contact data.
+         * @param string $form_id Form ID.
          *
-         * @return mixed id or error object
+         * @return WP_Error|string Unique ID or error object
          */
-        public function api_auth($data = array(), $form_id = '')
+        public function api_auth($data = [], $form_id = '')
+        {
+        }
+        /**
+         * Get account information.
+         *
+         * @since 1.7.6
+         *
+         * @return array|WP_Error
+         */
+        public function get_account_information()
         {
         }
         /**
@@ -4471,6 +4883,7 @@ namespace {
          * Provider account authorize fields HTML.
          *
          * @since 1.3.6
+         *
          * @return string
          */
         public function output_auth()
@@ -4481,25 +4894,37 @@ namespace {
          *
          * @since 1.3.6
          *
-         * @param string $connection_id
-         * @param array $connection
+         * @param string $connection_id Connection Id.
+         * @param array  $connection    Connection data.
          *
          * @return string
          */
-        public function output_groups($connection_id = '', $connection = array())
+        public function output_groups($connection_id = '', $connection = [])
         {
         }
         /**
-         * Output content after the main builder output.
+         * Default content for the provider settings panel in the form builder.
          *
-         * @since 1.3.6
+         * @since 1.6.8
+         *
+         * @param string $content Default content.
+         *
+         * @return string
          */
-        public function builder_output_after()
+        public function builder_settings_default_content($content)
         {
         }
         /*************************************************************************
          * Integrations tab methods - these methods relate to the settings page. *
          *************************************************************************/
+        /**
+         * AJAX to add a provider from the settings integrations tab.
+         *
+         * @since 1.7.6
+         */
+        public function integrations_tab_add()
+        {
+        }
         /**
          * Form fields to add a new provider account.
          *
@@ -4523,21 +4948,16 @@ namespace {
          * Dismiss the Constant Contact admin notice.
          *
          * @since 1.3.6
-         */
-        public function connect_dismiss()
-        {
-        }
-        /**
-         * Constant Contact "Learn More" admin page.
+         * @since 1.6.7.1 Added parameter $notice_id.
          *
-         * @since 1.3.6
+         * @param string $notice_id Notice ID (slug).
          */
-        public function learn_more_page()
+        public function connect_dismiss($notice_id = '')
         {
         }
     }
     /**
-     * WPForms Lite. Load Lite specific features/functionality.
+     * WPForms Lite. Load Lite-specific features/functionality.
      *
      * @since 1.2.0
      */
@@ -4546,7 +4966,7 @@ namespace {
         /**
          * Primary class constructor.
          *
-         * @since 1.2.x
+         * @since 1.2.2
          */
         public function __construct()
         {
@@ -4582,7 +5002,7 @@ namespace {
          *
          * @since 1.4.8
          *
-         * @param object $settings
+         * @param WPForms_Builder_Panel_Settings $settings Builder panel settings.
          */
         public function form_settings_confirmations($settings)
         {
@@ -4600,7 +5020,7 @@ namespace {
          *
          * @since 1.4.7
          *
-         * @param string $view
+         * @param string $view Current view inside the plugin settings page.
          */
         public function settings_cta($view)
         {
@@ -4625,14 +5045,16 @@ namespace {
          * Add appropriate styling to addons page.
          *
          * @since 1.0.4
+         * @deprecated 1.6.7
          */
         public function addon_page_enqueues()
         {
         }
         /**
-         * Notify user that addons are a pro feature.
+         * Addons page.
          *
          * @since 1.0.0
+         * @deprecated 1.6.7
          */
         public function addons_page()
         {
@@ -4647,6 +5069,49 @@ namespace {
          * @param int|string $form_id Form ID.
          */
         public function update_entry_count($fields, $entry, $form_id)
+        {
+        }
+        /**
+         * Submit entry to the Lite Connect API.
+         *
+         * @since 1.7.4
+         *
+         * @param array $fields    Set of form fields.
+         * @param array $entry     Entry contents.
+         * @param int   $form_id   Form ID.
+         * @param array $form_data Form data.
+         */
+        public function entry_submit($fields, $entry, $form_id, $form_data = [])
+        {
+        }
+        /**
+         * Add Lite-specific templates to the list of searchable template paths.
+         *
+         * @since 1.6.6
+         *
+         * @param array $paths Paths to templates.
+         *
+         * @return array
+         */
+        public function add_templates($paths)
+        {
+        }
+        /**
+         * Render Upgrade to Pro admin bar menu item.
+         *
+         * @since 1.7.4
+         *
+         * @param WP_Admin_Bar $wp_admin_bar WordPress Admin Bar object.
+         */
+        public function upgrade_to_pro_menu(\WP_Admin_Bar $wp_admin_bar)
+        {
+        }
+        /**
+         * Handle plugin installation upon activation.
+         *
+         * @since 1.7.4
+         */
+        public function install()
         {
         }
     }
@@ -4708,7 +5173,7 @@ namespace WPForms\Access {
 }
 namespace WPForms\Lite\Reports {
     /**
-     * Generates form submissions reports.
+     * Generate form submissions reports.
      *
      * @since 1.5.4
      */
@@ -4725,7 +5190,7 @@ namespace WPForms\Lite\Reports {
         /**
          * Get entries count grouped by form.
          * Main point of entry to fetch form entry count data from DB.
-         * Caches the result.
+         * Cache the result.
          *
          * @since 1.5.4
          *
@@ -4747,9 +5212,11 @@ namespace WPForms {
         /**
          * Classes to register.
          *
+         * @since 1.5.8
+         *
          * @var array
          */
-        private $classes = array();
+        private $classes = [];
         /**
          * Loader init.
          *
@@ -4764,6 +5231,38 @@ namespace WPForms {
          * @since 1.5.8
          */
         protected function populate_classes()
+        {
+        }
+        /**
+         * Populate the Forms related classes.
+         *
+         * @since 1.6.2
+         */
+        private function populate_forms()
+        {
+        }
+        /**
+         * Populate Admin related classes.
+         *
+         * @since 1.6.0
+         */
+        private function populate_admin()
+        {
+        }
+        /**
+         * Populate Forms Overview admin page related classes.
+         *
+         * @since 1.7.5
+         */
+        private function populate_forms_overview()
+        {
+        }
+        /**
+         * Populate Form Builder related classes.
+         *
+         * @since 1.6.8
+         */
+        private function populate_builder()
         {
         }
         /**
@@ -4790,12 +5289,53 @@ namespace WPForms {
         private function populate_tasks()
         {
         }
+        /**
+         * Populate smart tags loaded classes.
+         *
+         * @since 1.6.7
+         */
+        private function populate_smart_tags()
+        {
+        }
+        /**
+         * Populate logger loaded classes.
+         *
+         * @since 1.6.3
+         */
+        private function populate_logger()
+        {
+        }
+        /**
+         * Populate education related classes.
+         *
+         * @since 1.6.6
+         */
+        private function populate_education()
+        {
+        }
+        /**
+         * Populate robots loaded class.
+         *
+         * @since 1.7.0
+         */
+        private function populate_robots()
+        {
+        }
+        /**
+         * Populate Country and Keyword filters from AntiSpam settings.
+         *
+         * @since 1.7.8
+         */
+        private function populate_anti_spam_filters()
+        {
+        }
     }
     /**
      * Main WPForms class.
      *
      * @since 1.0.0
      */
+    #[\AllowDynamicProperties]
     final class WPForms
     {
         /**
@@ -4816,96 +5356,33 @@ namespace WPForms {
          */
         public $version = '';
         /**
-         * The form data handler instance.
-         *
-         * @since 1.0.0
-         *
-         * @var \WPForms_Form_Handler
-         */
-        public $form;
-        /**
-         * The entry data handler instance (Pro).
-         *
-         * @since 1.0.0
-         *
-         * @var \WPForms_Entry_Handler
-         */
-        public $entry;
-        /**
-         * The entry fields data handler instance (Pro).
-         *
-         * @since 1.4.3
-         *
-         * @var \WPForms_Entry_Fields_Handler
-         */
-        public $entry_fields;
-        /**
-         * The entry meta data handler instance (Pro).
-         *
-         * @since 1.1.6
-         *
-         * @var \WPForms_Entry_Meta_Handler
-         */
-        public $entry_meta;
-        /**
-         * The front-end instance.
-         *
-         * @since 1.0.0
-         *
-         * @var \WPForms_Frontend
-         */
-        public $frontend;
-        /**
-         * The process instance.
-         *
-         * @since 1.0.0
-         *
-         * @var \WPForms_Process
-         */
-        public $process;
-        /**
-         * The smart tags instance.
-         *
-         * @since 1.0.0
-         *
-         * @var \WPForms_Smart_Tags
-         */
-        public $smart_tags;
-        /**
-         * The Logging instance.
-         *
-         * @since 1.0.0
-         *
-         * @var \WPForms_Logging
-         */
-        public $logs;
-        /**
-         * The License class instance (Pro).
-         *
-         * @since 1.0.0
-         *
-         * @var \WPForms_License
-         */
-        public $license;
-        /**
          * Classes registry.
          *
          * @since 1.5.7
          *
          * @var array
          */
-        private $registry = array();
+        private $registry = [];
+        /**
+         * List of legacy public properties.
+         *
+         * @since 1.6.8
+         *
+         * @var string[]
+         */
+        private $legacy_properties = ['form', 'entry', 'entry_fields', 'entry_meta', 'frontend', 'process', 'smart_tags', 'license'];
         /**
          * Paid returns true, free (Lite) returns false.
          *
          * @since 1.3.9
+         * @since 1.7.3 changed to private.
          *
-         * @var boolean
+         * @var bool
          */
-        public $pro = false;
+        private $pro = false;
         /**
-         * Backward compatibility method for accessing the class registry in an old way
-         * e.g. 'wpforms()->form' or 'wpforms()->entry'
+         * Backward compatibility method for accessing the class registry in an old way,
+         * e.g. 'wpforms()->form' or 'wpforms()->entry'.
          *
          * @since 1.5.7
          *
@@ -4919,8 +5396,8 @@ namespace WPForms {
         /**
          * Main WPForms Instance.
          *
-         * Insures that only one instance of WPForms exists in memory at any one
-         * time. Also prevents needing to define globals all over the place.
+         * Only one instance of WPForms exists in memory at any one time.
+         * Also prevent the need to define globals all over the place.
          *
          * @since 1.0.0
          *
@@ -4936,15 +5413,6 @@ namespace WPForms {
          * @since 1.0.0
          */
         private function constants()
-        {
-        }
-        /**
-         * Loads the plugin language files.
-         *
-         * @since 1.0.0
-         * @since 1.5.0 Load only the lite translation.
-         */
-        public function load_textdomain()
         {
         }
         /**
@@ -4998,9 +5466,29 @@ namespace WPForms {
          *
          * @param string $name Class name or an alias.
          *
-         * @return mixed|null
+         * @return mixed|stdClass|null
          */
         public function get($name)
+        {
+        }
+        /**
+         * Get the list of all custom tables starting with `wpforms_*`.
+         *
+         * @since 1.6.3
+         *
+         * @return array List of table names.
+         */
+        public function get_existing_custom_tables()
+        {
+        }
+        /**
+         * Whether the current instance of the plugin is a paid version, or free.
+         *
+         * @since 1.7.3
+         *
+         * @return bool
+         */
+        public function is_pro()
         {
         }
     }
@@ -5018,11 +5506,6 @@ namespace {
     }
 }
 namespace {
-    /**
-     * Global admin related items and functionality.
-     *
-     * @since 1.3.9
-     */
     /**
      * Load styles for all WPForms-related admin screens.
      *
@@ -5052,7 +5535,7 @@ namespace {
     {
     }
     /**
-     * Outputs the WPForms admin header.
+     * Output the WPForms admin header.
      *
      * @since 1.3.9
      */
@@ -5063,6 +5546,7 @@ namespace {
      * Remove non-WPForms notices from WPForms pages.
      *
      * @since 1.3.9
+     * @since 1.6.9 Added callback for removing on `admin_footer` hook.
      */
     function wpforms_admin_hide_unrelated_notices()
     {
@@ -5075,10 +5559,10 @@ namespace {
      *
      * @since 1.3.9
      *
-     * @param string $medium  utm_medium URL parameter.
-     * @param string $content utm_content URL parameter.
+     * @param string $medium  URL parameter: utm_medium.
+     * @param string $content URL parameter: utm_content.
      *
-     * @return string.
+     * @return string
      */
     function wpforms_admin_upgrade_link($medium = 'link', $content = '')
     {
@@ -5088,6 +5572,7 @@ namespace {
      *
      * @since 1.4.0.1
      * @since 1.5.0 Raising this awareness of old PHP version message from 5.2 to 5.3.
+     * @since 1.7.9 Raising this awareness of old PHP version message to 7.1.
      */
     function wpforms_check_php_version()
     {
@@ -5130,7 +5615,7 @@ namespace {
     {
     }
     /**
-     * Create a new form
+     * Create a new form.
      *
      * @since 1.0.0
      */
@@ -5186,6 +5671,7 @@ namespace {
      * Deactivate addon.
      *
      * @since 1.0.0
+     * @since 1.6.2.3 Updated the permissions checking.
      */
     function wpforms_deactivate_addon()
     {
@@ -5194,6 +5680,7 @@ namespace {
      * Activate addon.
      *
      * @since 1.0.0
+     * @since 1.6.2.3 Updated the permissions checking.
      */
     function wpforms_activate_addon()
     {
@@ -5202,27 +5689,66 @@ namespace {
      * Install addon.
      *
      * @since 1.0.0
+     * @since 1.6.2.3 Updated the permissions checking.
      */
     function wpforms_install_addon()
     {
     }
     /**
-     * The function which returns the one WPForms_Conditional_Logic_Core instance.
+     * Search pages for dropdown.
      *
-     * Use this function like you would a global variable, except without needing
-     * to declare the global.
-     *
-     * @since 1.1.0
-     *
-     * @return WPForms_Conditional_Logic_Core
+     * @since 1.7.9
      */
-    function wpforms_conditional_logic()
+    function wpforms_ajax_search_pages_for_dropdown()
     {
     }
     /**
      * Register WPForms plugin widgets.
      */
     function wpforms_register_widgets()
+    {
+    }
+    /**
+     * Retrieves the current environment type.
+     *
+     * The type can be set via the `WP_ENVIRONMENT_TYPE` global system variable,
+     * or a constant of the same name.
+     *
+     * Possible values are 'local', 'development', 'staging', and 'production'.
+     * If not set, the type defaults to 'production'.
+     *
+     * @return string The current environment type.
+     */
+    function wp_get_environment_type()
+    {
+    }
+    /**
+     * Get notification state, whether it's opened or closed.
+     *
+     * @deprecated 1.4.8
+     *
+     * @since 1.4.1
+     *
+     * @param int $form_id         Form ID.
+     * @param int $notification_id Notification ID.
+     *
+     * @return string
+     */
+    function wpforms_builder_notification_get_state($form_id, $notification_id)
+    {
+    }
+    /**
+     * Convert bytes to megabytes (or in some cases KB).
+     *
+     * @deprecated 1.6.2
+     *
+     * @since 1.0.0
+     *
+     * @param int $bytes Bytes to convert to a readable format.
+     *
+     * @return string
+     */
+    function wpforms_size_to_megabytes($bytes)
     {
     }
     /**
@@ -5355,11 +5881,18 @@ namespace {
     {
     }
     /**
-     * Contains various functions that may be potentially used throughout
-     * the WPForms plugin.
+     * Cleanup $items array recursively removing from it all keys not existing in the $default array.
      *
-     * @since 1.0.0
+     * @since 1.7.2
+     *
+     * @param array $items   Items.
+     * @param array $default Default items.
+     *
+     * @return array
      */
+    function wpforms_list_intersect_key($items, $default)
+    {
+    }
     /**
      * Helper function to trigger displaying a form.
      *
@@ -5375,11 +5908,18 @@ namespace {
     /**
      * Perform json_decode and unslash.
      *
+     * IMPORTANT: This function decodes the result of wpforms_encode() properly only if
+     * wp_insert_post() or wp_update_post() were used after the data is encoded.
+     * Both wp_insert_post() and wp_update_post() remove excessive slashes added by wpforms_encode().
+     *
+     * Using wpforms_decode() on wpforms_encode() result directly
+     * (without using wp_insert_post() or wp_update_post() first) always returns null or false.
+     *
      * @since 1.0.0
      *
      * @param string $data Data to decode.
      *
-     * @return array|bool
+     * @return array|false|null
      */
     function wpforms_decode($data)
     {
@@ -5387,11 +5927,17 @@ namespace {
     /**
      * Perform json_encode and wp_slash.
      *
+     * IMPORTANT: This function adds excessive slashes to prevent data damage
+     * by wp_insert_post() or wp_update_post() that use wp_unslash() on all the incoming data.
+     *
+     * Decoding the result of this function by wpforms_decode() directly
+     * (without using wp_insert_post() or wp_update_post() first) always returns null or false.
+     *
      * @since 1.3.1.3
      *
      * @param mixed $data Data to encode.
      *
-     * @return string
+     * @return string|false
      */
     function wpforms_encode($data = \false)
     {
@@ -5410,9 +5956,50 @@ namespace {
     {
     }
     /**
+     * Verify that an email is valid.
+     * See the linked RFC.
+     *
+     * @see https://www.rfc-editor.org/rfc/inline-errata/rfc3696.html
+     *
+     * @since 1.7.3
+     *
+     * @param string $email Email address to verify.
+     *
+     * @return string|false Returns a valid email address on success, false on failure.
+     */
+    function wpforms_is_email($email)
+    {
+    }
+    /**
+     * Check whether the string is json-encoded.
+     *
+     * @since 1.7.5
+     *
+     * @param string $string A string.
+     *
+     * @return bool
+     */
+    function wpforms_is_json($string)
+    {
+    }
+    /**
+     * Decode json-encoded string if it is in json format.
+     *
+     * @since 1.7.5
+     *
+     * @param string $string      A string.
+     * @param bool   $associative Decode to the associative array if true. Decode to object if false.
+     *
+     * @return array|string
+     */
+    function wpforms_json_decode($string, $associative = \false)
+    {
+    }
+    /**
      * Get the current URL.
      *
      * @since 1.0.0
+     * @since 1.7.2 Refactored based on the `home_url` function.
      *
      * @return string
      */
@@ -5443,6 +6030,18 @@ namespace {
      * @return mixed
      */
     function wpforms_setting($key, $default = \false, $option = 'wpforms_settings')
+    {
+    }
+    /**
+     * Update plugin settings option and allow it to be filterable.
+     *
+     * @since 1.6.6
+     *
+     * @param array $settings A plugin settings array that is saved into options table.
+     *
+     * @return bool
+     */
+    function wpforms_update_settings($settings)
     {
     }
     /**
@@ -5486,24 +6085,28 @@ namespace {
     {
     }
     /**
-     * Check if form provided contains page breaks, if so give details.
+     * Check if form provided contains Page Break, if so give details.
      *
      * @since 1.0.0
      *
-     * @param mixed $form
+     * @todo It is not used since 1.4.0. Probably, it should be deprecated and suggest using the wpforms_get_pagebreak_details() function.
      *
-     * @return mixed
+     * @param WP_Post|array $form Form data.
+     *
+     * @return int|bool Pages count or false.
      */
     function wpforms_has_pagebreak($form = \false)
     {
     }
     /**
-     * Try to find and return a top or bottom pagebreak.
+     * Try to find and return a top or bottom Page Break.
      *
      * @since 1.2.1
      *
-     * @param mixed $form
-     * @param mixed $type
+     * @todo It is not used since 1.4.0. Probably, it should be deprecated and suggest using the wpforms_get_pagebreak_details() function.
+     *
+     * @param WP_Post|array $form Form data.
+     * @param string|bool   $type Type of Page Break fields (top, bottom, pages or false).
      *
      * @return array|bool
      */
@@ -5515,9 +6118,9 @@ namespace {
      *
      * @since 1.3.7
      *
-     * @param mixed $form
+     * @param WP_Post|array $form Form data.
      *
-     * @return mixed false or an array
+     * @return false|array Page Break details or false.
      */
     function wpforms_get_pagebreak_details($form = \false)
     {
@@ -5544,7 +6147,7 @@ namespace {
      *
      * @since 1.2.1
      *
-     * @param array|string $classes
+     * @param array|string $classes CSS classes.
      * @param bool         $convert True will convert strings to array and vice versa.
      *
      * @return string|array
@@ -5564,18 +6167,6 @@ namespace {
      * @return int
      */
     function wpforms_size_to_bytes($size)
-    {
-    }
-    /**
-     * Convert bytes to megabytes (or in some cases KB).
-     *
-     * @since 1.0.0
-     *
-     * @param int $bytes Bytes to convert to a readable format.
-     *
-     * @return string
-     */
-    function wpforms_size_to_megabytes($bytes)
     {
     }
     /**
@@ -5688,12 +6279,14 @@ namespace {
     {
     }
     /**
-     * Lookup user IP.
-     *
-     * There are many ways to do this, but we prefer the way EDD does it.
-     * https://github.com/easydigitaldownloads/easy-digital-downloads/blob/master/includes/misc-functions.php#L163
+     * Get the user IP address.
      *
      * @since 1.2.5
+     * @since 1.7.3 Improve the IP detection quality by taking care of proxies (e.g. when the site is behind Cloudflare).
+     *
+     * Code based on the:
+     *   - WordPress method \WP_Community_Events::get_unsafe_client_ip
+     *   - Cloudflare documentation https://support.cloudflare.com/hc/en-us/articles/206776727
      *
      * @return string
      */
@@ -5716,8 +6309,9 @@ namespace {
      * Sanitize error message, primarily used during form frontend output.
      *
      * @since 1.3.7
+     * @since 1.7.6 Expand list of allowed HTML tags and attributes.
      *
-     * @param string $error
+     * @param string $error Error message.
      *
      * @return string
      */
@@ -5726,16 +6320,64 @@ namespace {
     }
     /**
      * Sanitize a string, that can be a multiline.
-     * If WP core `sanitize_textarea_field()` exists (after 4.7.0) - use it.
-     * Otherwise - split onto separate lines, sanitize each one, merge again.
+     *
+     * @uses wpforms_sanitize_text_deeply()
      *
      * @since 1.4.1
      *
-     * @param string $string
+     * @param string $string String to deeply sanitize.
      *
-     * @return string If empty var is passed, or not a string - return unmodified. Otherwise - sanitize.
+     * @return string Sanitized string, or empty string if not a string provided.
      */
     function wpforms_sanitize_textarea_field($string)
+    {
+    }
+    /**
+     * Deeply sanitize the string, preserve newlines if needed.
+     * Prevent maliciously prepared strings from containing HTML tags.
+     *
+     * @since 1.6.0
+     *
+     * @param string $string        String to deeply sanitize.
+     * @param bool   $keep_newlines Whether to keep newlines. Default: false.
+     *
+     * @return string Sanitized string, or empty string if not a string provided.
+     */
+    function wpforms_sanitize_text_deeply($string, $keep_newlines = \false)
+    {
+    }
+    /**
+     * Sanitize an HTML string with a set of allowed HTML tags.
+     *
+     * @since 1.7.0
+     *
+     * @param string $value String to sanitize.
+     *
+     * @return string Sanitized string.
+     */
+    function wpforms_sanitize_richtext_field($value)
+    {
+    }
+    /**
+     * Escaping for Rich Text field values.
+     *
+     * @since 1.7.0
+     *
+     * @param string $value Text to escape.
+     *
+     * @return string Escaped text.
+     */
+    function wpforms_esc_richtext_field($value)
+    {
+    }
+    /**
+     * Retrieve allowed HTML tags for Rich Text field.
+     *
+     * @since 1.7.0
+     *
+     * @return array Array of allowed tags.
+     */
+    function wpforms_get_allowed_html_tags_for_richtext_field()
     {
     }
     /**
@@ -5778,7 +6420,19 @@ namespace {
      *
      * @return array
      */
-    function wpforms_get_hierarchical_object($args = array(), $flat = \false)
+    function wpforms_get_hierarchical_object($args = [], $flat = \false)
+    {
+    }
+    /**
+     * Sort a nested array of objects.
+     *
+     * @since 1.6.5
+     *
+     * @param array  $objects An array of objects to sort.
+     * @param string $orderby The object field to order by.
+     * @param string $order   Order direction.
+     */
+    function _wpforms_sort_hierarchical_object(&$objects, $orderby, $order)
     {
     }
     /**
@@ -5868,7 +6522,7 @@ namespace {
      * @param mixed $data What to dump, can be any type.
      * @param bool  $echo Whether to print or return. Default is to print.
      *
-     * @return string
+     * @return string|void
      */
     function wpforms_debug_data($data, $echo = \true)
     {
@@ -5900,8 +6554,11 @@ namespace {
     }
     /**
      * Decode special characters, both alpha- (<) and numeric-based (').
+     * Sanitize recursively, preserve new lines.
+     * Handle all the possible mixed variations of < and `&lt;` that can be processed into tags.
      *
      * @since 1.4.1
+     * @since 1.6.0 Sanitize recursively, preserve new lines.
      *
      * @param string $string Raw string to decode.
      *
@@ -5958,29 +6615,79 @@ namespace {
      * @since 1.4.4
      *
      * @param array|string $caps Capability name(s).
-     * @param int          $id   ID of the specific object to check against if `$capability` is a "meta" cap.
-     *                           "Meta" capabilities, e.g. 'edit_post', 'edit_user', etc., are capabilities used
-     *                           by map_meta_cap() to map to other "primitive" capabilities, e.g. 'edit_posts',
-     *                           'edit_others_posts', etc. Accessed via func_get_args() and passed to WP_User::has_cap(),
-     *                           then map_meta_cap().
+     * @param int          $id   ID of the specific object to check against if capability is a "meta" cap. "Meta"
+     *                           capabilities, e.g. 'edit_post', 'edit_user', etc., are capabilities used by
+     *                           map_meta_cap() to map to other "primitive" capabilities, e.g. 'edit_posts',
+     *                           edit_others_posts', etc. Accessed via func_get_args() and passed to
+     *                           WP_User::has_cap(), then map_meta_cap().
      *
      * @return bool
      */
-    function wpforms_current_user_can($caps = array(), $id = 0)
+    function wpforms_current_user_can($caps = [], $id = 0)
+    {
+    }
+    /**
+     * Return date and time formatted as expected.
+     *
+     * @since 1.6.3
+     *
+     * @param string|int $date       Date to format.
+     * @param string     $format     Optional. Format for the date and time.
+     * @param bool       $gmt_offset Optional. GTM offset.
+     *
+     * @return string
+     */
+    function wpforms_datetime_format($date, $format = '', $gmt_offset = \false)
+    {
+    }
+    /**
+     * Return date formatted as expected.
+     *
+     * @since 1.6.3
+     *
+     * @param string|int $date       Date to format.
+     * @param string     $format     Optional. Format for the date.
+     * @param bool       $gmt_offset Optional. GTM offset.
+     *
+     * @return string
+     */
+    function wpforms_date_format($date, $format = '', $gmt_offset = \false)
     {
     }
     /**
      * Get the certain date of a specified day in a specified format.
      *
      * @since 1.4.4
+     * @since 1.6.3 Added $use_gmt_offset parameter.
      *
-     * @param string $period    Supported values: start, end.
-     * @param string $timestamp Default is the current timestamp, if left empty.
-     * @param string $format    Default is a MySQL format.
+     * @param string $period         Supported values: start, end.
+     * @param string $timestamp      Default is the current timestamp, if left empty.
+     * @param string $format         Default is a MySQL format.
+     * @param bool   $use_gmt_offset Use GTM offset.
      *
      * @return string
      */
-    function wpforms_get_day_period_date($period, $timestamp = '', $format = 'Y-m-d H:i:s')
+    function wpforms_get_day_period_date($period, $timestamp = '', $format = 'Y-m-d H:i:s', $use_gmt_offset = \false)
+    {
+    }
+    /**
+     * Return available date formats.
+     *
+     * @since 1.7.5
+     *
+     * @return array
+     */
+    function wpforms_date_formats()
+    {
+    }
+    /**
+     * Return available time formats.
+     *
+     * @since 1.7.7
+     *
+     * @return array
+     */
+    function wpforms_time_formats()
     {
     }
     /**
@@ -6028,7 +6735,7 @@ namespace {
     {
     }
     /**
-     * Helper function to determine if loading an WPForms related admin page.
+     * Helper function to determine if loading on WPForms related admin page.
      *
      * Here we determine if the current administration page is owned/created by
      * WPForms. This is done in compliance with WordPress best practices for
@@ -6042,7 +6749,7 @@ namespace {
      * @param string $slug Slug identifier for a specific WPForms admin page.
      * @param string $view Slug identifier for a specific WPForms admin page view ("subpage").
      *
-     * @return boolean
+     * @return bool
      */
     function wpforms_is_admin_page($slug = '', $view = '')
     {
@@ -6097,7 +6804,7 @@ namespace {
     }
     /**
      * Include a template - alias to \WPForms\Helpers\Template::get_html.
-     * Uses 'require' if $args are passed or 'load_template' if not.
+     * Use 'require' if $args are passed or 'load_template' if not.
      *
      * @since 1.5.6
      *
@@ -6135,9 +6842,49 @@ namespace {
     {
     }
     /**
+     * Get the current installation license key.
+     *
+     * @since 1.6.2.3
+     *
+     * @return string
+     */
+    function wpforms_get_license_key()
+    {
+    }
+    /**
+     * Get when WPForms was first installed.
+     *
+     * @since 1.6.0
+     *
+     * @param string $type Specific install type to check for.
+     *
+     * @return int|false Unix timestamp. False on failure.
+     */
+    function wpforms_get_activated_timestamp($type = '')
+    {
+    }
+    /**
+     * Retrieve a timestamp when WPForms was upgraded.
+     *
+     * @since 1.7.5
+     *
+     * @param string $version Specific plugin version to check for.
+     *
+     * @return int|false Unix timestamp or migration status. False on failure.
+     *                   Available migration statuses:
+     *                   -2 if migration is failed;
+     *                   -1 if migration is started (in progress);
+     *                    0 if migration is completed, but no luck to set a timestamp.
+     */
+    function wpforms_get_upgraded_timestamp($version)
+    {
+    }
+    /**
      * Detect if AJAX frontend form submit is being processed.
      *
      * @since 1.5.8.2
+     * @since 1.6.5 Added filterable frontend ajax actions list as a fallback to missing referer cases.
+     * @since 1.6.7.1 Removed a requirement for an AJAX action to be a WPForms action if referer is not missing.
      *
      * @return bool
      */
@@ -6145,10 +6892,362 @@ namespace {
     {
     }
     /**
-     * Contains various WPForms integrations.
+     * Dequeue enqueues by URI list.
+     * Parts of URI (e.g. filename) is also supported.
      *
-     * @since 1.3.0
+     * @since 1.6.1
+     *
+     * @param array|string           $uris     List of URIs or individual URI to dequeue.
+     * @param \WP_Scripts|\WP_Styles $enqueues Enqueues list to dequeue from.
      */
+    function wpforms_dequeue_by_uri($uris, $enqueues)
+    {
+    }
+    /**
+     * Dequeue scripts by URI list.
+     * Parts of URI (e.g. filename) is also supported.
+     *
+     * @since 1.6.1
+     *
+     * @param array|string $uris List of URIs or individual URI to dequeue.
+     */
+    function wpforms_dequeue_scripts_by_uri($uris)
+    {
+    }
+    /**
+     * Dequeue styles by URI list.
+     * Parts of URI (e.g. filename) is also supported.
+     *
+     * @since 1.6.1
+     *
+     * @param array|string $uris List of URIs or individual URI to dequeue.
+     */
+    function wpforms_dequeue_styles_by_uri($uris)
+    {
+    }
+    /**
+     * Count words in the string.
+     *
+     * @since 1.6.2
+     *
+     * @param string $string String value.
+     *
+     * @return integer Words count.
+     */
+    function wpforms_count_words($string)
+    {
+    }
+    /**
+     * Get WPForms upload root path (e.g. /wp-content/uploads/wpforms).
+     *
+     * As of 1.7.0, you can pass in your own value that matches the output of wp_upload_dir()
+     * in order to use this function inside of a filter without infinite looping.
+     *
+     * @since 1.6.1
+     *
+     * @return array WPForms upload root path (no trailing slash).
+     */
+    function wpforms_upload_dir()
+    {
+    }
+    /**
+     * Create index.html file in the specified directory if it doesn't exist.
+     *
+     * @since 1.6.1
+     *
+     * @param string $path Path to the directory.
+     *
+     * @return int|false Number of bytes that were written to the file, or false on failure.
+     */
+    function wpforms_create_index_html_file($path)
+    {
+    }
+    /**
+     * Create .htaccess file in the WPForms upload directory.
+     *
+     * @since 1.6.1
+     *
+     * @return bool True when the .htaccess file exists, false on failure.
+     */
+    function wpforms_create_upload_dir_htaccess_file()
+    {
+    }
+    /**
+     * Check if Gutenberg is active.
+     *
+     * @since 1.6.2
+     *
+     * @return bool True if Gutenberg is active.
+     */
+    function wpforms_is_gutenberg_active()
+    {
+    }
+    /**
+     * Determine if the plugin/addon installations are allowed.
+     *
+     * @since 1.6.2.3
+     *
+     * @param string $type Should be `plugin` or `addon`.
+     *
+     * @return bool
+     */
+    function wpforms_can_install($type)
+    {
+    }
+    /**
+     * Determine if the plugin/addon activations are allowed.
+     *
+     * @since 1.7.3
+     *
+     * @param string $type Should be `plugin` or `addon`.
+     *
+     * @return bool
+     */
+    function wpforms_can_activate($type)
+    {
+    }
+    /**
+     * Determine if the plugin/addon installations/activations are allowed.
+     *
+     * @since 1.7.3
+     *
+     * @internal Use wpforms_can_activate() or wpforms_can_install() instead.
+     *
+     * @param string $what Should be 'activate' or 'install'.
+     * @param string $type Should be `plugin` or `addon`.
+     *
+     * @return bool
+     */
+    function wpforms_can_do($what, $type)
+    {
+    }
+    /**
+     * Retrieve the full config for CAPTCHA.
+     *
+     * @since 1.6.4
+     *
+     * @return array
+     */
+    function wpforms_get_captcha_settings()
+    {
+    }
+    /**
+     * Wrapper for set_time_limit to see if it is enabled.
+     *
+     * @since 1.6.4
+     *
+     * @param int $limit Time limit.
+     */
+    function wpforms_set_time_limit($limit = 0)
+    {
+    }
+    /**
+     * Determine if collecting user's IP is allowed by GDPR setting (globally or per form).
+     * Majority of our users have GDPR disabled.
+     * So we remove this data from the request only when it's not needed:
+     * 1) when GDPR is enabled AND globally disabled user details storage;
+     * 2) when GDPR is enabled AND IP address processing is disabled on per form basis.
+     *
+     * @since 1.6.6
+     *
+     * @param array $form_data Form settings.
+     *
+     * @return bool
+     */
+    function wpforms_is_collecting_ip_allowed($form_data = [])
+    {
+    }
+    /**
+     * Determine if collecting cookies is allowed by GDPR setting.
+     *
+     * @since 1.7.5
+     *
+     * @return bool
+     */
+    function wpforms_is_collecting_cookies_allowed()
+    {
+    }
+    /**
+     * Retrieve a timezone from the site settings as a `DateTimeZone` object.
+     *
+     * Timezone can be based on a PHP timezone string or a ±HH:MM offset.
+     *
+     * @since 1.6.6
+     *
+     * @return DateTimeZone Timezone object.
+     */
+    function wpforms_get_timezone()
+    {
+    }
+    /**
+     * Alias for default readonly function.
+     *
+     * @since 1.6.9
+     *
+     * @param mixed $readonly One of the values to compare.
+     * @param mixed $current  The other value to compare if not just true.
+     * @param bool  $echo     Whether to echo or just return the string.
+     *
+     * @return string HTML attribute or empty string.
+     */
+    function wpforms_readonly($readonly, $current = \true, $echo = \true)
+    {
+    }
+    /**
+     * Process smart tags.
+     *
+     * @since 1.7.1
+     *
+     * @param string $content   Content.
+     * @param array  $form_data Form data.
+     * @param array  $fields    List of fields.
+     * @param string $entry_id  Entry ID.
+     *
+     * @return string
+     */
+    function wpforms_process_smart_tags($content, $form_data, $fields = [], $entry_id = '')
+    {
+    }
+    /**
+     * Get formatted [ id => title ] pages list.
+     *
+     * @since 1.7.2
+     * @deprecated 1.7.9
+     *
+     * @param array|string $args Array or string of arguments to retrieve pages.
+     *
+     * @return array
+     */
+    function wpforms_get_pages_list($args = [])
+    {
+    }
+    /**
+     * Changes array of items into string of items, separated by comma and sql-escaped.
+     *
+     * @see https://coderwall.com/p/zepnaw
+     *
+     * @since 1.7.4
+     *
+     * @param mixed|array $items  Item(s) to be joined into string.
+     * @param string      $format Can be %s or %d.
+     *
+     * @return string Items separated by comma and sql-escaped.
+     */
+    function wpforms_wpdb_prepare_in($items, $format = '%s')
+    {
+    }
+    /**
+     * Add UTM tags to a link that allows detecting traffic sources for our or partners' websites.
+     *
+     * @since 1.7.5
+     *
+     * @param string $link    Link to which you need to add UTM tags.
+     * @param string $medium  The page or location description. Check your current page and try to find
+     *                        and use an already existing medium for links otherwise, use a page name.
+     * @param string $content The feature's name, the button's content, the link's text, or something
+     *                        else that describes the element that contains the link.
+     * @param string $term    Additional information for the content that makes the link more unique.
+     *
+     * @return string
+     */
+    function wpforms_utm_link($link, $medium, $content = '', $term = '')
+    {
+    }
+    /**
+     * Determines whether the current request is a WP CLI request.
+     *
+     * @since 1.7.6
+     *
+     * @return bool
+     */
+    function wpforms_doing_wp_cli()
+    {
+    }
+    /**
+     * Modify the default USer-Agent generated by wp_remote_*() to include additional information.
+     *
+     * @since 1.7.5.2
+     *
+     * @return string
+     */
+    function wpforms_get_default_user_agent()
+    {
+    }
+    /**
+     * Get sanitized post title or "no title" placeholder.
+     *
+     * The placeholder is prepended with post ID.
+     *
+     * @since 1.7.6
+     *
+     * @param WP_Post|object $post Post object.
+     *
+     * @return string Post title.
+     */
+    function wpforms_get_post_title($post)
+    {
+    }
+    /**
+     * Get sanitized term name or "no name" placeholder.
+     *
+     * The placeholder is prepended with term ID.
+     *
+     * @since 1.7.6
+     *
+     * @param WP_Term $term Term object.
+     *
+     * @return string Term name.
+     */
+    function wpforms_get_term_name($term)
+    {
+    }
+    /**
+     * Search for posts editable by user.
+     *
+     * @since 1.7.9
+     *
+     * @param string $search_term Optional search term. Default ''.
+     * @param array  $args        Args {
+     *                            Optional. An array of arguments.
+     *
+     * @type string   $post_type   Post type to search for.
+     * @type string[] $post_status Post status to search for.
+     * @type int      $count       Number of results to return. Default 20.
+     * }
+     *
+     * @return array
+     * @noinspection PhpTernaryExpressionCanBeReducedToShortVersionInspection
+     * @noinspection ElvisOperatorCanBeUsedInspection
+     */
+    function wpforms_search_posts($search_term = '', $args = [])
+    {
+    }
+    /**
+     * Search pages by search term and return an array containing
+     * `value` and `label` which is the post ID and post title respectively.
+     *
+     * @since 1.7.9
+     *
+     * @param string $search_term The search term.
+     * @param array  $args        Optional. An array of arguments.
+     *
+     * @return array
+     */
+    function wpforms_search_pages_for_dropdown($search_term, $args = [])
+    {
+    }
+    /**
+     * Convert hex color value to RGB.
+     *
+     * @since 1.7.9
+     *
+     * @param string $hex Color value in hex format.
+     *
+     * @return string Color value in RGB format.
+     */
+    function wpforms_hex_to_rgb($hex)
+    {
+    }
     /**
      * Register and setup WPForms as a Visual Composer element.
      *
