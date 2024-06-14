@@ -305,8 +305,17 @@ namespace {
          * Add the PRO badge to left sidebar menu item.
          *
          * @since 1.7.8
+         * @deprecated 1.8.1
          */
         public function adjust_pro_menu_item_class()
+        {
+        }
+        /**
+         * Make changes to the PRO menu item.
+         *
+         * @since 1.8.1
+         */
+        public function adjust_pro_menu_item()
         {
         }
         /**
@@ -1002,504 +1011,6 @@ namespace {
         }
     }
     /**
-     * Form front-end rendering.
-     *
-     * @since 1.0.0
-     */
-    class WPForms_Frontend
-    {
-        /**
-         * Store form data to be referenced later.
-         *
-         * @since 1.0.0
-         *
-         * @var array
-         */
-        public $forms;
-        /**
-         * Store information for multi-page forms.
-         *
-         * Forms that do not contain pages return false, otherwise returns an array
-         * that contains the number of total pages and page counter used when
-         * displaying pagebreak fields.
-         *
-         * @since 1.3.7
-         *
-         * @var array
-         */
-        public $pages = \false;
-        /**
-         * Store a form confirmation message.
-         *
-         * @since 1.4.8
-         *
-         * @todo Remove in favor of \WPForms_Process::$confirmation_message().
-         *
-         * @var string
-         */
-        public $confirmation_message = '';
-        /**
-         * If the active form confirmation should auto scroll.
-         *
-         * @since 1.4.9
-         *
-         * @var bool
-         */
-        public $confirmation_message_scroll = \false;
-        /**
-         * Whether ChoiceJS library has already been enqueued on the front end.
-         * This lib is used in different fields that can enqueue it separately,
-         * and we use this property to avoid config duplication.
-         *
-         * @since 1.6.3
-         *
-         * @var bool
-         */
-        public $is_choicesjs_enqueued = \false;
-        /**
-         * Primary class constructor.
-         *
-         * @since 1.0.0
-         */
-        public function __construct()
-        {
-        }
-        /**
-         * Register hooks.
-         *
-         * @since 1.7.7
-         */
-        private function hooks()
-        {
-        }
-        /**
-         * Get the amp-state ID for a given form.
-         *
-         * @since 1.5.4.2
-         *
-         * @param int $form_id Form ID.
-         *
-         * @return string State ID.
-         */
-        protected function get_form_amp_state_id($form_id)
-        {
-        }
-        /**
-         * Disable AMP if query param is detected.
-         *
-         * This allows the full form to be accessible for Pro users or sites
-         * that do not have SSL.
-         *
-         * @since 1.5.3
-         *
-         * @param bool $skip Skip AMP mode, display full post.
-         *
-         * @return bool
-         */
-        public function amp_skip_post($skip)
-        {
-        }
-        /**
-         * Primary function to render a form on the frontend.
-         *
-         * @since 1.0.0
-         *
-         * @param int  $id          Form ID.
-         * @param bool $title       Whether to display form title.
-         * @param bool $description Whether to display form description.
-         */
-        public function output($id, $title = \false, $description = \false)
-        {
-        }
-        /**
-         * Display form confirmation message.
-         *
-         * @since 1.0.0
-         *
-         * @param array $form_data Form data and settings.
-         * @param array $fields    Sanitized field data.
-         * @param int   $entry_id  Entry id.
-         */
-        public function confirmation($form_data, $fields = [], $entry_id = 0)
-        {
-        }
-        /**
-         * Form container classes.
-         *
-         * @since 1.7.9
-         *
-         * @param array $form_data Form data and settings.
-         *
-         * @return array
-         */
-        private function get_container_classes($form_data)
-        {
-        }
-        /**
-         * Display the opening container markup for a form.
-         *
-         * @since 1.7.9
-         *
-         * @param array   $form_data Form data and settings.
-         * @param WP_Post $form      Form post type.
-         */
-        private function form_container_open($form_data, $form)
-        {
-        }
-        /**
-         * Display the closing container markup for a form.
-         *
-         * @since 1.7.9
-         *
-         * @param array   $form_data Form data and settings.
-         * @param WP_Post $form      Form post type.
-         */
-        private function form_container_close($form_data, $form)
-        {
-        }
-        /**
-         * Form head area, for displaying form title and description if enabled.
-         *
-         * @since 1.0.0
-         *
-         * @param array $form_data   Form data and settings.
-         * @param null  $deprecated  Deprecated in v1.3.7, previously was $form object.
-         * @param bool  $title       Whether to display form title.
-         * @param bool  $description Whether to display form description.
-         * @param array $errors      List of all errors filled in WPForms_Process::process().
-         */
-        public function head($form_data, $deprecated, $title, $description, $errors)
-        {
-        }
-        /**
-         * Form field area.
-         *
-         * @since 1.0.0
-         *
-         * @param array $form_data   Form data and settings.
-         * @param null  $deprecated  Deprecated in v1.3.7, previously was $form object.
-         * @param bool  $title       Whether to display form title.
-         * @param bool  $description Whether to display form description.
-         * @param array $errors      List of all errors filled in WPForms_Process::process().
-         */
-        public function fields($form_data, $deprecated, $title, $description, $errors)
-        {
-        }
-        /**
-         * Return base attributes for a specific field. This is deprecated and
-         * exists for backwards-compatibility purposes. Use field properties instead.
-         *
-         * @since 1.3.7
-         *
-         * @param array $field     Field data and settings.
-         * @param array $form_data Form data and settings.
-         *
-         * @return array
-         */
-        public function get_field_attributes($field, $form_data)
-        {
-        }
-        /**
-         * Return base properties for a specific field.
-         *
-         * @since 1.3.7
-         *
-         * @param array $field      Field data and settings.
-         * @param array $form_data  Form data and settings.
-         * @param array $attributes List of field attributes.
-         *
-         * @return array
-         */
-        public function get_field_properties($field, $form_data, $attributes = [])
-        {
-        }
-        /**
-         * Display the opening container markup for each field.
-         *
-         * @since 1.3.7
-         *
-         * @param array $field     Field data and settings.
-         * @param array $form_data Form data and settings.
-         */
-        public function field_container_open($field, $form_data)
-        {
-        }
-        /**
-         * Display the label for each field.
-         *
-         * @since 1.3.7
-         *
-         * @param array $field     Field data and settings.
-         * @param array $form_data Form data and settings.
-         */
-        public function field_label($field, $form_data)
-        {
-        }
-        /**
-         * Display any errors for each field.
-         *
-         * @since 1.3.7
-         *
-         * @param array $field     Field data and settings.
-         * @param array $form_data Form data and settings.
-         */
-        public function field_error($field, $form_data)
-        {
-        }
-        /**
-         * Display the description for each field.
-         *
-         * @since 1.3.7
-         *
-         * @param array $field     Field data and settings.
-         * @param array $form_data Form data and settings.
-         */
-        public function field_description($field, $form_data)
-        {
-        }
-        /**
-         * Display the closing container markup for each field.
-         *
-         * @since 1.3.7
-         *
-         * @param array $field     Field data and settings.
-         * @param array $form_data Form data and settings.
-         */
-        public function field_container_close($field, $form_data)
-        {
-        }
-        /**
-         * Anti-spam honeypot output if configured.
-         *
-         * @since 1.0.0
-         *
-         * @param array $form_data   Form data and settings.
-         * @param null  $deprecated  Deprecated in v1.3.7, previously was $form object.
-         * @param bool  $title       Whether to display form title.
-         * @param bool  $description Whether to display form description.
-         * @param array $errors      List of all errors filled in WPForms_Process::process().
-         */
-        public function honeypot($form_data, $deprecated, $title, $description, $errors)
-        {
-        }
-        /**
-         * CAPTCHA output if configured.
-         *
-         * @since 1.0.0
-         * @since 1.6.4 Added hCaptcha support.
-         *
-         * @param array $form_data   Form data and settings.
-         * @param null  $deprecated  Deprecated in v1.3.7, previously was $form object.
-         * @param bool  $title       Whether to display form title.
-         * @param bool  $description Whether to display form description.
-         * @param array $errors      List of all errors filled in WPForms_Process::process().
-         */
-        public function recaptcha($form_data, $deprecated, $title, $description, $errors)
-        {
-        }
-        /**
-         * Form footer area.
-         *
-         * @since 1.0.0
-         *
-         * @param array $form_data   Form data and settings.
-         * @param null  $deprecated  Deprecated in v1.3.7, previously was $form object.
-         * @param bool  $title       Whether to display form title.
-         * @param bool  $description Whether to display form description.
-         * @param array $errors      List of all errors filled in WPForms_Process::process().
-         */
-        public function foot($form_data, $deprecated, $title, $description, $errors)
-        {
-        }
-        /**
-         * Display form error.
-         *
-         * @since 1.5.3
-         *
-         * @param string $type  Error type.
-         * @param string $error Error text.
-         */
-        public function form_error($type, $error)
-        {
-        }
-        /**
-         * Determine if we should load assets globally.
-         * If false assets will load conditionally (default).
-         *
-         * @since 1.2.4
-         *
-         * @return bool
-         */
-        public function assets_global()
-        {
-        }
-        /**
-         * Load the necessary CSS for single pages/posts earlier if possible.
-         *
-         * If we are viewing a singular page, then we can check the content early
-         * to see if the shortcode was used. If not we fallback and load the assets
-         * later on during the page (widgets, archives, etc).
-         *
-         * @since 1.0.0
-         */
-        public function assets_header()
-        {
-        }
-        /**
-         * Load the CSS assets for frontend output.
-         *
-         * @since 1.0.0
-         */
-        public function assets_css()
-        {
-        }
-        /**
-         * Load the JS assets for frontend output.
-         *
-         * @since 1.0.0
-         */
-        public function assets_js()
-        {
-        }
-        /**
-         * Load the assets needed for the CAPTCHA.
-         *
-         * @since 1.6.2
-         * @since 1.6.4 Added hCaptcha support.
-         */
-        public function assets_recaptcha()
-        {
-        }
-        /**
-         * Retrieve the string containing the CAPTCHA inline javascript.
-         *
-         * @since 1.6.4
-         *
-         * @param array $captcha_settings The CAPTCHA settings.
-         *
-         * @return string
-         */
-        protected function get_captcha_inline_script($captcha_settings)
-        {
-        }
-        /**
-         * Cloudflare Turnstile captcha requires defer attribute.
-         *
-         * @since 1.8.0
-         *
-         * @param string $tag    HTML for the script tag.
-         * @param string $handle Handle of script.
-         * @param string $src    Src of script.
-         *
-         * @return string
-         */
-        public function set_defer_attribute($tag, $handle, $src)
-        {
-        }
-        /**
-         * Load the necessary assets for the confirmation message.
-         *
-         * @since 1.1.2
-         * @since 1.7.9 Added $form_data argument.
-         *
-         * @param array $form_data Form data and settings.
-         */
-        public function assets_confirmation($form_data = [])
-        {
-        }
-        /**
-         * Load the assets in footer if needed (archives, widgets, etc).
-         *
-         * @since 1.0.0
-         */
-        public function assets_footer()
-        {
-        }
-        /**
-         * Get strings to localize.
-         *
-         * @since 1.6.0
-         *
-         * @return array Array of strings to localize.
-         */
-        public function get_strings()
-        {
-        }
-        /**
-         * Hook at fires at a later priority in wp_footer.
-         *
-         * @since 1.0.5
-         * @since 1.7.0 Load wpforms_settings on the confirmation page for a non-ajax form.
-         */
-        public function footer_end()
-        {
-        }
-        /**
-         * Google reCAPTCHA no-conflict mode.
-         *
-         * When enabled in the WPForms settings, forcefully remove all other
-         * reCAPTCHA enqueues to prevent conflicts. Filter can be used to target
-         * specific pages, etc.
-         *
-         * @since 1.4.5
-         * @since 1.6.4 Added hCaptcha support.
-         */
-        public function recaptcha_noconflict()
-        {
-        }
-        /**
-         * Shortcode wrapper for the outputting a form.
-         *
-         * @since 1.0.0
-         *
-         * @param array $atts Shortcode attributes provided by a user.
-         *
-         * @return string
-         */
-        public function shortcode($atts)
-        {
-        }
-        /**
-         * Inline a script to check if our main js is loaded and display a warning message otherwise.
-         *
-         * @since 1.6.4.1
-         */
-        public function missing_assets_error_js()
-        {
-        }
-        /**
-         * Get missing assets error script.
-         *
-         * @since 1.6.4.1
-         *
-         * @return string
-         */
-        private function get_missing_assets_error_script()
-        {
-        }
-        /**
-         * Get missing assets error message.
-         *
-         * @since 1.6.4.1
-         *
-         * @return string
-         */
-        private function get_missing_assets_error_message()
-        {
-        }
-        /**
-         * Render the single field.
-         *
-         * @since 1.7.7
-         *
-         * @param array $form_data Form data.
-         * @param array $field     Field data.
-         */
-        public function render_field($form_data, $field)
-        {
-        }
-    }
-    /**
      * Handle plugin installation upon activation.
      *
      * @since 1.0.0
@@ -1756,6 +1267,11 @@ namespace WPForms {
         private static function trigger_error($element_name = '')
         {
         }
+    }
+}
+namespace WPForms\Forms {
+    class Loader extends \WPForms\Removed
+    {
     }
 }
 namespace {
@@ -2216,6 +1732,14 @@ namespace {
          */
         public $field_data;
         /**
+         * Instance of the Frontend class.
+         *
+         * @since 1.8.1
+         *
+         * @var FrontendBase
+         */
+        protected $frontend_obj;
+        /**
          * Primary class constructor.
          *
          * @since 1.0.0
@@ -2496,16 +2020,53 @@ namespace {
         {
         }
         /**
-         * Display the field input elements on the frontend.
+         * Display the field input elements on the frontend
+         * according to the render engine setting.
+         *
+         * @since 1.8.1
+         *
+         * @param array $field      Field data and settings.
+         * @param array $field_atts Field attributes (deprecated).
+         * @param array $form_data  Form data and settings.
+         *
+         * @noinspection PhpUnusedParameterInspection
+         */
+        public function field_display_proxy($field, $field_atts, $form_data)
+        {
+        }
+        /**
+         * Display the field using classic rendering.
          *
          * @since 1.0.0
          * @since 1.5.0 Converted to abstract method, as it's required for all fields.
          *
          * @param array $field      Field data and settings.
-         * @param array $field_atts Field attributes.
+         * @param array $field_atts Field attributes (deprecated).
          * @param array $form_data  Form data and settings.
          */
         public abstract function field_display($field, $field_atts, $form_data);
+        /**
+         * Display the field using classic rendering.
+         *
+         * @since 1.8.1
+         *
+         * @param array $field     Field data and settings.
+         * @param array $form_data Form data and settings.
+         */
+        protected function field_display_classic($field, $form_data)
+        {
+        }
+        /**
+         * Display the field using modern rendering.
+         *
+         * @since 1.8.1
+         *
+         * @param array $field     Field data and settings.
+         * @param array $form_data Form data and settings.
+         */
+        protected function field_display_modern($field, $form_data)
+        {
+        }
         /**
          * Display field input errors if present.
          *
@@ -2590,6 +2151,19 @@ namespace {
         protected function is_choicesjs_search_enabled($choices_count)
         {
         }
+        /**
+         * Get instance of the class connected to the current field,
+         * and located in the `src/Forms/[Pro/]Fields/FieldType/Class.php` file.
+         *
+         * @since 1.8.1
+         *
+         * @param string $class Class name, for example `Frontend`.
+         *
+         * @return object
+         */
+        private function get_object($class)
+        {
+        }
     }
     /**
      * Checkbox field.
@@ -2604,6 +2178,14 @@ namespace {
          * @since 1.0.0
          */
         public function init()
+        {
+        }
+        /**
+         * Hooks.
+         *
+         * @since 1.8.1
+         */
+        private function hooks()
         {
         }
         /**
@@ -2723,6 +2305,14 @@ namespace {
          * @since 1.0.0
          */
         public function init()
+        {
+        }
+        /**
+         * Hooks.
+         *
+         * @since 1.8.1
+         */
+        private function hooks()
         {
         }
         /**
@@ -3160,6 +2750,21 @@ namespace {
          * @return false|string
          */
         private function is_email_pattern_without_at($pattern)
+        {
+        }
+        /**
+         * Determine if the field requires fieldset instead of the regular field label.
+         *
+         * @since 1.8.1
+         *
+         * @param bool  $requires_fieldset True if requires fieldset.
+         * @param array $field             Field data.
+         *
+         * @return bool
+         *
+         * @noinspection PhpUnusedParameterInspection
+         */
+        public function is_field_requires_fieldset($requires_fieldset, $field)
         {
         }
     }
@@ -3628,6 +3233,14 @@ namespace {
         {
         }
         /**
+         * Hooks.
+         *
+         * @since 1.8.1
+         */
+        private function hooks()
+        {
+        }
+        /**
          * Define additional field properties.
          *
          * @since 1.3.7
@@ -3708,6 +3321,21 @@ namespace {
          * @param array $form_data
          */
         public function format($field_id, $field_submit, $form_data)
+        {
+        }
+        /**
+         * Determine if the field requires fieldset+legend instead of the regular field label.
+         *
+         * @since 1.8.1
+         *
+         * @param bool  $requires_fieldset True if requires fieldset.
+         * @param array $field             Field data.
+         *
+         * @return bool
+         *
+         * @noinspection PhpUnusedParameterInspection
+         */
+        public function is_field_requires_fieldset($requires_fieldset, $field)
         {
         }
     }
@@ -3950,6 +3578,14 @@ namespace {
         {
         }
         /**
+         * Hooks.
+         *
+         * @since 1.8.1
+         */
+        private function hooks()
+        {
+        }
+        /**
          * Return images, if any, for HTML supported values.
          *
          * @since 1.4.5
@@ -4140,6 +3776,14 @@ namespace {
          * @param array $forms Forms on the current page.
          */
         public function enqueue_frontend_js($forms)
+        {
+        }
+        /**
+         * Load WPForms Gutenberg block scripts.
+         *
+         * @since 1.8.1
+         */
+        public function enqueue_block_editor_assets()
         {
         }
         /**
@@ -5353,6 +4997,14 @@ namespace WPForms {
          * @since 1.6.2
          */
         private function populate_forms()
+        {
+        }
+        /**
+         * Populate Frontend related classes.
+         *
+         * @since 1.8.1
+         */
+        private function populate_frontend()
         {
         }
         /**
@@ -7248,6 +6900,16 @@ namespace {
      * @return string Items separated by comma and sql-escaped.
      */
     function wpforms_wpdb_prepare_in($items, $format = '%s')
+    {
+    }
+    /**
+     * Get the render engine slug according to the Modern Markup setting value and corresponding filter.
+     *
+     * @since 1.8.1
+     *
+     * @return string
+     */
+    function wpforms_get_render_engine()
     {
     }
     /**
