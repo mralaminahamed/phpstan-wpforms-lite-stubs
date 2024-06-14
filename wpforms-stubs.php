@@ -627,368 +627,6 @@ namespace {
         }
     }
     /**
-     * Generate the table on the plugin overview page.
-     *
-     * @since 1.0.0
-     */
-    class WPForms_Overview_Table extends \WP_List_Table
-    {
-        /**
-         * Number of forms to show per page.
-         *
-         * @since 1.0.0
-         *
-         * @var int
-         */
-        public $per_page;
-        /**
-         * Number of forms in different views.
-         *
-         * @since 1.7.2
-         *
-         * @var array
-         */
-        private $count;
-        /**
-         * Current view.
-         *
-         * @since 1.7.3
-         *
-         * @var string
-         */
-        private $view;
-        /**
-         * Primary class constructor.
-         *
-         * @since 1.0.0
-         */
-        public function __construct()
-        {
-        }
-        /**
-         * Get the instance of a class and store it in itself.
-         *
-         * @since 1.7.5
-         */
-        public static function get_instance()
-        {
-        }
-        /**
-         * Retrieve the table columns.
-         *
-         * @since 1.0.0
-         *
-         * @return array $columns Array of all the list table columns.
-         */
-        public function get_columns()
-        {
-        }
-        /**
-         * Render the checkbox column.
-         *
-         * @since 1.0.0
-         *
-         * @param WP_Post $form Form.
-         *
-         * @return string
-         */
-        public function column_cb($form)
-        {
-        }
-        /**
-         * Render the columns.
-         *
-         * @since 1.0.0
-         *
-         * @param WP_Post $form        CPT object as a form representation.
-         * @param string  $column_name Column Name.
-         *
-         * @return string
-         */
-        public function column_default($form, $column_name)
-        {
-        }
-        /**
-         * Filter the default list of hidden columns.
-         *
-         * @since 1.7.2
-         *
-         * @param string[]  $hidden Array of IDs of columns hidden by default.
-         * @param WP_Screen $screen WP_Screen object of the current screen.
-         *
-         * @return string[]
-         */
-        public function default_hidden_columns($hidden, $screen)
-        {
-        }
-        /**
-         * Render the form name column with action links.
-         *
-         * @since 1.0.0
-         *
-         * @param WP_Post $form Form.
-         *
-         * @return string
-         */
-        public function column_name($form)
-        {
-        }
-        /**
-         * Render the form tags column.
-         *
-         * @since 1.7.5
-         *
-         * @param WP_Post $form Form.
-         *
-         * @return string
-         */
-        public function column_tags($form)
-        {
-        }
-        /**
-         * Get the form name HTML for the form name column.
-         *
-         * @since 1.5.8
-         *
-         * @param WP_Post $form Form object.
-         *
-         * @return string
-         */
-        protected function get_column_name_title($form)
-        {
-        }
-        /**
-         * Get the row actions HTML for the form name column.
-         *
-         * @since 1.5.8
-         *
-         * @param WP_Post $form Form object.
-         *
-         * @return string
-         */
-        protected function get_column_name_row_actions($form)
-        {
-        }
-        /**
-         * Define bulk actions available for our table listing.
-         *
-         * @since 1.0.0
-         *
-         * @return array
-         */
-        public function get_bulk_actions()
-        {
-        }
-        /**
-         * Generate the table navigation above or below the table.
-         *
-         * @since 1.7.2
-         *
-         * @param string $which The location of the table navigation: 'top' or 'bottom'.
-         */
-        protected function display_tablenav($which)
-        {
-        }
-        /**
-         * Extra controls to be displayed between bulk actions and pagination.
-         *
-         * @since 1.7.3
-         *
-         * @param string $which The location of the table navigation: 'top' or 'bottom'.
-         */
-        protected function extra_tablenav($which)
-        {
-        }
-        /**
-         * Message to be displayed when there are no forms.
-         *
-         * @since 1.0.0
-         */
-        public function no_items()
-        {
-        }
-        /**
-         * Fetch and set up the final data for the table.
-         *
-         * @since 1.0.0
-         */
-        public function prepare_items()
-        {
-        }
-        /**
-         * Calculate and update form counts.
-         *
-         * @since 1.7.2
-         *
-         * @param array $args Get forms arguments.
-         */
-        private function update_count($args)
-        {
-        }
-        /**
-         * Display the pagination.
-         *
-         * @since 1.7.2
-         *
-         * @param string $which The location of the table pagination: 'top' or 'bottom'.
-         */
-        protected function pagination($which)
-        {
-        }
-        /**
-         * Extending the `display_rows()` method in order to add hooks.
-         *
-         * @since 1.5.6
-         */
-        public function display_rows()
-        {
-        }
-        /**
-         * Forms search markup.
-         *
-         * @since 1.7.2
-         *
-         * @param string $text     The 'submit' button label.
-         * @param string $input_id ID attribute value for the search input field.
-         */
-        public function search_box($text, $input_id)
-        {
-        }
-        /**
-         * Get the list of views available on forms overview table.
-         *
-         * @since 1.7.3
-         */
-        protected function get_views()
-        {
-        }
-    }
-    /**
-     * Primary overview page inside the admin which lists all forms.
-     *
-     * @since 1.0.0
-     */
-    class WPForms_Overview
-    {
-        /**
-         * Overview Table instance.
-         *
-         * @since 1.7.2
-         *
-         * @var WPForms_Overview_Table
-         */
-        private $overview_table;
-        /**
-         * Primary class constructor.
-         *
-         * @since 1.0.0
-         */
-        public function __construct()
-        {
-        }
-        /**
-         * Determine if the user is viewing the overview page, if so, party on.
-         *
-         * @since 1.0.0
-         */
-        public function init()
-        {
-        }
-        /**
-         * Init overview table class.
-         *
-         * @since 1.7.2
-         */
-        public function init_overview_table()
-        {
-        }
-        /**
-         * Remove previous `_wp_http_referer` variable from the REQUEST_URI.
-         *
-         * @since 1.7.2
-         */
-        private function remove_referer()
-        {
-        }
-        /**
-         * Add per-page screen option to the Forms table.
-         *
-         * @since 1.0.0
-         */
-        public function screen_options()
-        {
-        }
-        /**
-         * Form table per-page screen option value.
-         *
-         * @since 1.0.0
-         *
-         * @param bool   $keep   Whether to save or skip saving the screen option value. Default false.
-         * @param string $option The option name.
-         * @param int    $value  The number of rows to use.
-         *
-         * @return mixed
-         */
-        public function screen_options_set($keep, $option, $value)
-        {
-        }
-        /**
-         * Enqueue assets for the overview page.
-         *
-         * @since 1.0.0
-         */
-        public function enqueues()
-        {
-        }
-        /**
-         * Determine if it is an empty state.
-         *
-         * @since 1.7.5
-         */
-        private function is_empty_state()
-        {
-        }
-        /**
-         * Build the output for the overview page.
-         *
-         * @since 1.0.0
-         */
-        public function output()
-        {
-        }
-        /**
-         * Admin notices.
-         *
-         * @since 1.5.7
-         * @deprecated 1.7.3
-         */
-        public function notices()
-        {
-        }
-        /**
-         * Process the bulk table actions.
-         *
-         * @since 1.5.7
-         * @deprecated 1.7.3
-         */
-        public function process_bulk_actions()
-        {
-        }
-        /**
-         * Remove certain arguments from a query string that WordPress should always hide for users.
-         *
-         * @since 1.5.7
-         * @deprecated 1.7.3
-         *
-         * @param array $removable_query_args An array of parameters to remove from the URL.
-         *
-         * @return array Extended/filtered array of parameters to remove from the URL.
-         */
-        public function removable_query_args($removable_query_args)
-        {
-        }
-    }
-    /**
      * Load the field types.
      *
      * @since 1.0.0
@@ -1993,6 +1631,30 @@ namespace {
         {
         }
         /**
+         * Enhances template fields by adding keywords.
+         *
+         * @since 1.8.6
+         *
+         * @param array $template_fields List of template fields.
+         *
+         * @return array
+         */
+        public function enhance_template_fields_with_keywords(array $template_fields) : array
+        {
+        }
+        /**
+         * Adds keywords to the provided fields.
+         *
+         * @since 1.8.6
+         *
+         * @param array $fields List of fields to which keywords will be added.
+         *
+         * @return void
+         */
+        private function add_keywords(array &$fields)
+        {
+        }
+        /**
          * Create the field options panel. Used by subclasses.
          *
          * @since 1.0.0
@@ -2356,6 +2018,19 @@ namespace {
          * @param array $field Field data and settings.
          */
         protected function display_empty_dynamic_choices_message($field)
+        {
+        }
+        /**
+         * Get checkbox, choices and select field options label.
+         *
+         * @since 1.8.6
+         *
+         * @param string $label Choice option label.
+         * @param int    $key   Choice number.
+         *
+         * @return string
+         */
+        protected function get_choices_label($label, int $key)
         {
         }
     }
@@ -5108,6 +4783,41 @@ namespace {
         }
     }
 }
+namespace WPForms {
+    /**
+     * Class API.
+     *
+     * @since 1.8.6
+     */
+    class API
+    {
+        /**
+         * Registry.
+         * Contains name of the class and method to be called.
+         * For non-static methods, should contain the id to operate via wpforms->get( 'class' ).
+         *
+         * @todo Add non-static methods processing.
+         *
+         * @since 1.8.6
+         *
+         * @var array[]
+         */
+        private $registry = ['import_forms' => ['class' => \WPForms\Admin\Tools\Views\Import::class, 'method' => 'import_forms']];
+        /**
+         * Magic method to call a method from registry.
+         *
+         * @since 1.8.6
+         *
+         * @param string $name Method name.
+         * @param array  $args Arguments.
+         *
+         * @return mixed|null
+         */
+        public function __call(string $name, array $args)
+        {
+        }
+    }
+}
 namespace WPForms\Access {
     /**
      * Access/Capability management.
@@ -5226,6 +4936,14 @@ namespace WPForms {
         {
         }
         /**
+         * Populate common classes.
+         *
+         * @since 1.8.6
+         */
+        private function populate_common()
+        {
+        }
+        /**
          * Populate the Forms related classes.
          *
          * @since 1.6.2
@@ -5263,6 +4981,14 @@ namespace WPForms {
          * @since 1.7.5
          */
         private function populate_forms_overview()
+        {
+        }
+        /**
+         * Populate Entries related classes.
+         *
+         * @since 1.8.6
+         */
+        private function populate_entries()
         {
         }
         /**
@@ -5468,9 +5194,20 @@ namespace WPForms {
          *
          * @since 1.5.7
          *
-         * @param array $class Class registration info.
+         * @param array $class_data Class registration info.
          */
-        public function register($class)
+        public function register($class_data)
+        {
+        }
+        /**
+         * Register any class instance.
+         *
+         * @since 1.8.6
+         *
+         * @param string $id       Class ID.
+         * @param object $instance Any class instance (object).
+         */
+        public function register_instance($id, $instance)
         {
         }
         /**
