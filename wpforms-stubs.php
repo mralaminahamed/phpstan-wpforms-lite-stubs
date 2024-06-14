@@ -6033,6 +6033,36 @@ namespace {
     {
     }
     /**
+     * Helpers functions for the Education pages.
+     *
+     * @since 1.8.2.2
+     */
+    /**
+     * Get the button.
+     *
+     * @since 1.8.2.2
+     *
+     * @param string $action       Action to perform.
+     * @param bool   $plugin_allow Is plugin allowed.
+     * @param string $path         Plugin file.
+     * @param string $url          URL for download plugin.
+     * @param array  $utm          UTM parameters.
+     */
+    function wpforms_edu_get_button($action, $plugin_allow, $path, $url, $utm)
+    {
+    }
+    /**
+     * Get the upgrade button.
+     *
+     * @since 1.8.2.2
+     *
+     * @param array $utm     UTM parameters.
+     * @param array $classes Classes.
+     */
+    function wpforms_edu_get_upgrade_button($utm, $classes = [])
+    {
+    }
+    /**
      * Decode special characters, both alpha- (<) and numeric-based (').
      * Sanitize recursively, preserve new lines.
      * Handle all the possible mixed variations of < and `&lt;` that can be processed into tags.
