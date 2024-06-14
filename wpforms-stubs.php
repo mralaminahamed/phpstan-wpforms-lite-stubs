@@ -6,15 +6,79 @@
  */
 
 /**
+ * Awesome Motive Events and News Feed.
+ *
+ * This appends additional blog feeds to the WordPress Events and News Feed Widget
+ * available in the WP-Admin Dashboard.
+ *
+ * @package    AwesomeMotive
+ * @author     AwesomeMotive Team
+ * @license    GPL-2.0+
+ * @copyright  Copyright (c) 2018, Awesome Motive LLC
+ * @version    1.0.0
+ */
+class AM_Dashboard_Widget_Extend_Feed
+{
+    /**
+     * The number of feed items to show.
+     *
+     * @since 1.0.0
+     *
+     * @var int
+     */
+    const FEED_COUNT = 6;
+    /**
+     * Construct.
+     *
+     * @since 1.0.0
+     */
+    public function __construct()
+    {
+    }
+    /**
+     * Set the number of feed items to show.
+     *
+     * @since 1.0.0
+     *
+     * @return int Count of feed items.
+     */
+    public function dashboard_items_count()
+    {
+    }
+    /**
+     * Update the planet feed to add other AM blog feeds.
+     *
+     * @since 1.0.0
+     *
+     * @param object $feed SimplePie feed object (passed by reference).
+     * @param string $url URL of feed to retrieve (original planet feed url). If an array of URLs, the feeds are merged.
+     */
+    public function dashboard_update_feed_urls($feed, $url)
+    {
+    }
+    /**
+     * Get the feed URLs for various active AM Products.
+     *
+     * @since 1.0.0
+     *
+     * @param string $url Planet Feed URL.
+     *
+     * @return array Array of Feed URLs.
+     */
+    public function get_feed_urls($url)
+    {
+    }
+}
+/**
  * Awesome Motive Deactivation Survey.
  *
  * This prompts the user for more details when they deactivate the plugin.
  *
- * @version    1.0.0
+ * @version    1.2.0
  * @package    AwesomeMotive
- * @author     Jared Atchison
+ * @author     Jared Atchison and Chris Christoff
  * @license    GPL-2.0+
- * @copyright  Copyright (c) 2017
+ * @copyright  Copyright (c) 2018
  */
 class AM_Deactivation_Survey
 {
@@ -47,6 +111,15 @@ class AM_Deactivation_Survey
      * @param string $plugin Plugin slug.
      */
     public function __construct($name = '', $plugin = '')
+    {
+    }
+    /**
+     * Checks if current site is a development one.
+     *
+     * @since 1.2.0
+     * @return bool
+     */
+    public function is_dev_url()
     {
     }
     /**
@@ -90,10 +163,10 @@ class AM_Deactivation_Survey
  * retrieve notifications for this product.
  *
  * @package    AwesomeMotive
- * @author     Benjamin Rojas
+ * @author     AwesomeMotive Team
  * @license    GPL-2.0+
- * @copyright  Copyright (c) 2017, Retyp LLC
- * @version    1.0.0
+ * @copyright  Copyright (c) 2018, Awesome Motive LLC
+ * @version    1.0.6
  */
 class AM_Notification
 {
@@ -123,28 +196,20 @@ class AM_Notification
      */
     public $plugin_version;
     /**
-     * The list of installed plugins.
+     * Flag if a notice has been registered.
      *
      * @since 1.0.0
      *
-     * @var array
+     * @var bool
      */
-    public $plugin_list = array();
-    /**
-     * The list of installed themes.
-     *
-     * @since 1.0.0
-     *
-     * @var string
-     */
-    public $theme_list = array();
+    public static $registered = \false;
     /**
      * Construct.
      *
      * @since 1.0.0
      *
-     * @param string $plugin  The plugin slug.
-     * @param string $version The version of the plugin.
+     * @param string $plugin The plugin slug.
+     * @param mixed $version The version of the plugin.
      */
     public function __construct($plugin = '', $version = 0)
     {
@@ -171,30 +236,11 @@ class AM_Notification
      * @since 1.0.0
      *
      * @param  integer $limit Set the limit for how many posts to retrieve.
-     * @param  array   $args  Any top-level arguments to add to the array.
-     * @return object         WP_Posts that match the query.
+     * @param  array $args Any top-level arguments to add to the array.
+     *
+     * @return WP_Post[] WP_Post that match the query.
      */
     public function get_plugin_notifications($limit = -1, $args = array())
-    {
-    }
-    /**
-     * Retrieve a list of plugins that are currently installed.
-     *
-     * @since 1.0.0
-     *
-     * @return array An array of plugins that are currently installed.
-     */
-    public function get_plugins_list()
-    {
-    }
-    /**
-     * Retrieve a list of themes that are currently installed.
-     *
-     * @since 1.0.0
-     *
-     * @return array An array of themes that are currently installed.
-     */
-    public function get_themes_list()
     {
     }
     /**
@@ -211,9 +257,20 @@ class AM_Notification
      * @since 1.0.0
      *
      * @param  array $plugin_notifications An array of plugin notifications.
+     *
      * @return array                       A filtered array of plugin notifications.
      */
     public function validate_notifications($plugin_notifications)
+    {
+    }
+    /**
+     * Grab the current plan level.
+     *
+     * @since 1.0.0
+     *
+     * @return string The current plan level.
+     */
+    public function get_plan_level()
     {
     }
     /**
@@ -222,6 +279,16 @@ class AM_Notification
      * @since 1.0.0
      */
     public function dismiss_notification()
+    {
+    }
+    /**
+     * Revokes notifications.
+     *
+     * @since 1.0.0
+     *
+     * @param array $ids An array of notification IDs to revoke.
+     */
+    public function revoke_notifications($ids)
     {
     }
 }
@@ -233,7 +300,7 @@ class AM_Notification
  * @since      1.0.0
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2016, WPForms LLC
-*/
+ */
 class WPForms_Admin_Editor
 {
     /**
@@ -246,12 +313,12 @@ class WPForms_Admin_Editor
     }
     /**
      * Allow easy shortcode insertion via a custom media button.
-     * 
+     *
      * @since 1.0.0
+     *
      * @param string $editor_id
-     * @return
      */
-    function media_button($editor_id)
+    public function media_button($editor_id)
     {
     }
     /**
@@ -263,7 +330,43 @@ class WPForms_Admin_Editor
      *
      * @since 1.0.0
      */
-    function shortcode_modal()
+    public function shortcode_modal()
+    {
+    }
+}
+/**
+ * Load the different form importers.
+ *
+ * @package    WPForms
+ * @author     WPForms
+ * @since      1.4.2
+ * @license    GPL-2.0+
+ * @copyright  Copyright (c) 2017, WPForms LLC
+ */
+class WPForms_Importers
+{
+    /**
+     * Primary class constructor.
+     *
+     * @since 1.4.2
+     */
+    public function __construct()
+    {
+    }
+    /**
+     * Load and init the base importer class.
+     *
+     * @since 1.4.2
+     */
+    public function init()
+    {
+    }
+    /**
+     * Load default form importers.
+     *
+     * @since 1.4.2
+     */
+    public function load()
     {
     }
 }
@@ -291,7 +394,7 @@ class WPForms_Admin_Menu
      *
      * @since 1.0.0
      */
-    function register_menus()
+    public function register_menus()
     {
     }
     /**
@@ -303,18 +406,12 @@ class WPForms_Admin_Menu
     {
     }
     /**
-     * Load CSS for custom menu icon.
-     *
-     * @since 1.0.0
-     */
-    public function menu_icon()
-    {
-    }
-    /**
      * Add settings link to the Plugins page.
      *
      * @since 1.3.9
-     * @param array $links
+     *
+     * @param array $links Plugin row links.
+     *
      * @return array $links
      */
     public function settings_link($links)
@@ -325,12 +422,12 @@ class WPForms_Admin_Menu
  * Admin notices, on the fly.
  *
  * @example
- * Notice::success( 'All is good!' );
+ * WPForms_Admin_Notice::success( 'All is good!' );
  *
  * @example
- * Notice::warning( 'Do something please.' );
+ * WPForms_Admin_Notice::warning( 'Do something please.' );
  *
- * @todo       Persistent, dismissable notices
+ * @todo       Persistent, dismissible notices.
  * @link       https://gist.github.com/monkeymonk/2ea17e2260daaecd0049c46c8d6c85fd
  * @package    WPForms
  * @author     WPForms
@@ -358,7 +455,7 @@ class WPForms_Admin_Notice
      * Get the instance.
      *
      * @since 1.3.9
-     * @return WPForms_Admin
+     * @return WPForms_Admin_Notice
      */
     public static function getInstance()
     {
@@ -383,8 +480,9 @@ class WPForms_Admin_Notice
      * Add notice to instance property.
      *
      * @since 1.3.9
-     * @param $message Message to display
-     * @param string $type Type of the notice (default: '')
+     *
+     * @param string $message Message to display.
+     * @param string $type Type of the notice (default: '').
      */
     public static function add($message, $type = '')
     {
@@ -393,7 +491,8 @@ class WPForms_Admin_Notice
      * Add Info notice.
      *
      * @since 1.3.9
-     * @param string $message Message to display
+     *
+     * @param string $message Message to display.
      */
     public static function info($message)
     {
@@ -402,7 +501,8 @@ class WPForms_Admin_Notice
      * Add Error notice.
      *
      * @since 1.3.9
-     * @param string $message Message to display
+     *
+     * @param string $message Message to display.
      */
     public static function error($message)
     {
@@ -411,7 +511,8 @@ class WPForms_Admin_Notice
      * Add Success notice.
      *
      * @since 1.3.9
-     * @param string $message Message to display
+     *
+     * @param string $message Message to display.
      */
     public static function success($message)
     {
@@ -420,7 +521,8 @@ class WPForms_Admin_Notice
      * Add Warning notice.
      *
      * @since 1.3.9
-     * @param string $message Message to display
+     *
+     * @param string $message Message to display.
      */
     public static function warning($message)
     {
@@ -434,7 +536,7 @@ class WPForms_Admin_Notice
  * @since      1.3.2
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2017, WPForms LLC
-*/
+ */
 class WPForms_Review
 {
     /**
@@ -482,7 +584,9 @@ class WPForms_Review
      * that graciously asks them to rate us.
      *
      * @since 1.3.2
+     *
      * @param string $text
+     *
      * @return string
      */
     public function admin_footer($text)
@@ -504,23 +608,50 @@ class WPForms_Tools
      * The current active tab.
      *
      * @since 1.3.9
-     * @var array
+     *
+     * @var string
      */
     public $view;
     /**
      * Template code if generated.
      *
      * @since 1.3.9
+     *
      * @var string
      */
     private $template = \false;
     /**
+     * Registered importers.
+     *
+     * @since 1.4.2
+     *
+     * @var array
+     */
+    public $importers = array();
+    /**
+     * Available forms for a specific importer.
+     *
+     * @since 1.4.2
+     *
+     * @var array
+     */
+    public $importer_forms = array();
+    /**
      * The available forms.
      *
      * @since 1.3.9
+     *
      * @var array
      */
     public $forms = \false;
+    /**
+     * The core views.
+     *
+     * @since 1.4.3
+     *
+     * @var array
+     */
+    public $views = array();
     /**
      * Primary class constructor.
      *
@@ -530,7 +661,7 @@ class WPForms_Tools
     {
     }
     /**
-     * Determing if the user is viewing the tools page, if so, party on.
+     * Determining if the user is viewing the tools page, if so, party on.
      *
      * @since 1.3.9
      */
@@ -546,11 +677,35 @@ class WPForms_Tools
     {
     }
     /**
-     * Import/Export tab contents.
+     * Import tab contents.
      *
-     * @since 1.3.9
+     * @since 1.4.2
      */
-    public function import_export_tab()
+    public function import_tab()
+    {
+    }
+    /**
+     * Importer tab contents.
+     *
+     * @since 1.4.2
+     */
+    public function importer_tab()
+    {
+    }
+    /**
+     * Various Underscores templates for form importing.
+     *
+     * @since 1.4.2
+     */
+    public function importer_templates()
+    {
+    }
+    /**
+     * Export tab contents.
+     *
+     * @since 1.4.2
+     */
+    public function export_tab()
     {
     }
     /**
@@ -575,7 +730,9 @@ class WPForms_Tools
      * Based on a function from Easy Digital Downloads by Pippin Williamson.
      *
      * @link https://github.com/easydigitaldownloads/easy-digital-downloads/blob/master/includes/admin/tools.php#L470
+     *
      * @since 1.3.9
+     *
      * @return string
      */
     public function get_system_info()
@@ -592,7 +749,7 @@ class WPForms_Tools
  * @since      1.0.0
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2016, WPForms LLC
-*/
+ */
 class WPForms_Welcome
 {
     /**
@@ -627,7 +784,7 @@ class WPForms_Welcome
     /**
      * Welcome screen redirect.
      *
-     * This function checks if a new install or update has just occured. If so,
+     * This function checks if a new install or update has just occurred. If so,
      * then we redirect the user to the appropriate page.
      *
      * @since 1.0.0
@@ -645,6 +802,508 @@ class WPForms_Welcome
     }
 }
 /**
+ * Interface WPForms_Importer_Interface to handle common methods for all importers.
+ *
+ * @package    WPForms
+ * @author     WPForms
+ * @since      1.4.2
+ * @license    GPL-2.0+
+ * @copyright  Copyright (c) 2017, WPForms LLC
+ */
+interface WPForms_Importer_Interface
+{
+    /**
+     * Define required properties.
+     *
+     * @since 1.4.2
+     */
+    public function init();
+    /**
+     * Get ALL THE FORMS.
+     *
+     * @since 1.4.2
+     */
+    public function get_forms();
+    /**
+     * Get a single form.
+     *
+     * @since 1.4.2
+     *
+     * @param int $id Form ID.
+     */
+    public function get_form($id);
+    /**
+     * Import a single form using AJAX.
+     *
+     * @since 1.4.2
+     */
+    public function import_form();
+    /**
+     * Replace 3rd-party form provider tags/shortcodes with our own Smart Tags.
+     *
+     * @since 1.4.2
+     *
+     * @param string $string Text to look for Smart Tags in.
+     * @param array  $fields List of fields to process Smart Tags in.
+     *
+     * @return string
+     */
+    public function get_smarttags($string, $fields);
+}
+/**
+ * Base Importer class.
+ *
+ * @package    WPForms
+ * @author     WPForms
+ * @since      1.4.2
+ * @license    GPL-2.0+
+ * @copyright  Copyright (c) 2017, WPForms LLC
+ */
+abstract class WPForms_Importer implements \WPForms_Importer_Interface
+{
+    /**
+     * Importer name.
+     *
+     * @since 1.4.2
+     *
+     * @var string
+     */
+    public $name;
+    /**
+     * Importer name in slug format.
+     *
+     * @since 1.4.2
+     *
+     * @var string
+     */
+    public $slug;
+    /**
+     * Importer plugin path.
+     *
+     * @since 1.4.2
+     *
+     * @var string
+     */
+    public $path;
+    /**
+     * Primary class constructor.
+     *
+     * @since 1.4.2
+     */
+    public function __construct()
+    {
+    }
+    /**
+     * Add to list of registered importers.
+     *
+     * @since 1.4.2
+     *
+     * @param array $importers List of supported importers.
+     *
+     * @return array
+     */
+    public function register($importers = array())
+    {
+    }
+    /**
+     * If the importer source is available.
+     *
+     * @since 1.4.2
+     *
+     * @return bool
+     */
+    protected function is_active()
+    {
+    }
+    /**
+     * Add the new form to the database and return AJAX data.
+     *
+     * @since 1.4.2
+     *
+     * @param array $form Form to import.
+     * @param array $unsupported List of unsupported fields.
+     * @param array $upgrade_plain List of fields, that are supported inside the paid WPForms, but not in Lite.
+     * @param array $upgrade_omit No field alternative in WPForms.
+     */
+    public function add_form($form, $unsupported = array(), $upgrade_plain = array(), $upgrade_omit = array())
+    {
+    }
+    /**
+     * After a form has been successfully imported we track it, so that in the
+     * future we can alert users if they try to import a form that has already
+     * been imported.
+     *
+     * @since 1.4.2
+     *
+     * @param int $source_id Imported plugin form ID.
+     * @param int $wpforms_id WPForms form ID.
+     */
+    public function track_import($source_id, $wpforms_id)
+    {
+    }
+}
+/**
+ * Contact Form 7 Importer class.
+ *
+ * @package    WPForms
+ * @author     WPForms
+ * @since      1.4.2
+ * @license    GPL-2.0+
+ * @copyright  Copyright (c) 2017, WPForms LLC
+ */
+class WPForms_Contact_Form_7 extends \WPForms_Importer
+{
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+    }
+    /**
+     * @inheritdoc
+     */
+    public function get_forms()
+    {
+    }
+    /**
+     * Get a single form.
+     *
+     * @since 1.4.2
+     *
+     * @param int $id Form ID.
+     *
+     * @return WPCF7_ContactForm|bool
+     */
+    public function get_form($id)
+    {
+    }
+    /**
+     * @inheritdoc
+     */
+    public function import_form()
+    {
+    }
+    /**
+     * Lookup and return the placeholder or default value.
+     *
+     * @since 1.4.2
+     *
+     * @param object $field Field object.
+     * @param string $type Type of the field.
+     *
+     * @return string
+     */
+    public function get_field_placeholder_default($field, $type = 'placeholder')
+    {
+    }
+    /**
+     * Get the field label.
+     *
+     * @since 1.4.2
+     *
+     * @param string $form Form data.
+     * @param string $type Field type.
+     * @param string $name Field name.
+     *
+     * @return string
+     */
+    public function get_field_label($form, $type, $name = '')
+    {
+    }
+    /**
+     * @inheritdoc
+     */
+    public function get_smarttags($string, $fields)
+    {
+    }
+    /**
+     * Find Reply-To in headers if provided.
+     *
+     * @since 1.4.2
+     *
+     * @param string $headers CF7 email headers.
+     * @param array  $fields List of fields.
+     *
+     * @return string
+     */
+    public function get_replyto($headers, $fields)
+    {
+    }
+    /**
+     * Sender information.
+     *
+     * @since 1.4.2
+     *
+     * @param string $sender Sender strings in "Name <email@example.com>" format.
+     * @param array  $fields List of fields.
+     *
+     * @return bool|array
+     */
+    public function get_sender_details($sender, $fields)
+    {
+    }
+}
+/**
+ * WordPress class extended for on-the-fly plugins installations, without error reporting.
+ *
+ * @package    WPForms
+ * @author     WPForms
+ * @since      1.4.9
+ * @license    GPL-2.0+
+ * @copyright  Copyright (c) 2018, WPForms LLC
+ */
+class WPForms_Install_Silent_Skin extends \WP_Upgrader_Skin
+{
+    /**
+     * Set the upgrader object and store it as a property in the parent class.
+     *
+     * @since 1.4.9
+     *
+     * @param object $upgrader The upgrader object (passed by reference).
+     */
+    public function set_upgrader(&$upgrader)
+    {
+    }
+    /**
+     * Empty out the header of its HTML content and only check to see if it has
+     * been performed or not.
+     *
+     * @since 1.4.9
+     */
+    public function header()
+    {
+    }
+    /**
+     * Empty out the footer of its HTML contents.
+     *
+     * @since 1.4.9
+     */
+    public function footer()
+    {
+    }
+    /**
+     * Instead of outputting HTML for errors, just return them.
+     * Ajax request will just ignore it.
+     *
+     * @since 1.4.9
+     *
+     * @param array $errors Array of errors with the install process.
+     *
+     * @return array
+     */
+    public function error($errors)
+    {
+    }
+    /**
+     * Empty out the feedback method to prevent outputting HTML strings as the install
+     * is progressing.
+     *
+     * @since 1.4.9
+     *
+     * @param string $string The feedback string.
+     */
+    public function feedback($string)
+    {
+    }
+    /**
+     * Empty out JavaScript output that calls function to decrement the update counts.
+     *
+     * @since 1.4.9
+     *
+     * @param string $type Type of update count to decrement.
+     */
+    public function decrement_update_count($type)
+    {
+    }
+}
+/**
+ * Ninja Forms Importer class.
+ *
+ * @package    WPForms
+ * @author     WPForms
+ * @since      1.4.2
+ * @license    GPL-2.0+
+ * @copyright  Copyright (c) 2017, WPForms LLC
+ */
+class WPForms_Ninja_Forms extends \WPForms_Importer
+{
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+    }
+    /**
+     * Get ALL THE FORMS.
+     *
+     * @since 1.4.2
+     *
+     * @return NF_Database_Models_Form[]
+     */
+    public function get_forms()
+    {
+    }
+    /**
+     * @inheritdoc
+     */
+    public function get_form($id)
+    {
+    }
+    /**
+     * @inheritdoc
+     */
+    public function import_form()
+    {
+    }
+    /**
+     * Get the field label.
+     *
+     * @since 1.4.2
+     *
+     * @param array $field
+     *
+     * @return string
+     */
+    public function get_field_label($field)
+    {
+    }
+    /**
+     * @inheritdoc
+     */
+    public function get_smarttags($string, $fields)
+    {
+    }
+}
+/**
+ * Pirate Forms Importer class.
+ *
+ * @package    WPForms
+ * @author     WPForms
+ * @since      1.4.9
+ * @license    GPL-2.0+
+ * @copyright  Copyright (c) 2018, WPForms LLC
+ */
+class WPForms_Pirate_Forms extends \WPForms_Importer
+{
+    /**
+     * Direct URL to download the latest version of WP Mail SMTP plugin from WP.org repo.
+     *
+     * @since 1.4.9
+     *
+     * @var string
+     */
+    const URL_SMTP_ZIP = 'https://downloads.wordpress.org/plugin/wp-mail-smtp.zip';
+    /**
+     * WP Mail SMTP plugin basename.
+     *
+     * @since 1.4.9
+     *
+     * @var string
+     */
+    const SLUG_SMTP_PLUGIN = 'wp-mail-smtp/wp_mail_smtp.php';
+    /**
+     * Default PirateForms smart tags.
+     *
+     * @var array
+     */
+    public static $tags = array('[email]');
+    /**
+     * Define required properties.
+     *
+     * @since 1.4.9
+     */
+    public function init()
+    {
+    }
+    /**
+     * Get ALL THE FORMS.
+     * We need only ID's and names here.
+     *
+     * @since 1.4.9
+     *
+     * @return array
+     */
+    public function get_forms()
+    {
+    }
+    /**
+     * Pirate Forms has a default form, which doesn't have an ID.
+     *
+     * @since 1.4.9
+     *
+     * @return array
+     */
+    protected function get_default_forms()
+    {
+    }
+    /**
+     * Copy-paste from Pro plugin code, it doesn't have API to get this data easily.
+     *
+     * @since 1.4.9
+     *
+     * @return array
+     */
+    protected function get_pro_forms()
+    {
+    }
+    /**
+     * Get a single form options.
+     *
+     * @since 1.4.9
+     *
+     * @param int $id Form ID.
+     *
+     * @return array
+     */
+    public function get_form($id)
+    {
+    }
+    /**
+     * Import a single form using AJAX.
+     *
+     * @since 1.4.9
+     */
+    public function import_form()
+    {
+    }
+    /**
+     * Replace 3rd-party form provider tags/shortcodes with our own Smart Tags.
+     * See: PirateForms_Util::get_magic_tags() for all PF tags.
+     *
+     * @since 1.4.9
+     *
+     * @param string $string String to process the smart tag in.
+     * @param array  $fields List of fields for the form.
+     *
+     * @return string
+     */
+    public function get_smarttags($string, $fields)
+    {
+    }
+    /**
+     * Import SMTP settings from Default form only.
+     *
+     * @since 1.4.9
+     *
+     * @param int   $pf_form_id PirateForms form ID.
+     * @param array $form WPForms form array.
+     */
+    protected function import_smtp($pf_form_id, $form)
+    {
+    }
+    /**
+     * Do all the voodoo to install and activate the WP Mail SMTP plugin behind the scene.
+     * No user interaction is needed.
+     *
+     * @since 1.4.9
+     *
+     * @return bool
+     */
+    protected function install_activate_smtp()
+    {
+    }
+}
+/**
  * Generates the table on the plugin overview page.
  *
  * @package    WPForms
@@ -652,11 +1311,11 @@ class WPForms_Welcome
  * @since      1.0.0
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2016, WPForms LLC
-*/
+ */
 class WPForms_Overview_Table extends \WP_List_Table
 {
     /**
-     * Numbe of forms to show per page.
+     * Number of forms to show per page.
      *
      * @since 1.0.0
      */
@@ -670,10 +1329,10 @@ class WPForms_Overview_Table extends \WP_List_Table
     {
     }
     /**
-     * Retrieve the table columns
+     * Retrieve the table columns.
      *
      * @since 1.0.0
-     * @return array $columns Array of all the list table columns
+     * @return array $columns Array of all the list table columns.
      */
     public function get_columns()
     {
@@ -682,7 +1341,9 @@ class WPForms_Overview_Table extends \WP_List_Table
      * Render the checkbox column.
      *
      * @since 1.0.0
-     * @param array
+     *
+     * @param WP_Post $form
+     *
      * @return string
      */
     public function column_cb($form)
@@ -692,8 +1353,10 @@ class WPForms_Overview_Table extends \WP_List_Table
      * Renders the columns.
      *
      * @since 1.0.0
-     * @param array $form
+     *
+     * @param WP_Post $form
      * @param string $column_name
+     *
      * @return string
      */
     public function column_default($form, $column_name)
@@ -703,23 +1366,26 @@ class WPForms_Overview_Table extends \WP_List_Table
      * Render the form name column with action links.
      *
      * @since 1.0.0
-     * @param array $optin
+     *
+     * @param WP_Post $form
+     *
      * @return string
      */
     public function column_form_name($form)
     {
     }
     /**
-     * Define bulk actions available for our table listing
+     * Define bulk actions available for our table listing.
      *
      * @since 1.0.0
+     *
      * @return array
      */
     public function get_bulk_actions()
     {
     }
     /**
-     * Process the bulk actions
+     * Process the bulk actions.
      *
      * @since 1.0.0
      */
@@ -727,7 +1393,7 @@ class WPForms_Overview_Table extends \WP_List_Table
     {
     }
     /**
-     * Message to be displayed when there are no forms
+     * Message to be displayed when there are no forms.
      *
      * @since 1.0.0
      */
@@ -735,7 +1401,7 @@ class WPForms_Overview_Table extends \WP_List_Table
     {
     }
     /**
-     * Fetch and setup the final data for the table
+     * Fetch and setup the final data for the table.
      *
      * @since 1.0.0
      */
@@ -763,7 +1429,7 @@ class WPForms_Overview
     {
     }
     /**
-     * Determing if the user is viewing the overview page, if so, party on.
+     * Determine if the user is viewing the overview page, if so, party on.
      *
      * @since 1.0.0
      */
@@ -775,19 +1441,21 @@ class WPForms_Overview
      *
      * @since 1.0.0
      */
-    function screen_options()
+    public function screen_options()
     {
     }
     /**
-     * Forms table per-page screen option value
+     * Forms table per-page screen option value.
      *
      * @since 1.0.0
+     *
      * @param mixed $status
      * @param string $option
      * @param mixed $value
+     *
      * @return mixed
      */
-    function screen_options_set($status, $option, $value)
+    public function screen_options_set($status, $option, $value)
     {
     }
     /**
@@ -804,6 +1472,119 @@ class WPForms_Overview
      * @since 1.0.0
      */
     public function output()
+    {
+    }
+}
+/**
+ * Analytics integration class.
+ *
+ * @package    WPForms
+ * @author     WPForms
+ * @since      1.4.5
+ * @license    GPL-2.0+
+ * @copyright  Copyright (c) 2017, WPForms LLC
+ */
+abstract class WPForms_Analytics_Integration
+{
+    /**
+     * Payment name.
+     *
+     * @since 1.0.0
+     *
+     * @var string
+     */
+    public $name;
+    /**
+     * Payment name in slug format.
+     *
+     * @since 1.0.0
+     *
+     * @var string
+     */
+    public $slug;
+    /**
+     * Load priority.
+     *
+     * @since 1.0.0
+     *
+     * @var int
+     */
+    public $priority = 10;
+    /**
+     * Payment icon.
+     *
+     * @since 1.0.0
+     * @var string
+     */
+    public $icon;
+    /**
+     * Form data.
+     *
+     * @since 1.1.0
+     * @var array
+     */
+    public $form_data;
+    /**
+     * Primary class constructor.
+     *
+     * @since 1.0.0
+     */
+    public function __construct()
+    {
+    }
+    /**
+     * All systems go. Used by subclasses.
+     *
+     * @since 1.0.0
+     */
+    public function init()
+    {
+    }
+    /**
+     * Add to list of registered analytics.
+     *
+     * @since 1.0.0
+     *
+     * @param array $analytics
+     *
+     * @return array
+     */
+    public function register_analytics($analytics = array())
+    {
+    }
+    /********************************************************
+     * Builder methods - these methods _build_ the Builder. *
+     ********************************************************/
+    /**
+     * Fetch and store the current form data when in the builder.
+     *
+     * @since 1.1.0
+     */
+    public function builder_form_data()
+    {
+    }
+    /**
+     * Display content inside the panel sidebar area.
+     *
+     * @since 1.0.0
+     */
+    public function builder_sidebar()
+    {
+    }
+    /**
+     * Wraps the builder content with the required markup.
+     *
+     * @since 1.0.0
+     */
+    public function builder_output()
+    {
+    }
+    /**
+     * Display content inside the panel content area.
+     *
+     * @since 1.0.0
+     */
+    public function builder_content()
     {
     }
 }
@@ -829,7 +1610,7 @@ class WPForms_Conditional_Logic_Core
      * One is the loneliest number that you'll ever do.
      *
      * @since 1.1.0
-     * @var object
+     * @var WPForms_Conditional_Logic_Core
      */
     private static $instance;
     /**
@@ -869,8 +1650,11 @@ class WPForms_Conditional_Logic_Core
      * Builds the conditional logic settings to display in the form builder.
      *
      * @since 1.3.8
-     * @param array $args
-     * @param bool $echo
+     *
+     * @param array $args Data needed for a block to be generated properly.
+     * @param bool  $echo Whether to return or print. Default: print.
+     *
+     * @return string
      */
     public function builder_block($args = array(), $echo = \true)
     {
@@ -879,8 +1663,12 @@ class WPForms_Conditional_Logic_Core
      * Alias method for backwards compatibility.
      *
      * @since 1.1.0
-     * @param array $args
-     * @param bool $echo
+     * @deprecated 1.3.8 Use wpforms_conditional_logic()->builder_block() instead.
+     *
+     * @param array $args Data needed for a block to be generated properly.
+     * @param bool  $echo Whether to return or print. Default: print.
+     *
+     * @return string
      */
     public function conditionals_block($args = array(), $echo = \true)
     {
@@ -891,9 +1679,12 @@ class WPForms_Conditional_Logic_Core
      * Checks if a form passes the conditional logic rules that are provided.
      *
      * @since 1.3.8
+     *
      * @param array $fields
      * @param array $form_data
      * @param array $conditionals
+     *
+     * @return bool
      */
     public function process($fields, $form_data, $conditionals)
     {
@@ -902,9 +1693,12 @@ class WPForms_Conditional_Logic_Core
      * Alias function for backwards compatibility.
      *
      * @since 1.0.0
+     *
      * @param array $fields
      * @param array $form_data
      * @param array $conditionals
+     *
+     * @return bool
      */
     public function conditionals_process($fields, $form_data, $conditionals)
     {
@@ -918,7 +1712,7 @@ class WPForms_Conditional_Logic_Core
  * @since      1.0.0
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2016, WPForms LLC
-*/
+ */
 class WPForms_Fields
 {
     /**
@@ -972,9 +1766,26 @@ class WPForms_Frontend
      * displaying pagebreak fields.
      *
      * @since 1.3.7
+     *
      * @var array
      */
     public $pages = \false;
+    /**
+     * Contains a form confirmation message.
+     *
+     * @since 1.4.8
+     *
+     * @var string
+     */
+    public $confirmation_message = '';
+    /**
+     * If the active form confirmation should auto scroll.
+     *
+     * @since 1.4.9
+     *
+     * @var bool
+     */
+    public $confirmation_message_scroll = \false;
     /**
      * Primary class constructor.
      *
@@ -987,6 +1798,7 @@ class WPForms_Frontend
      * Primary function to render a form on the frontend.
      *
      * @since 1.0.0
+     *
      * @param int $id
      * @param boolean $title
      * @param boolean $description
@@ -998,15 +1810,19 @@ class WPForms_Frontend
      * Display form confirmation message.
      *
      * @since 1.0.0
-     * @param array $form_data
+     *
+     * @param array $form_data Form data.
+     * @param array $fields    Sanitized field data.
+     * @param array $entry_id  Entry id.
      */
-    function confirmation($form_data)
+    public function confirmation($form_data, $fields = array(), $entry_id = 0)
     {
     }
     /**
      * Form head area.
      *
      * @since 1.0.0
+     *
      * @param array $form_data
      * @param null $deprecated Deprecated in v1.3.7, previously was $form object.
      * @param mixed $title
@@ -1020,6 +1836,7 @@ class WPForms_Frontend
      * Form field area.
      *
      * @since 1.0.0
+     *
      * @param array $form_data
      * @param null $deprecated Deprecated in v1.3.7, previously was $form object.
      * @param mixed $title
@@ -1031,11 +1848,13 @@ class WPForms_Frontend
     }
     /**
      * Return base attributes for a specific field. This is deprecated and
-     * exists for backwards-compatibility purposes. Use field proprties instead.
+     * exists for backwards-compatibility purposes. Use field properties instead.
      *
      * @since 1.3.7
+     *
      * @param array $field
      * @param array $form_data
+     *
      * @return array
      */
     public function get_field_attributes($field, $form_data)
@@ -1045,18 +1864,21 @@ class WPForms_Frontend
      * Return base properties for a specific field.
      *
      * @since 1.3.7
+     *
      * @param array $field
      * @param array $form_data
      * @param array $attributes
+     *
      * @return array
      */
-    function get_field_properties($field, $form_data, $attributes = array())
+    public function get_field_properties($field, $form_data, $attributes = array())
     {
     }
     /**
      * Display the opening container markup for each field.
      *
      * @since 1.3.7
+     *
      * @param array $field
      * @param array $form_data
      */
@@ -1067,6 +1889,7 @@ class WPForms_Frontend
      * Display the label for each field.
      *
      * @since 1.3.7
+     *
      * @param array $field
      * @param array $form_data
      */
@@ -1077,6 +1900,7 @@ class WPForms_Frontend
      * Display any errors for each field.
      *
      * @since 1.3.7
+     *
      * @param array $field
      * @param array $form_data
      */
@@ -1087,6 +1911,7 @@ class WPForms_Frontend
      * Display the description for each field.
      *
      * @since 1.3.7
+     *
      * @param array $field
      * @param array $form_data
      */
@@ -1097,6 +1922,7 @@ class WPForms_Frontend
      * Display the closing container markup for each field.
      *
      * @since 1.3.7
+     *
      * @param array $field
      * @param array $form_data
      */
@@ -1107,6 +1933,7 @@ class WPForms_Frontend
      * Anti-spam honeypot output if configured.
      *
      * @since 1.0.0
+     *
      * @param array $form_data
      * @param null $deprecated Deprecated in v1.3.7, previously was $form object.
      * @param mixed $title
@@ -1120,6 +1947,7 @@ class WPForms_Frontend
      * Google reCAPTCHA output if configured.
      *
      * @since 1.0.0
+     *
      * @param array $form_data
      * @param null $deprecated Deprecated in v1.3.7, previously was $form object.
      * @param mixed $title
@@ -1130,9 +1958,10 @@ class WPForms_Frontend
     {
     }
     /**
-     * Form footer arera.
+     * Form footer area.
      *
      * @since 1.0.0
+     *
      * @param array $form_data
      * @param null $deprecated Deprecated in v1.3.7, previously was $form object.
      * @param mixed $title
@@ -1143,10 +1972,11 @@ class WPForms_Frontend
     {
     }
     /**
-     * Determine if we should load assets globally. If false assets will
-     * load conditionally (default).
+     * Determine if we should load assets globally.
+     * If false assets will load conditionally (default).
      *
      * @since 1.2.4
+     *
      * @return bool
      */
     public function assets_global()
@@ -1205,11 +2035,25 @@ class WPForms_Frontend
     {
     }
     /**
+     * Google reCAPTCHA no-conflict mode.
+     *
+     * When enabled in the WPForms settings, forcefully remove all other
+     * reCAPTCHA enqueues to prevent conflicts. Filter can be used to target
+     * specific pages, etc.
+     *
+     * @since 1.4.5
+     */
+    public function recaptcha_noconflict()
+    {
+    }
+    /**
      * Shortcode wrapper for the outputting a form.
      *
      * @since 1.0.0
+     *
      * @param array $atts
-     * @return array
+     *
+     * @return string
      */
     public function shortcode($atts)
     {
@@ -1431,7 +2275,7 @@ class WPForms_Preview
     {
     }
     /**
-     * Determing if the user should see a preview page, if so, party on.
+     * Determining if the user should see a preview page, if so, party on.
      *
      * @since 1.1.5
      */
@@ -1458,7 +2302,9 @@ class WPForms_Preview
      * Preview page URL.
      *
      * @since 1.1.9
+     *
      * @param int $form_id
+     *
      * @return string
      */
     public function form_preview_url($form_id)
@@ -1476,8 +2322,10 @@ class WPForms_Preview
      * Tweak the page content for form preview page requests.
      *
      * @since 1.1.9
+     *
      * @param array $posts
-     * @param object $query
+     * @param WP_Query $query
+     *
      * @return array
      */
     public function form_preview_query($posts, $query)
@@ -1487,9 +2335,10 @@ class WPForms_Preview
      * Hide the preview page from admin
      *
      * @since 1.2.3
-     * @param object $query
+     *
+     * @param WP_Query $query
      */
-    function form_preview_hide($query)
+    public function form_preview_hide($query)
     {
     }
 }
@@ -1501,7 +2350,7 @@ class WPForms_Preview
  * @since      1.3.6
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2017, WPForms LLC
-*/
+ */
 class WPForms_Providers
 {
     /**
@@ -1537,7 +2386,7 @@ class WPForms_Providers
  * @since      1.0.0
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2016, WPForms LLC
-*/
+ */
 class WPForms_Smart_Tags
 {
     /**
@@ -1552,23 +2401,27 @@ class WPForms_Smart_Tags
      * Approved smart tags.
      *
      * @since 1.0.0
-     * @param string $return
-     * @return array
+     *
+     * @param string $return Type of data to return.
+     *
+     * @return string|array
      */
-    function get($return = 'array')
+    public function get($return = 'array')
     {
     }
     /**
      * Process and parse smart tags.
      *
      * @since 1.0.0
-     * @param string $content
-     * @param array $form_data
-     * @param array $fields
-     * @param int $entry_id
+     *
+     * @param string $content The string to preprocess.
+     * @param array $form_data Array of the form data.
+     * @param string|array $fields Form fields.
+     * @param int|string $entry_id Entry ID.
+     *
      * @return string
      */
-    function process($content, $form_data, $fields = '', $entry_id = '')
+    public function process($content, $form_data, $fields = '', $entry_id = '')
     {
     }
 }
@@ -1580,7 +2433,7 @@ class WPForms_Smart_Tags
  * @since      1.0.2
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2016, WPForms LLC
-*/
+ */
 class WPForms_Widget extends \WP_Widget
 {
     /**
@@ -1595,17 +2448,18 @@ class WPForms_Widget extends \WP_Widget
      *
      * @since 1.0.2
      */
-    function __construct()
+    public function __construct()
     {
     }
     /**
      * Outputs the HTML for this widget.
      *
      * @since 1.0.2
-     * @param array $args An array of standard parameters for widgets in this theme 
-     * @param array $instance An array of settings for this widget instance 
+     *
+     * @param array $args An array of standard parameters for widgets in this theme.
+     * @param array $instance An array of settings for this widget instance.
      */
-    function widget($args, $instance)
+    public function widget($args, $instance)
     {
     }
     /**
@@ -1613,20 +2467,25 @@ class WPForms_Widget extends \WP_Widget
      * where any validation should be dealt with.
      *
      * @since 1.0.2
-     * @param array $new_instance An array of new settings as submitted by the admin
-     * @param array $old_instance An array of the previous settings 
+     *
+     * @param array $new_instance An array of new settings as submitted by the admin.
+     * @param array $old_instance An array of the previous settings.
+     *
      * @return array The validated and (if necessary) amended settings
      */
-    function update($new_instance, $old_instance)
+    public function update($new_instance, $old_instance)
     {
     }
     /**
      * Displays the form for this widget on the Widgets page of the WP Admin area.
      *
      * @since 1.0.2
-     * @param array $instance An array of the current settings for this widget
+     *
+     * @param array $instance An array of the current settings for this widget.
+     *
+     * @return void
      */
-    function form($instance)
+    public function form($instance)
     {
     }
 }
@@ -1635,7 +2494,7 @@ class WPForms_Widget extends \WP_Widget
  *
  * This class handles all (notification) emails sent by WPForms.
  *
- * Heavily influceded by the great AffiliateWP plugin by Pippin Williamson.
+ * Heavily influenced by the great AffiliateWP plugin by Pippin Williamson.
  * https://github.com/AffiliateWP/AffiliateWP/blob/master/includes/emails/class-affwp-emails.php
  *
  * @package    WPForms
@@ -1643,80 +2502,101 @@ class WPForms_Widget extends \WP_Widget
  * @since      1.1.3
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2016, WPForms LLC
-*/
+ */
 class WPForms_WP_Emails
 {
     /**
      * Holds the from address.
      *
      * @since 1.1.3
+     *
+     * @var string
      */
     private $from_address;
     /**
      * Holds the from name.
      *
      * @since 1.1.3
+     *
+     * @var string
      */
     private $from_name;
     /**
      * Holds the reply-to address.
      *
      * @since 1.1.3
+     *
+     * @var string
      */
     private $reply_to = \false;
     /**
      * Holds the carbon copy addresses.
      *
-     * @since 1.3,1
+     * @since 1.3.1
+     *
+     * @var string
      */
     private $cc = \false;
     /**
      * Holds the email content type.
      *
      * @since 1.1.3
+     *
+     * @var string
      */
     private $content_type;
     /**
      * Holds the email headers.
      *
      * @since 1.1.3
+     *
+     * @var string
      */
     private $headers;
     /**
      * Whether to send email in HTML.
      *
      * @since 1.1.3
+     *
+     * @var bool
      */
     private $html = \true;
     /**
      * The email template to use.
      *
      * @since 1.1.3
+     *
+     * @var string
      */
     private $template;
     /**
      * Form data.
      *
      * @since 1.1.3
+     *
+     * @var array
      */
-    public $form_data = '';
+    public $form_data = array();
     /**
      * Fields, formatted, and sanitized.
      *
      * @since 1.1.3
+     *
+     * @var array
      */
-    public $fields = '';
+    public $fields = array();
     /**
      * Entry ID.
      *
      * @since 1.2.3
+     *
+     * @var int
      */
     public $entry_id = '';
     /**
      * Get things going.
      *
      * @since 1.1.3
-     * @return void
      */
     public function __construct()
     {
@@ -1725,7 +2605,9 @@ class WPForms_WP_Emails
      * Set a property.
      *
      * @since 1.1.3
-     * @return void
+     *
+     * @param string $key   Object property key.
+     * @param mixed  $value Object property value.
      */
     public function __set($key, $value)
     {
@@ -1734,6 +2616,7 @@ class WPForms_WP_Emails
      * Get the email from name.
      *
      * @since 1.1.3
+     *
      * @return string The email from name
      */
     public function get_from_name()
@@ -1743,7 +2626,8 @@ class WPForms_WP_Emails
      * Get the email from address.
      *
      * @since 1.1.3
-     * @return string The email from address
+     *
+     * @return string The email from address.
      */
     public function get_from_address()
     {
@@ -1752,7 +2636,8 @@ class WPForms_WP_Emails
      * Get the email reply-to.
      *
      * @since 1.1.3
-     * @return string The email reply-to address
+     *
+     * @return string The email reply-to address.
      */
     public function get_reply_to()
     {
@@ -1761,7 +2646,8 @@ class WPForms_WP_Emails
      * Get the email carbon copy addresses.
      *
      * @since 1.3.1
-     * @return string The email reply-to address
+     *
+     * @return string The email reply-to address.
      */
     public function get_cc()
     {
@@ -1770,7 +2656,8 @@ class WPForms_WP_Emails
      * Get the email content type.
      *
      * @since 1.1.3
-     * @return string The email content type
+     *
+     * @return string The email content type.
      */
     public function get_content_type()
     {
@@ -1779,29 +2666,35 @@ class WPForms_WP_Emails
      * Get the email headers.
      *
      * @since 1.1.3
-     * @return string The email headers
+     *
+     * @return string The email headers.
      */
     public function get_headers()
     {
     }
     /**
-     * Build the email
+     * Build the email.
      *
      * @since 1.1.3
-     * @param string $message The email message
+     *
+     * @param string $message The email message.
+     *
      * @return string
      */
     public function build_email($message)
     {
     }
     /**
-     * Send the email
+     * Send the email.
      *
      * @since 1.1.3
-     * @param string $to The To address
-     * @param string $subject The subject line of the email
-     * @param string $message The body of the email
-     * @param string|array $attachments Attachments to the email
+     *
+     * @param string $to The To address.
+     * @param string $subject The subject line of the email.
+     * @param string $message The body of the email.
+     * @param array  $attachments Attachments to the email.
+     *
+     * @return bool
      */
     public function send($to, $subject, $message, $attachments = array())
     {
@@ -1827,7 +2720,9 @@ class WPForms_WP_Emails
      * into <p> and <br/> tags.
      *
      * @since 1.1.3
-     * @param string $message
+     *
+     * @param string $message Text to convert.
+     *
      * @return string
      */
     public function text_to_html($message)
@@ -1837,35 +2732,44 @@ class WPForms_WP_Emails
      * Processes a smart tag.
      *
      * @since 1.1.3
-     * @param string $string
-     * @param bool $sanitize
+     *
+     * @param string $string     String that may contain tags.
+     * @param bool   $sanitize   Toggle to maybe sanitize.
+     * @param bool   $linebreaks Toggle to process linebreaks.
+     *
      * @return string
      */
-    function process_tag($string = '', $sanitize = \true, $linebreaks = \false)
+    public function process_tag($string = '', $sanitize = \true, $linebreaks = \false)
     {
     }
     /**
      * Process the all fields smart tag if present.
      *
      * @since 1.1.3
+     *
+     * @param bool $html Toggle to use HTML or plaintext.
+     *
+     * @return string
      */
-    function wpforms_html_field_value($html = \true)
+    public function wpforms_html_field_value($html = \true)
     {
     }
     /**
      * Email kill switch if needed.
      *
      * @since 1.1.3
+     *
      * @return bool
      */
     public function is_email_disabled()
     {
     }
     /**
-     * Get the enabled email template
+     * Get the enabled email template.
      *
      * @since 1.1.3
-     * @return string|null
+     *
+     * @return string When filtering return 'none' to switch to text/plain email.
      */
     public function get_template()
     {
@@ -1874,9 +2778,11 @@ class WPForms_WP_Emails
      * Retrieves a template part. Taken from bbPress.
      *
      * @since 1.1.3
-     * @param string $slug
-     * @param string $name Optional. Default null
-     * @param bool $load
+     *
+     * @param string $slug Template file slug.
+     * @param string $name Optional. Default null.
+     * @param bool   $load Maybe load.
+     *
      * @return string
      */
     public function get_template_part($slug, $name = \null, $load = \true)
@@ -1889,13 +2795,15 @@ class WPForms_WP_Emails
      * inherit from a parent theme can just overload one file. If the template is
      * not found in either of those, it looks in the theme-compat folder last.
      *
-     * Taken from bbPress
+     * Taken from bbPress.
      *
      * @since 1.1.3
+     *
      * @param string|array $template_names Template file(s) to search for, in order.
-     * @param bool $load If true the template file will be loaded if it is found.
-     * @param bool $require_once Whether to require_once or require. Default true.
-     *   Has no effect if $load is false.
+     * @param bool         $load           If true the template file will be loaded if it is found.
+     * @param bool         $require_once   Whether to require_once or require. Default true.
+     *                                     Has no effect if $load is false.
+     *
      * @return string The template filename if one is located.
      */
     public function locate_template($template_names, $load = \false, $require_once = \true)
@@ -1905,7 +2813,8 @@ class WPForms_WP_Emails
      * Returns a list of paths to check for template locations
      *
      * @since 1.1.3
-     * @return mixed|void
+     *
+     * @return array
      */
     public function get_theme_template_paths()
     {
@@ -1982,6 +2891,7 @@ abstract class WPForms_Field
      * Primary class constructor.
      *
      * @since 1.0.0
+     *
      * @param bool $init
      */
     public function __construct($init = \true)
@@ -1999,7 +2909,9 @@ abstract class WPForms_Field
      * Create the button for the 'Add Fields' tab, inside the form editor.
      *
      * @since 1.0.0
+     *
      * @param array $fields
+     *
      * @return array
      */
     public function field_button($fields)
@@ -2009,6 +2921,7 @@ abstract class WPForms_Field
      * Creates the field options panel. Used by subclasses.
      *
      * @since 1.0.0
+     *
      * @param array $field
      */
     public function field_options($field)
@@ -2018,6 +2931,7 @@ abstract class WPForms_Field
      * Creates the field preview. Used by subclasses.
      *
      * @since 1.0.0
+     *
      * @param array $field
      */
     public function field_preview($field)
@@ -2026,14 +2940,16 @@ abstract class WPForms_Field
     /**
      * Helper function to create field option elements.
      *
-     * Field option elements are peices that help create a field option. They
-     * are used to quickly build field options.
+     * Field option elements are pieces that help create a field option.
+     * They are used to quickly build field options.
      *
      * @since 1.0.0
+     *
      * @param string $option
      * @param array $field
      * @param array $args
      * @param boolean $echo
+     *
      * @return mixed echo or return string
      */
     public function field_element($option, $field, $args = array(), $echo = \true)
@@ -2043,10 +2959,12 @@ abstract class WPForms_Field
      * Helper function to create common field options that are used frequently.
      *
      * @since 1.0.0
+     *
      * @param string $option
      * @param array $field
      * @param array $args
      * @param boolean $echo
+     *
      * @return mixed echo or return string
      */
     public function field_option($option, $field, $args = array(), $echo = \true)
@@ -2057,10 +2975,12 @@ abstract class WPForms_Field
      * in the field preview.
      *
      * @since 1.0.0
+     *
      * @param string $option
      * @param array $field
      * @param array $args
      * @param boolean $echo
+     *
      * @return mixed echo or return string
      */
     public function field_preview_option($option, $field, $args = array(), $echo = \true)
@@ -2078,6 +2998,7 @@ abstract class WPForms_Field
      * Display the field input elements on the frontend.
      *
      * @since 1.0.0
+     *
      * @param array $field
      * @param array $field_atts
      * @param array $form_data
@@ -2089,7 +3010,8 @@ abstract class WPForms_Field
      * Display field input errors if present.
      *
      * @since 1.3.7
-     * @param tring $key
+     *
+     * @param string $key
      * @param array $field
      */
     public function field_display_error($key, $field)
@@ -2099,7 +3021,9 @@ abstract class WPForms_Field
      * Display field input sublabel if present.
      *
      * @since 1.3.7
-     * @param tring $key
+     *
+     * @param string $key
+     * @param string $position
      * @param array $field
      */
     public function field_display_sublabel($key, $position, $field)
@@ -2109,6 +3033,7 @@ abstract class WPForms_Field
      * Validates field on form submit.
      *
      * @since 1.0.0
+     *
      * @param int $field_id
      * @param array $field_submit
      * @param array $form_data
@@ -2120,6 +3045,7 @@ abstract class WPForms_Field
      * Formats and sanitizes field.
      *
      * @since 1.0.0
+     *
      * @param int $field_id
      * @param array $field_submit
      * @param array $form_data
@@ -2136,7 +3062,7 @@ abstract class WPForms_Field
  * @since      1.0.0
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2016, WPForms LLC
-*/
+ */
 class WPForms_Field_Checkbox extends \WPForms_Field
 {
     /**
@@ -2148,10 +3074,40 @@ class WPForms_Field_Checkbox extends \WPForms_Field
     {
     }
     /**
+     * Return images, if any, for HTML supported values.
+     *
+     * @since 1.4.5
+     *
+     * @param string $value     Field value.
+     * @param array  $field     Field settings.
+     * @param array  $form_data Form data.
+     * @param string $context   Value display context.
+     *
+     * @return string
+     */
+    public function field_html_value($value, $field, $form_data = array(), $context = '')
+    {
+    }
+    /**
+     * Define additional field properties.
+     *
+     * @since 1.4.5
+     *
+     * @param array $properties Field properties.
+     * @param array $field      Field settings.
+     * @param array $form_data  Form data.
+     *
+     * @return array
+     */
+    public function field_properties($properties, $field, $form_data)
+    {
+    }
+    /**
      * Field options panel inside the builder.
      *
      * @since 1.0.0
-     * @param array $field
+     *
+     * @param array $field Field settings.
      */
     public function field_options($field)
     {
@@ -2160,7 +3116,8 @@ class WPForms_Field_Checkbox extends \WPForms_Field
      * Field preview inside the builder.
      *
      * @since 1.0.0
-     * @param array $field
+     *
+     * @param array $field Field settings.
      */
     public function field_preview($field)
     {
@@ -2169,19 +3126,22 @@ class WPForms_Field_Checkbox extends \WPForms_Field
      * Field display on the form front-end.
      *
      * @since 1.0.0
-     * @param array $field
-     * @param array $form_data
+     *
+     * @param array $field      Field settings.
+     * @param array $deprecated Deprecated array.
+     * @param array $form_data  Form data.
      */
-    public function field_display($field, $field_atts, $form_data)
+    public function field_display($field, $deprecated, $form_data)
     {
     }
     /**
      * Formats and sanitizes field.
      *
      * @since 1.0.2
-     * @param int $field_id
-     * @param array $field_submit
-     * @param array $form_data
+     *
+     * @param int   $field_id     Field ID.
+     * @param array $field_submit Submitted form data.
+     * @param array $form_data    Form data.
      */
     public function format($field_id, $field_submit, $form_data)
     {
@@ -2277,6 +3237,97 @@ class WPForms_Field_Email extends \WPForms_Field
      * @param int $field_id
      * @param array $field_submit
      * @param array $form_data
+     */
+    public function format($field_id, $field_submit, $form_data)
+    {
+    }
+}
+/**
+ * GDPR Checkbox field.
+ *
+ * @package    WPForms
+ * @author     WPForms
+ * @since      1.4.6
+ * @license    GPL-2.0+
+ * @copyright  Copyright (c) 2018, WPForms LLC
+ */
+class WPForms_Field_GDPR_Checkbox extends \WPForms_Field
+{
+    /**
+     * Primary class constructor.
+     *
+     * @since 1.4.6
+     */
+    public function init()
+    {
+    }
+    /**
+     * Field should default to being required.
+     *
+     * @since 1.4.6
+     *
+     * @param bool  $required Required status, true is required.
+     * @param array $field    Field settings.
+     *
+     * @return bool
+     */
+    public function field_default_required($required, $field)
+    {
+    }
+    /**
+     * Define additional field properties.
+     *
+     * @since 1.4.6
+     *
+     * @param array $properties Field properties.
+     * @param array $field      Field settings.
+     * @param array $form_data  Form data.
+     *
+     * @return array
+     */
+    public function field_properties($properties, $field, $form_data)
+    {
+    }
+    /**
+     * Field options panel inside the builder.
+     *
+     * @since 1.4.6
+     *
+     * @param array $field Field settings.
+     */
+    public function field_options($field)
+    {
+    }
+    /**
+     * Field preview inside the builder.
+     *
+     * @since 1.4.6
+     *
+     * @param array $field Field settings.
+     */
+    public function field_preview($field)
+    {
+    }
+    /**
+     * Field display on the form front-end.
+     *
+     * @since 1.4.6
+     *
+     * @param array $field      Field settings.
+     * @param array $deprecated Deprecated array.
+     * @param array $form_data  Form data.
+     */
+    public function field_display($field, $deprecated, $form_data)
+    {
+    }
+    /**
+     * Formats and sanitizes field.
+     *
+     * @since 1.4.6
+     *
+     * @param int   $field_id     Field ID.
+     * @param array $field_submit Submitted form data.
+     * @param array $form_data    Form data.
      */
     public function format($field_id, $field_submit, $form_data)
     {
@@ -2455,7 +3506,7 @@ class WPForms_Field_Number extends \WPForms_Field
  * @since      1.0.0
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2016, WPForms LLC
-*/
+ */
 class WPForms_Field_Radio extends \WPForms_Field
 {
     /**
@@ -2467,10 +3518,40 @@ class WPForms_Field_Radio extends \WPForms_Field
     {
     }
     /**
+     * Return images, if any, for HTML supported values.
+     *
+     * @since 1.4.5
+     *
+     * @param string $value     Field value.
+     * @param array  $field     Field settings.
+     * @param array  $form_data Form data.
+     * @param string $context   Value display context.
+     *
+     * @return string
+     */
+    public function field_html_value($value, $field, $form_data = array(), $context = '')
+    {
+    }
+    /**
+     * Define additional field properties.
+     *
+     * @since 1.4.5
+     *
+     * @param array $properties Field properties.
+     * @param array $field      Field settings.
+     * @param array $form_data  Form data.
+     *
+     * @return array
+     */
+    public function field_properties($properties, $field, $form_data)
+    {
+    }
+    /**
      * Field options panel inside the builder.
      *
      * @since 1.0.0
-     * @param array $field
+     *
+     * @param array $field Field settings.
      */
     public function field_options($field)
     {
@@ -2479,7 +3560,8 @@ class WPForms_Field_Radio extends \WPForms_Field
      * Field preview inside the builder.
      *
      * @since 1.0.0
-     * @param array $field
+     *
+     * @param array $field Field settings.
      */
     public function field_preview($field)
     {
@@ -2488,19 +3570,22 @@ class WPForms_Field_Radio extends \WPForms_Field
      * Field display on the form front-end.
      *
      * @since 1.0.0
-     * @param array $field
-     * @param array $form_data
+     *
+     * @param array $field      Field settings.
+     * @param array $deprecated Deprecated array.
+     * @param array $form_data  Form data.
      */
-    public function field_display($field, $field_atts, $form_data)
+    public function field_display($field, $deprecated, $form_data)
     {
     }
     /**
      * Formats and sanitizes field.
      *
      * @since 1.0.2
-     * @param int $field_id
-     * @param array $field_submit
-     * @param array $form_data
+     *
+     * @param int   $field_id     Field ID.
+     * @param array $field_submit Submitted form data.
+     * @param array $form_data    Form data.
      */
     public function format($field_id, $field_submit, $form_data)
     {
@@ -2514,7 +3599,7 @@ class WPForms_Field_Radio extends \WPForms_Field
  * @since      1.0.0
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2016, WPForms LLC
-*/
+ */
 class WPForms_Field_Select extends \WPForms_Field
 {
     /**
@@ -2529,6 +3614,7 @@ class WPForms_Field_Select extends \WPForms_Field
      * Field options panel inside the builder.
      *
      * @since 1.0.0
+     *
      * @param array $field
      */
     public function field_options($field)
@@ -2538,6 +3624,7 @@ class WPForms_Field_Select extends \WPForms_Field
      * Field preview inside the builder.
      *
      * @since 1.0.0
+     *
      * @param array $field
      */
     public function field_preview($field)
@@ -2547,7 +3634,9 @@ class WPForms_Field_Select extends \WPForms_Field
      * Field display on the form front-end.
      *
      * @since 1.0.0
+     *
      * @param array $field
+     * @param array $field_atts
      * @param array $form_data
      */
     public function field_display($field, $field_atts, $form_data)
@@ -2557,8 +3646,9 @@ class WPForms_Field_Select extends \WPForms_Field
      * Formats and sanitizes field.
      *
      * @since 1.0.2
+     *
      * @param int $field_id
-     * @param array $field_submit
+     * @param string $field_submit
      * @param array $form_data
      */
     public function format($field_id, $field_submit, $form_data)
@@ -2585,10 +3675,25 @@ class WPForms_Field_Text extends \WPForms_Field
     {
     }
     /**
+     * Define additional field properties.
+     *
+     * @since 1.4.5
+     *
+     * @param array $properties Field properties.
+     * @param array $field      Field settings.
+     * @param array $form_data  Form data.
+     *
+     * @return array
+     */
+    public function field_properties($properties, $field, $form_data)
+    {
+    }
+    /**
      * Field options panel inside the builder.
      *
      * @since 1.0.0
-     * @param array $field
+     *
+     * @param array $field Field settings.
      */
     public function field_options($field)
     {
@@ -2597,7 +3702,8 @@ class WPForms_Field_Text extends \WPForms_Field
      * Field preview inside the builder.
      *
      * @since 1.0.0
-     * @param array $field
+     *
+     * @param array $field Field settings.
      */
     public function field_preview($field)
     {
@@ -2606,9 +3712,10 @@ class WPForms_Field_Text extends \WPForms_Field
      * Field display on the form front-end.
      *
      * @since 1.0.0
-     * @param array $field
-     * @param array $deprecated
-     * @param array $form_data
+     *
+     * @param array $field      Field settings.
+     * @param array $deprecated Deprecated.
+     * @param array $form_data  Form data.
      */
     public function field_display($field, $deprecated, $form_data)
     {
@@ -2671,34 +3778,38 @@ class WPForms_Field_Textarea extends \WPForms_Field
  * @since      1.0.0
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2016, WPForms LLC
-*/
+ */
 abstract class WPForms_Provider
 {
     /**
-     * Provider add-on version.
+     * Provider addon version.
      *
      * @since 1.0.0
-     * @var sting
+     *
+     * @var string
      */
-    private $version;
+    protected $version;
     /**
      * Provider name.
      *
      * @since 1.0.0
-     * @var sting
+     *
+     * @var string
      */
     public $name;
     /**
      * Provider name in slug format.
      *
      * @since 1.0.0
-     * @var sting
+     *
+     * @var string
      */
     public $slug;
     /**
      * Load priority.
      *
      * @since 1.0.0
+     *
      * @var int
      */
     public $priority = 10;
@@ -2706,6 +3817,7 @@ abstract class WPForms_Provider
      * Holds the API connections.
      *
      * @since 1.0.0
+     *
      * @var mixed
      */
     public $api = \false;
@@ -2713,6 +3825,7 @@ abstract class WPForms_Provider
      * Service icon.
      *
      * @since 1.0.0
+     *
      * @var string
      */
     public $icon;
@@ -2720,6 +3833,7 @@ abstract class WPForms_Provider
      * Service icon.
      *
      * @since 1.2.3
+     *
      * @var string
      */
     public $type;
@@ -2727,6 +3841,7 @@ abstract class WPForms_Provider
      * Form data.
      *
      * @since 1.2.3
+     *
      * @var array
      */
     public $form_data;
@@ -2750,10 +3865,12 @@ abstract class WPForms_Provider
      * Add to list of registered providers.
      *
      * @since 1.0.0
-     * @param array $providers
+     *
+     * @param array $providers Array of all active providers.
+     *
      * @return array
      */
-    function register_provider($providers = array())
+    public function register_provider($providers = array())
     {
     }
     /**
@@ -2768,6 +3885,7 @@ abstract class WPForms_Provider
      * Process and submit entry to provider.
      *
      * @since 1.0.0
+     *
      * @param array $fields
      * @param array $entry
      * @param array $form_data
@@ -2780,10 +3898,13 @@ abstract class WPForms_Provider
      * Process conditional fields.
      *
      * @since 1.0.0
+     *
      * @param array $fields
      * @param array $entry
      * @param array $form_data
      * @param array $connection
+     *
+     * @return bool
      */
     public function process_conditionals($fields, $entry, $form_data, $connection)
     {
@@ -2796,8 +3917,11 @@ abstract class WPForms_Provider
      * variations.
      *
      * @since 1.0.0
-     * @param mixed $form_id
-     * @return mixed boolean or array
+     *
+     * @param object|bool $form
+     * @param array $whitelist
+     *
+     * @return bool|array
      */
     public function get_form_fields($form = \false, $whitelist = array())
     {
@@ -2809,22 +3933,26 @@ abstract class WPForms_Provider
      * provider field types.
      *
      * @since 1.0.0
+     *
      * @param array $form_fields
      * @param string $form_field_type
+     *
+     * @return array
      */
     public function get_form_field_select($form_fields = array(), $form_field_type = '')
     {
     }
-    //************************************************************************//
-    //
-    //	API methods - these methods interact directly with the provider API.
-    //
-    //************************************************************************//
+    /************************************************************************
+     * API methods - these methods interact directly with the provider API. *
+     ************************************************************************/
     /**
      * Authenticate with the provider API.
      *
+     * @since 1.0.0
+     *
      * @param array $data
      * @param string $form_id
+     *
      * @return mixed id or error object
      */
     public function api_auth($data = array(), $form_id = '')
@@ -2834,7 +3962,9 @@ abstract class WPForms_Provider
      * Establish connection object to provider API.
      *
      * @since 1.0.0
+     *
      * @param string $account_id
+     *
      * @return mixed array or error object
      */
     public function api_connect($account_id)
@@ -2844,8 +3974,10 @@ abstract class WPForms_Provider
      * Retrieve provider account lists.
      *
      * @since 1.0.0
+     *
      * @param string $connection_id
      * @param string $account_id
+     *
      * @return mixed array or error object
      */
     public function api_lists($connection_id = '', $account_id = '')
@@ -2855,8 +3987,11 @@ abstract class WPForms_Provider
      * Retrieve provider account list groups.
      *
      * @since 1.0.0
+     *
      * @param string $connection_id
      * @param string $account_id
+     * @param string $list_id
+     *
      * @return mixed array or error object
      */
     public function api_groups($connection_id = '', $account_id = '', $list_id = '')
@@ -2866,27 +4001,30 @@ abstract class WPForms_Provider
      * Retrieve provider account list fields.
      *
      * @since 1.0.0
+     *
      * @param string $connection_id
      * @param string $account_id
+     * @param string $list_id
+     *
      * @return mixed array or error object
      */
     public function api_fields($connection_id = '', $account_id = '', $list_id = '')
     {
     }
-    //************************************************************************//
-    //
-    //	Output methods - these methods generally return HTML for the builder.
-    //
-    //************************************************************************//
+    /*************************************************************************
+     * Output methods - these methods generally return HTML for the builder. *
+     *************************************************************************/
     /**
      * Connection HTML.
      *
      * This method compiles all the HTML necessary for a connection to a provider.
      *
      * @since 1.0.0
+     *
      * @param string $connection_id
      * @param array $connection
-     * @param mixed $form form id or form data
+     * @param mixed $form Form id or form data.
+     *
      * @return string
      */
     public function output_connection($connection_id = '', $connection = array(), $form = '')
@@ -2896,8 +4034,10 @@ abstract class WPForms_Provider
      * Connection header HTML.
      *
      * @since 1.0.0
+     *
      * @param string $connection_id
      * @param array $connection
+     *
      * @return string
      */
     public function output_connection_header($connection_id = '', $connection = array())
@@ -2907,7 +4047,8 @@ abstract class WPForms_Provider
      * Provider account authorize fields HTML.
      *
      * @since 1.0.0
-     * @return string
+     *
+     * @return mixed
      */
     public function output_auth()
     {
@@ -2916,8 +4057,10 @@ abstract class WPForms_Provider
      * Provider account select HTML.
      *
      * @since 1.0.0
-     * @param string $connection_id
-     * @param array $connection
+     *
+     * @param string $connection_id Unique connection ID.
+     * @param array  $connection Array of connection data.
+     *
      * @return string
      */
     public function output_accounts($connection_id = '', $connection = array())
@@ -2927,9 +4070,11 @@ abstract class WPForms_Provider
      * Provider account lists HTML.
      *
      * @since 1.0.0
+     *
      * @param string $connection_id
      * @param array $connection
-     * @return string
+     *
+     * @return WP_Error|string
      */
     public function output_lists($connection_id = '', $connection = array())
     {
@@ -2938,8 +4083,10 @@ abstract class WPForms_Provider
      * Provider account list groups HTML.
      *
      * @since 1.0.0
+     *
      * @param string $connection_id
      * @param array $connection
+     *
      * @return string
      */
     public function output_groups($connection_id = '', $connection = array())
@@ -2949,10 +4096,12 @@ abstract class WPForms_Provider
      * Provider account list fields HTML.
      *
      * @since 1.0.0
+     *
      * @param string $connection_id
      * @param array $connection
      * @param mixed $form
-     * @return string
+     *
+     * @return WP_Error|string
      */
     public function output_fields($connection_id = '', $connection = array(), $form = '')
     {
@@ -2961,9 +4110,11 @@ abstract class WPForms_Provider
      * Provider connection conditional options HTML
      *
      * @since 1.0.0
+     *
      * @param string $connection_id
      * @param array $connection
-     * @param array $form
+     * @param string|array $form
+     *
      * @return string
      */
     public function output_conditionals($connection_id = '', $connection = array(), $form = '')
@@ -2973,19 +4124,18 @@ abstract class WPForms_Provider
      * Provider account list options HTML.
      *
      * @since 1.0.0
+     *
      * @param string $connection_id
      * @param array $connection
-     * @param mixed $form
+     *
      * @return string
      */
     public function output_options($connection_id = '', $connection = array())
     {
     }
-    //************************************************************************//
-    //
-    //	Builder methods - these methods _build_ the Builder.
-    //
-    //************************************************************************//
+    /********************************************************
+     * Builder methods - these methods _build_ the Builder. *
+     ********************************************************/
     /**
      * Fetch and store the current form data when in the builder.
      *
@@ -3034,11 +4184,9 @@ abstract class WPForms_Provider
     public function builder_output_after()
     {
     }
-    //************************************************************************//
-    //
-    //	Integrations tab methods - these methods relate to the settings page.
-    //
-    //************************************************************************//
+    /*************************************************************************
+     * Integrations tab methods - these methods relate to the settings page. *
+     *************************************************************************/
     /**
      * Form fields to add a new provider account.
      *
@@ -3064,11 +4212,12 @@ abstract class WPForms_Provider
     {
     }
     /**
-     * Add provider to the Settings Integrations tab
+     * Add provider to the Settings Integrations tab.
      *
      * @since 1.0.0
-     * @param array $active
-     * @param array $settings
+     *
+     * @param array $active Array of active connections.
+     * @param array $settings Array of all connections settings.
      */
     public function integrations_tab_options($active, $settings)
     {
@@ -3077,9 +4226,11 @@ abstract class WPForms_Provider
      * Error wrapper for WP_Error.
      *
      * @since 1.0.0
-     * @param string $id
+     *
      * @param string $message
-     * @return object
+     * @param string $parent
+     *
+     * @return WP_Error
      */
     public function error($message = '', $parent = '0')
     {
@@ -3093,7 +4244,7 @@ abstract class WPForms_Provider
  * @since      1.3.6
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2017, WPForms LLC
-*/
+ */
 class WPForms_Constant_Contact extends \WPForms_Provider
 {
     /**
@@ -3129,24 +4280,28 @@ class WPForms_Constant_Contact extends \WPForms_Provider
      * Process and submit entry to provider.
      *
      * @since 1.3.6
+     *
      * @param array $fields
      * @param array $entry
      * @param array $form_data
+     * @param int $entry_id
+     *
+     * @return void
      */
     public function process_entry($fields, $entry, $form_data, $entry_id = 0)
     {
     }
-    //************************************************************************//
-    //
-    //	API methods - these methods interact directly with the provider API.
-    //
-    //************************************************************************//
+    /************************************************************************
+     * API methods - these methods interact directly with the provider API. *
+     ************************************************************************/
     /**
      * Authenticate with the API.
      *
      * @since 1.3.6
+     *
      * @param array $data
      * @param string $form_id
+     *
      * @return mixed id or error object
      */
     public function api_auth($data = array(), $form_id = '')
@@ -3155,9 +4310,11 @@ class WPForms_Constant_Contact extends \WPForms_Provider
     /**
      * Establish connection object to API.
      *
-     * @since 1.3.6 [<description>]
+     * @since 1.3.6
+     *
      * @param string $account_id
-     * @return mixed array or error object
+     *
+     * @return mixed array or error object.
      */
     public function api_connect($account_id)
     {
@@ -3166,8 +4323,10 @@ class WPForms_Constant_Contact extends \WPForms_Provider
      * Retrieve provider account lists.
      *
      * @since 1.3.6
+     *
      * @param string $connection_id
      * @param string $account_id
+     *
      * @return mixed array or error object
      */
     public function api_lists($connection_id = '', $account_id = '')
@@ -3177,18 +4336,19 @@ class WPForms_Constant_Contact extends \WPForms_Provider
      * Retrieve provider account list fields.
      *
      * @since 1.3.6
+     *
      * @param string $connection_id
      * @param string $account_id
+     * @param string $list_id
+     *
      * @return mixed array or error object
      */
     public function api_fields($connection_id = '', $account_id = '', $list_id = '')
     {
     }
-    //************************************************************************//
-    //
-    //	Output methods - these methods generally return HTML for the builder.
-    //
-    //************************************************************************//
+    /*************************************************************************
+     * Output methods - these methods generally return HTML for the builder. *
+     *************************************************************************/
     /**
      * Provider account authorize fields HTML.
      *
@@ -3202,8 +4362,10 @@ class WPForms_Constant_Contact extends \WPForms_Provider
      * Provider account list groups HTML.
      *
      * @since 1.3.6
+     *
      * @param string $connection_id
      * @param array $connection
+     *
      * @return string
      */
     public function output_groups($connection_id = '', $connection = array())
@@ -3217,11 +4379,9 @@ class WPForms_Constant_Contact extends \WPForms_Provider
     public function builder_output_after()
     {
     }
-    //************************************************************************//
-    //
-    //	Integrations tab methods - these methods relate to the settings page.
-    //
-    //************************************************************************//
+    /*************************************************************************
+     * Integrations tab methods - these methods relate to the settings page. *
+     *************************************************************************/
     /**
      * Form fields to add a new provider account.
      *
@@ -3230,11 +4390,9 @@ class WPForms_Constant_Contact extends \WPForms_Provider
     public function integrations_tab_new_form()
     {
     }
-    //************************************************************************//
-    //
-    //	Other functionality.
-    //
-    //************************************************************************//
+    /************************
+     * Other functionality. *
+     ************************/
     /**
      * Add admin notices to connect to Constant Contact.
      *
@@ -3264,6 +4422,7 @@ class WPForms_Constant_Contact extends \WPForms_Provider
  * WPForms Lite. Load Lite specific features/functionality.
  *
  * @since 1.2.0
+ *
  * @package WPForms
  */
 class WPForms_Lite
@@ -3288,17 +4447,20 @@ class WPForms_Lite
      * Form notification settings, supports multiple notifications.
      *
      * @since 1.2.3
+     *
      * @param object $settings
      */
     public function form_settings_notifications($settings)
     {
     }
     /**
-     * Provide upgrade URL.
+     * Form confirmation settings, supports multiple confirmations.
      *
-     * @since 1.2.0
+     * @since 1.4.8
+     *
+     * @param object $settings
      */
-    public function upgrade_link()
+    public function form_settings_confirmations($settings)
     {
     }
     /**
@@ -3313,18 +4475,12 @@ class WPForms_Lite
      * Display/register additional fields available in the Pro version.
      *
      * @since 1.0.0
+     *
      * @param array $fields
+     *
      * @return array
      */
     public function form_fields($fields)
-    {
-    }
-    /**
-     * Display/register additional panels available in the Pro version.
-     *
-     * @since 1.0.0
-     */
-    public function form_panels()
     {
     }
     /**
@@ -3341,6 +4497,32 @@ class WPForms_Lite
      * @since 1.3.8
      */
     public function builder_provider_sidebar()
+    {
+    }
+    /**
+     * Display payment addons available with paid license.
+     *
+     * @since 1.4.7
+     */
+    public function builder_payments_sidebar()
+    {
+    }
+    /**
+     * Display upgrade notice at the bottom on the plugin settings pages.
+     *
+     * @since 1.4.7
+     *
+     * @param string $view
+     */
+    public function settings_cta($view)
+    {
+    }
+    /**
+     * Dismiss upgrade notice at the bottom on the plugin settings pages.
+     *
+     * @since 1.4.7
+     */
+    public function settings_cta_dismiss()
     {
     }
     /**
@@ -3378,15 +4560,6 @@ class WPForms_Lite
  * @copyright  Copyright (c) 2017, WPForms LLC
  */
 /**
- * Helper function to determine if viewing an WPForms related admin page.
- *
- * @since 1.3.9
- * @return boolean
- */
-function wpforms_is_admin_page()
-{
-}
-/**
  * Load styles for all WPForms-related admin screens.
  *
  * @since 1.3.9
@@ -3406,7 +4579,9 @@ function wpforms_admin_scripts()
  * Add body class to WPForms admin pages for easy reference.
  *
  * @since 1.3.9
+ *
  * @param string $classes
+ *
  * @return string
  */
 function wpforms_admin_body_class($classes)
@@ -3435,8 +4610,30 @@ function wpforms_admin_hide_unrelated_notices()
  * available globally in 1.3.9.
  *
  * @since 1.3.9
+ *
+ * @param string $medium utm_medium URL parameter.
+ *
+ * @return string.
  */
-function wpforms_admin_upgrade_link()
+function wpforms_admin_upgrade_link($medium = 'link')
+{
+}
+/**
+ * Check the current PHP version and display a notice if on unsupported PHP.
+ *
+ * @since 1.4.0.1
+ */
+function wpforms_check_php_version()
+{
+}
+/**
+ * Get an upgrade modal text.
+ *
+ * @since 1.4.4
+ *
+ * @return string
+ */
+function wpforms_get_upgrade_modal_text()
 {
 }
 /**
@@ -3447,9 +4644,9 @@ function wpforms_admin_upgrade_link()
  * @since      1.0.0
  * @license    GPL-2.0+
  * @copyright  Copyright (c) 2016, WPForms LLC
-*/
+ */
 /**
- * Save a form
+ * Save a form.
  *
  * @since 1.0.0
  */
@@ -3483,7 +4680,7 @@ function wpforms_builder_increase_next_field_id()
 /**
  * Form Builder Dynamic Choices option toggle.
  *
- * This can be triggered with select/radio/checkbox fileds.
+ * This can be triggered with select/radio/checkbox fields.
  *
  * @since 1.2.8
  */
@@ -3493,11 +4690,20 @@ function wpforms_builder_dynamic_choices()
 /**
  * Form Builder Dynamic Choices Source option toggle.
  *
- * This can be triggered with select/radio/checkbox fileds.
+ * This can be triggered with select/radio/checkbox fields.
  *
  * @since 1.2.8
  */
 function wpforms_builder_dynamic_source()
+{
+}
+/**
+ * Perform test connection to verify that the current web host can successfully
+ * make outbound SSL connections.
+ *
+ * @since 1.4.5
+ */
+function wpforms_verify_ssl()
 {
 }
 /**
@@ -3507,9 +4713,16 @@ function wpforms_builder_dynamic_source()
  * to declare the global.
  *
  * @since 1.1.0
- * @return object
+ *
+ * @return WPForms_Conditional_Logic_Core
  */
 function wpforms_conditional_logic()
+{
+}
+/**
+ * Register WPForms plugin widgets.
+ */
+function wpforms_register_widgets()
 {
 }
 /**
@@ -3526,9 +4739,10 @@ function wpforms_conditional_logic()
  * Helper function to trigger displaying a form.
  *
  * @since 1.0.2
- * @param int $form_id
- * @param bool $title
- * @param bool $desc
+ *
+ * @param mixed $form_id
+ * @param bool  $title
+ * @param bool  $desc
  */
 function wpforms_display($form_id = \false, $title = \false, $desc = \false)
 {
@@ -3537,8 +4751,10 @@ function wpforms_display($form_id = \false, $title = \false, $desc = \false)
  * Performs json_decode and unslash.
  *
  * @since 1.0.0
+ *
  * @param string $data
- * @return array
+ *
+ * @return array|bool
  */
 function wpforms_decode($data)
 {
@@ -3547,7 +4763,9 @@ function wpforms_decode($data)
  * Performs json_encode and wp_slash.
  *
  * @since 1.3.1.3
- * @param array $data
+ *
+ * @param mixed $data
+ *
  * @return string
  */
 function wpforms_encode($data = \false)
@@ -3557,7 +4775,9 @@ function wpforms_encode($data = \false)
  * Check if a string is a valid URL.
  *
  * @since 1.0.0
- * @param $url
+ *
+ * @param string $url
+ *
  * @return bool
  */
 function wpforms_is_url($url)
@@ -3567,6 +4787,7 @@ function wpforms_is_url($url)
  * Get current URL.
  *
  * @since 1.0.0
+ *
  * @return string
  */
 function wpforms_current_url()
@@ -3576,8 +4797,10 @@ function wpforms_current_url()
  * Object to array.
  *
  * @since 1.1.7
+ *
  * @param object $object
- * @return array
+ *
+ * @return mixed
  */
 function wpforms_object_to_array($object)
 {
@@ -3586,6 +4809,11 @@ function wpforms_object_to_array($object)
  * Get the value of a specific WPForms setting.
  *
  * @since 1.0.0
+ *
+ * @param string $key
+ * @param mixed  $default
+ * @param string $option
+ *
  * @return mixed
  */
 function wpforms_setting($key, $default = \false, $option = 'wpforms_settings')
@@ -3595,7 +4823,9 @@ function wpforms_setting($key, $default = \false, $option = 'wpforms_settings')
  * Sanitize key, primarily used for looking up options.
  *
  * @since 1.3.9
+ *
  * @param string $key
+ *
  * @return string
  */
 function wpforms_sanitize_key($key = '')
@@ -3605,17 +4835,37 @@ function wpforms_sanitize_key($key = '')
  * Check if form provided contains the specified field type.
  *
  * @since 1.0.5
- * @param string $type
- * @param mixed $form
+ *
+ * @param array|string $type
+ * @param array        $form
+ * @param bool         $multiple
+ *
  * @return bool
  */
 function wpforms_has_field_type($type, $form, $multiple = \false)
 {
 }
 /**
+ * Check if form provided contains a field which a specific setting.
+ *
+ * @since 1.4.5
+ *
+ * @param string $setting
+ * @param array  $form
+ * @param bool   $multiple
+ *
+ * @return bool
+ */
+function wpforms_has_field_setting($setting, $form, $multiple = \false)
+{
+}
+/**
  * Checks if form provided contains page breaks, if so give details.
  *
  * @since 1.0.0
+ *
+ * @param mixed $form
+ *
  * @return mixed
  */
 function wpforms_has_pagebreak($form = \false)
@@ -3625,9 +4875,11 @@ function wpforms_has_pagebreak($form = \false)
  * Tries to find and return an top or bottom pagebreak.
  *
  * @since 1.2.1
- * @param boolean $form
- * @param string $type
- * @return boolean
+ *
+ * @param mixed $form
+ * @param mixed $type
+ *
+ * @return array|bool
  */
 function wpforms_get_pagebreak($form = \false, $type = \false)
 {
@@ -3636,7 +4888,9 @@ function wpforms_get_pagebreak($form = \false, $type = \false)
  * Returns information about pages if the form has multiple pages.
  *
  * @since 1.3.7
+ *
  * @param mixed $form
+ *
  * @return mixed false or an array
  */
 function wpforms_get_pagebreak_details($form = \false)
@@ -3647,11 +4901,13 @@ function wpforms_get_pagebreak_details($form = \false)
  * and data attributes.
  *
  * @since 1.3.7
+ *
  * @param string $id
- * @param array $class
- * @param array $datas
- * @param array $atts
- * @param bool $echo
+ * @param array  $class
+ * @param array  $datas
+ * @param array  $atts
+ * @param bool   $echo
+ *
  * @return string
  */
 function wpforms_html_attributes($id = '', $class = array(), $datas = array(), $atts = array(), $echo = \false)
@@ -3661,9 +4917,11 @@ function wpforms_html_attributes($id = '', $class = array(), $datas = array(), $
  * Sanitizes string of CSS classes.
  *
  * @since 1.2.1
- * @param string $classes
- * @param bool $convert True will convert strings to array and vice versa.
- * @return string
+ *
+ * @param array|string $classes
+ * @param bool         $convert True will convert strings to array and vice versa.
+ *
+ * @return string|array
  */
 function wpforms_sanitize_classes($classes, $convert = \false)
 {
@@ -3673,7 +4931,9 @@ function wpforms_sanitize_classes($classes, $convert = \false)
  *
  * @since 1.0.0
  * @link http://stackoverflow.com/a/22500394
+ *
  * @param string $size
+ *
  * @return int
  */
 function wpforms_size_to_bytes($size)
@@ -3683,7 +4943,9 @@ function wpforms_size_to_bytes($size)
  * Convert bytes to megabytes (or in some cases KB).
  *
  * @since 1.0.0
- * @param int $bytes
+ *
+ * @param int $bytes Bytes to convert to a readable format.
+ *
  * @return string
  */
 function wpforms_size_to_megabytes($bytes)
@@ -3694,8 +4956,10 @@ function wpforms_size_to_megabytes($bytes)
  *
  * @since 1.0.0
  * @link http://stackoverflow.com/a/22500394
- * @param string $size
- * @return int
+ *
+ * @param bool $bytes
+ *
+ * @return mixed
  */
 function wpforms_max_upload($bytes = \false)
 {
@@ -3707,7 +4971,10 @@ function wpforms_max_upload($bytes = \false)
  * automatically excluded. Optionally a white list can be provided.
  *
  * @since 1.0.0
+ *
  * @param mixed $form
+ * @param array $whitelist
+ *
  * @return mixed boolean or array
  */
 function wpforms_get_form_fields($form = \false, $whitelist = array())
@@ -3717,9 +4984,11 @@ function wpforms_get_form_fields($form = \false, $whitelist = array())
  * Get meta key value for a form field.
  *
  * @since 1.1.9
- * @param int $id Field ID
- * @param string $key Meta key
- * @param array $form_data Form data array
+ *
+ * @param int|string $id Field ID.
+ * @param string     $key Meta key.
+ * @param mixed      $form_data Form data array.
+ *
  * @return string
  */
 function wpforms_get_form_field_meta($id = '', $key = '', $form_data = '')
@@ -3729,8 +4998,11 @@ function wpforms_get_form_field_meta($id = '', $key = '', $form_data = '')
  * Get meta key value for a form field.
  *
  * @since 1.3.1
- * @param string $key Meta key
- * @param array $form_data Form data array
+ *
+ * @param string $key Meta key.
+ * @param string $value
+ * @param mixed  $form_data Form data array.
+ *
  * @return string
  */
 function wpforms_get_form_fields_by_meta($key = '', $value = '', $form_data = '')
@@ -3740,6 +5012,7 @@ function wpforms_get_form_fields_by_meta($key = '', $value = '', $form_data = ''
  * US States
  *
  * @since 1.0.0
+ *
  * @return array
  */
 function wpforms_us_states()
@@ -3749,6 +5022,7 @@ function wpforms_us_states()
  * Countries.
  *
  * @since 1.0.0
+ *
  * @return array
  */
 function wpforms_countries()
@@ -3788,7 +5062,9 @@ function wpforms_get_ip()
  * Sanitizes hex color.
  *
  * @since 1.2.1
+ *
  * @param string $color
+ *
  * @return string
  */
 function wpforms_sanitize_hex_color($color)
@@ -3798,10 +5074,39 @@ function wpforms_sanitize_hex_color($color)
  * Sanitizes error message, primarily used during form frontend output.
  *
  * @since 1.3.7
+ *
  * @param string $error
+ *
  * @return string
  */
 function wpforms_sanitize_error($error = '')
+{
+}
+/**
+ * Sanitizes a string, that can be a multiline.
+ * If WP core `sanitize_textarea_field()` exists (after 4.7.0) - use it.
+ * Otherwise - split onto separate lines, sanitize each one, merge again.
+ *
+ * @since 1.4.1
+ *
+ * @param string $string
+ *
+ * @return string If empty var is passed, or not a string - return unmodified. Otherwise - sanitize.
+ */
+function wpforms_sanitize_textarea_field($string)
+{
+}
+/**
+ * Sanitizes an array, that consists of values as strings.
+ * After that - merge all array values into multiline string.
+ *
+ * @since 1.4.1
+ *
+ * @param array $array
+ *
+ * @return mixed If not an array is passed (or empty var) - return unmodified var. Otherwise - a merged array into multiline string.
+ */
+function wpforms_sanitize_array_combine($array)
 {
 }
 /**
@@ -3809,9 +5114,11 @@ function wpforms_sanitize_error($error = '')
  *
  * @since 1.2.5
  * @link https://docs.woocommerce.com/wc-apidocs/source-function-wc_light_or_dark.html#608-627
+ *
  * @param mixed $color
- * @param string $dark (default: '#000000')
- * @param string $light (default: '#FFFFFF')
+ * @param string $dark (default: '#000000').
+ * @param string $light (default: '#FFFFFF').
+ *
  * @return string
  */
 function wpforms_light_or_dark($color, $dark = '#000000', $light = '#FFFFFF')
@@ -3819,12 +5126,14 @@ function wpforms_light_or_dark($color, $dark = '#000000', $light = '#FFFFFF')
 }
 /**
  * Builds and returns either a taxonomy or post type object that is
- * nests to accomodate any hierarchy.
+ * nests to accommodate any hierarchy.
  *
  * @since 1.3.9
+ *
  * @param array $args
  * @param bool $flat
- * @return array
+ *
+ * @return bool|array
  */
 function wpforms_get_hierarchical_object($args = array(), $flat = \false)
 {
@@ -3833,7 +5142,8 @@ function wpforms_get_hierarchical_object($args = array(), $flat = \false)
  * Searches a given array and finds the parent of the provided object.
  *
  * @since 1.3.9
- * @param array $child
+ *
+ * @param object $child
  * @param array $parents
  * @param array $children
  * @param string $ref_parent
@@ -3842,9 +5152,10 @@ function _wpforms_get_hierarchical_object_search($child, &$parents, &$children, 
 {
 }
 /**
- * Flattens a heirarchical object.
+ * Flattens a hierarchical object.
  *
  * @since 1.3.9
+ *
  * @param array $array
  * @param array $output
  * @param string $ref_name
@@ -3854,14 +5165,30 @@ function _wpforms_get_hierarchical_object_flatten($array, &$output, $ref_name = 
 {
 }
 /**
+ * Returns field choice properties for field configured with dynamic choices.
+ *
+ * @since 1.4.5
+ *
+ * @param array $field     Field settings.
+ * @param int   $form_id   Form ID.
+ * @param array $form_data Form data.
+ *
+ * @return false|array
+ */
+function wpforms_get_field_dynamic_choices($field, $form_id, $form_data = array())
+{
+}
+/**
  * Insert an array into another array before/after a certain key.
  *
  * @since 1.3.9
  * @link https://gist.github.com/scribu/588429
- * @param array $array The initial array
- * @param array $pairs The array to insert
- * @param string $key The certain key
- * @param string $position Wether to insert the array before or after the key
+ *
+ * @param array $array The initial array.
+ * @param array $pairs The array to insert.
+ * @param string $key The certain key.
+ * @param string $position Where to insert the array - before or after the key.
+ *
  * @return array
  */
 function wpforms_array_insert($array, $pairs, $key, $position = 'after')
@@ -3871,16 +5198,20 @@ function wpforms_array_insert($array, $pairs, $key, $position = 'after')
  * Recursively remove empty strings from an array.
  *
  * @since 1.3.9.1
+ *
  * @param array $data
+ *
  * @return array
  */
 function wpforms_array_remove_empty_strings($data)
 {
 }
 /**
- * Debug mode bool.
+ * Whether plugin works in a debug mode.
  *
  * @since 1.2.3
+ *
+ * @return bool
  */
 function wpforms_debug()
 {
@@ -3889,7 +5220,10 @@ function wpforms_debug()
  * Helper function to display debug data.
  *
  * @since 1.0.0
- * @param string $data
+ *
+ * @param mixed $data What to dump, can be any type.
+ * @param bool  $echo Whether to print or return. Default is to print.
+ *
  * @return string
  */
 function wpforms_debug_data($data, $echo = \true)
@@ -3899,15 +5233,156 @@ function wpforms_debug_data($data, $echo = \true)
  * Log helper.
  *
  * @since 1.0.0
- * @param string $title
- * @param string $message
- * @param array $args
+ *
+ * @param string $title Title of a log message.
+ * @param string $message Content of a log message.
+ * @param array  $args Expected keys: form_id, meta, parent.
  */
 function wpforms_log($title = '', $message = '', $args = array())
 {
 }
 /**
- * Contains various WPForms integrations
+ * Check whether the current page is in AMP mode or not.
+ * We need to check for specific functions, as there is no special AMP header.
+ *
+ * @since 1.4.1
+ *
+ * @return bool
+ */
+function wpforms_is_amp()
+{
+}
+/**
+ * Decode special characters, both alpha- (<) and numeric-based (').
+ *
+ * @since 1.4.1
+ *
+ * @param string $string Raw string to decode.
+ *
+ * @return string
+ */
+function wpforms_decode_string($string)
+{
+}
+/**
+ * Get a suffix for assets, `.min` if debug is disabled.
+ *
+ * @since 1.4.1
+ *
+ * @return string
+ */
+function wpforms_get_min_suffix()
+{
+}
+/**
+ * Get the required label text, with a filter.
+ *
+ * @since 1.4.4
+ *
+ * @return string
+ */
+function wpforms_get_required_label()
+{
+}
+/**
+ * Get the required field label HTML, with a filter.
+ *
+ * @since 1.4.8
+ *
+ * @return string
+ */
+function wpforms_get_field_required_label()
+{
+}
+/**
+ * Get the default capability to manage everything for WPForms.
+ *
+ * @since 1.4.4
+ *
+ * @return string
+ */
+function wpforms_get_capability_manage_options()
+{
+}
+/**
+ * Check permissions for currently logged in user.
+ *
+ * @since 1.4.4
+ *
+ * @return bool
+ */
+function wpforms_current_user_can()
+{
+}
+/**
+ * Get the certain date of a specified day in a specified format.
+ *
+ * @since 1.4.4
+ *
+ * @param string $period Supported values: start, end.
+ * @param string $timestamp Default is the current timestamp, if left empty.
+ * @param string $format Default is a MySQL format.
+ *
+ * @return string
+ */
+function wpforms_get_day_period_date($period, $timestamp = '', $format = 'Y-m-d H:i:s')
+{
+}
+/**
+ * Get an array of all the active provider addons.
+ *
+ * @since 1.4.7
+ *
+ * @return array
+ */
+function wpforms_get_providers_available()
+{
+}
+/**
+ * Get options for all providers.
+ *
+ * @since 1.4.7
+ *
+ * @param string $provider Define a single provider to get options for this one only.
+ *
+ * @return array
+ */
+function wpforms_get_providers_options($provider = '')
+{
+}
+/**
+ * Update options for all providers.
+ *
+ * @since 1.4.7
+ *
+ * @param string      $provider Provider slug.
+ * @param array|false $options If false is passed - provider will be removed. Otherwise saved.
+ * @param string      $key Optional key to identify which connection to update. If empty - generate a new one.
+ */
+function wpforms_update_providers_options($provider, $options, $key = '')
+{
+}
+/**
+ * Helper function to determine if loading an WPForms related admin page.
+ *
+ * Here we determine if the current administration page is owned/created by
+ * WPForms. This is done in compliance with WordPress best practices for
+ * development, so that we only load required WPForms CSS and JS files on pages
+ * we create. As a result we do not load our assets admin wide, where they might
+ * conflict with other plugins needlessly, also leading to a better, faster user
+ * experience for our users.
+ *
+ * @since 1.3.9
+ *
+ * @param string $slug Slug identifier for a specifc WPForms admin page.
+ *
+ * @return boolean
+ */
+function wpforms_is_admin_page($slug = '', $view = '')
+{
+}
+/**
+ * Contains various WPForms integrations.
  *
  * @package    WPForms
  * @author     WPForms
