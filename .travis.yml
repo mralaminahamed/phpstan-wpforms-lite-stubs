@@ -20,8 +20,6 @@ before_install:
 
 install:
   - "composer update --no-interaction"
-  ## Reinstall sub-packages into /packages/
-  #- "composer update --no-interaction"
   - |
     LATEST="$(jq -r '."require"."wpforms-lite/wpforms"' source/composer.json)"
     wget -P source/ "https://downloads.wordpress.org/plugin/wpforms-lite.${LATEST}.zip"
@@ -36,4 +34,4 @@ script:
   - "php -l wpforms-stubs.php"
   - "git diff --exit-code"
   - |
-    php -r 'require "vendor/php-stubs/wordpress-stubs/wordpress-stubs.php"; require "vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php"; require "wpforms-constants-stubs.php"; require "wpforms-stubs.php";'
+    php -r 'require "vendor/php-stubs/wordpress-stubs/wordpress-stubs.php"; require "wpforms-constants-stubs.php"; require "wpforms-stubs.php";'
