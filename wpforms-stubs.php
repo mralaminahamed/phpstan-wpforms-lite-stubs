@@ -70,6 +70,14 @@ namespace {
         {
         }
         /**
+         * Register hooks.
+         *
+         * @since 1.8.2.3
+         */
+        private function hooks()
+        {
+        }
+        /**
          * Determining if the user is viewing the our page, if so, party on.
          *
          * @since 1.5.0
@@ -182,6 +190,16 @@ namespace {
          * @return string
          */
         protected function get_license_type()
+        {
+        }
+        /**
+         * Get the list of features for the licenses.
+         *
+         * @since 1.8.2.3
+         *
+         * @return array
+         */
+        private function get_licenses_features_list()
         {
         }
     }
@@ -3412,9 +3430,9 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param int   $field_id
-         * @param array $field_submit
-         * @param array $form_data
+         * @param int   $field_id     Field id.
+         * @param array $field_submit Field submit.
+         * @param array $form_data    Form data.
          */
         public function validate($field_id, $field_submit, $form_data)
         {
@@ -3444,6 +3462,20 @@ namespace {
          * @noinspection PhpUnusedParameterInspection
          */
         public function is_field_requires_fieldset($requires_fieldset, $field)
+        {
+        }
+        /**
+         * Validate complicated formats.
+         *
+         * @since 1.8.2.3
+         *
+         * @param WPForms_Process $process      Process class instance.
+         * @param int|string      $form_id      Form id.
+         * @param int|string      $field_id     Field id.
+         * @param array           $field_submit Field submit.
+         * @param string          $required     Required message text.
+         */
+        private function validate_complicated_formats($process, $form_id, $field_id, $field_submit, $required)
         {
         }
     }
