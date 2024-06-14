@@ -1094,15 +1094,15 @@ namespace {
          * and if so run the installer.
          *
          * @since 1.3.0
+         * @since 1.8.4 Added $new_site and $args parameters and removed $blog_id, $user_id, $domain, $path, $site_id,
+         *        $meta parameters.
          *
-         * @param int    $blog_id Blog ID.
-         * @param int    $user_id User ID.
-         * @param string $domain  Site domain.
-         * @param string $path    Site path.
-         * @param int    $site_id Site ID. Only relevant on multi-network installs.
-         * @param array  $meta    Meta data. Used to set initial site options.
+         * @param WP_Site $new_site New site object.
+         * @param array   $args     Arguments for the initialization.
+         *
+         * @noinspection PhpUnusedParameterInspection
          */
-        public function new_multisite_blog($blog_id, $user_id, $domain, $path, $site_id, $meta)
+        public function new_multisite_blog($new_site, $args)
         {
         }
         /**
@@ -2176,6 +2176,61 @@ namespace {
         {
         }
         /**
+         * Return images, if any, for HTML supported values.
+         *
+         * @since 1.4.5
+         *
+         * @param string $value     Field value.
+         * @param array  $field     Field settings.
+         * @param array  $form_data Form data and settings.
+         * @param string $context   Value display context.
+         *
+         * @return string
+         */
+        public function field_html_value($value, $field, $form_data = [], $context = '')
+        {
+        }
+        /**
+         * Return HTML for a field value.
+         *
+         * @since 1.8.4.1
+         *
+         * @param array  $field Field settings.
+         * @param string $value Field value.
+         *
+         * @return string
+         */
+        private function get_field_html($field, $value)
+        {
+        }
+        /**
+         * Return image HTML for a field value.
+         *
+         * @since 1.8.4.1
+         *
+         * @param string $url   Image URL.
+         * @param string $label Field value.
+         *
+         * @return string
+         */
+        private function get_field_html_image($url, $label)
+        {
+        }
+        /**
+         * Return boolean determining if field HTML values uses images.
+         *
+         * Bail if field type is not set.
+         *
+         * @since 1.8.2
+         *
+         * @param string $context Context of the field.
+         *
+         * @return bool
+         */
+        private function filter_field_html_value_images($context)
+        {
+        }
+        /**
          * Get field name for ajax error message.
          *
          * @since 1.6.3
@@ -2320,21 +2375,6 @@ namespace {
          * @since 1.8.1
          */
         private function hooks()
-        {
-        }
-        /**
-         * Return images, if any, for HTML supported values.
-         *
-         * @since 1.4.5
-         *
-         * @param string $value     Field value.
-         * @param array  $field     Field settings.
-         * @param array  $form_data Form data and settings.
-         * @param string $context   Value display context.
-         *
-         * @return string
-         */
-        public function field_html_value($value, $field, $form_data = [], $context = '')
         {
         }
         /**
@@ -3450,9 +3490,9 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param int   $field_id     Field id.
-         * @param array $field_submit Field submit.
-         * @param array $form_data    Form data.
+         * @param int          $field_id     Field id.
+         * @param array|string $field_submit Field submit.
+         * @param array        $form_data    Form data.
          */
         public function validate($field_id, $field_submit, $form_data)
         {
@@ -3462,9 +3502,9 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param int   $field_id
-         * @param array $field_submit
-         * @param array $form_data
+         * @param int   $field_id     Field ID.
+         * @param mixed $field_submit Field value that was submitted.
+         * @param array $form_data    Form data and settings.
          */
         public function format($field_id, $field_submit, $form_data)
         {
@@ -3743,21 +3783,6 @@ namespace {
          * @since 1.8.1
          */
         private function hooks()
-        {
-        }
-        /**
-         * Return images, if any, for HTML supported values.
-         *
-         * @since 1.4.5
-         *
-         * @param string $value     Field value.
-         * @param array  $field     Field settings.
-         * @param array  $form_data Form data and settings.
-         * @param string $context   Value display context.
-         *
-         * @return string
-         */
-        public function field_html_value($value, $field, $form_data = [], $context = '')
         {
         }
         /**
@@ -5574,6 +5599,7 @@ namespace {
      * @since 1.4.0.1
      * @since 1.5.0 Raising this awareness of old PHP version message from 5.2 to 5.3.
      * @since 1.7.9 Raising this awareness of old PHP version message to 7.1.
+     * @since 1.8.4 Raising this awareness of old PHP version message to 7.3.
      */
     function wpforms_check_php_version()
     {
@@ -5602,11 +5628,6 @@ namespace {
     function wpforms_admin_hide_wp_version($text)
     {
     }
-    /**
-     * Ajax actions used in by admin.
-     *
-     * @since 1.0.0
-     */
     /**
      * Save a form.
      *

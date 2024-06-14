@@ -24,8 +24,8 @@ install:
   #- "composer update --no-interaction"
   - |
     LATEST="$(jq -r '."require"."wpforms/wpforms"' source/composer.json)"
-    wget -P source/ "https://downloads.wordpress.org/plugin/wpforms.${LATEST}.zip"
-    unzip -q -d source/ "source/wpforms.${LATEST}.zip"
+    wget -P source/ "https://downloads.wordpress.org/plugin/wpforms-lite.${LATEST}.zip"
+    unzip -q -d source/ "source/wpforms-lite.${LATEST}.zip"
 
 before_script:
   - "cat ./source/wpforms/wpforms.php"
