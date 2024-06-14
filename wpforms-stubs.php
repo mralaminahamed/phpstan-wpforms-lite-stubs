@@ -523,6 +523,14 @@ namespace {
         {
         }
         /**
+         * Output the review content.
+         *
+         * @since 1.8.7.2
+         */
+        private function review_content()
+        {
+        }
+        /**
          * Dismiss the review admin notice.
          *
          * @deprecated 1.6.7.1
@@ -1949,6 +1957,18 @@ namespace {
         {
         }
         /**
+         * Whether a Choicesjs search area should be shown for quantity select.
+         *
+         * @since 1.8.7
+         *
+         * @param array $field Field data.
+         *
+         * @return bool
+         */
+        protected function is_quantity_choicesjs_search_enabled($field)
+        {
+        }
+        /**
          * Get instance of the class connected to the current field,
          * and located in the `src/Forms/[Pro/]Fields/FieldType/Class.php` file.
          *
@@ -2031,6 +2051,54 @@ namespace {
          * @return string
          */
         protected function get_choices_label($label, int $key)
+        {
+        }
+        /**
+         * Display quantity dropdown on the front.
+         *
+         * @since 1.8.7
+         *
+         * @param array $field Field data and settings.
+         */
+        protected function display_quantity_dropdown($field)
+        {
+        }
+        /**
+         * Add class to the builder field preview.
+         *
+         * @since 1.8.7
+         *
+         * @param string $css   Class names.
+         * @param array  $field Field properties.
+         *
+         * @return string
+         */
+        public function preview_field_class($css, $field)
+        {
+        }
+        /**
+         * Determine if payment quantities enabled.
+         *
+         * @since 1.8.7
+         *
+         * @param array $field_settings Field settings.
+         *
+         * @return bool
+         */
+        protected function is_payment_quantities_enabled($field_settings)
+        {
+        }
+        /**
+         * Get field payment submitted quantity.
+         *
+         * @since 1.8.7
+         *
+         * @param array $field     Field data.
+         * @param array $form_data Form data and settings.
+         *
+         * @return int
+         */
+        protected function get_submitted_field_quantity($field, $form_data)
         {
         }
     }
@@ -4968,6 +5036,14 @@ namespace WPForms {
         {
         }
         /**
+         * Populate Caches related classes.
+         *
+         * @since 1.8.7
+         */
+        private function populate_caches()
+        {
+        }
+        /**
          * Populate Fields related classes.
          *
          * @since 1.8.2
@@ -5195,6 +5271,13 @@ namespace WPForms {
          * @since 1.5.7
          *
          * @param array $class_data Class registration info.
+         *
+         * $class_data array accepts these params: name, id, hook, run, condition.
+         * - name: required -- class name to register.
+         * - id: optional -- class ID to register.
+         * - hook: optional -- hook to register the class on -- default wpforms_loaded.
+         * - run: optional -- method to run on class instantiation -- default init.
+         * - condition: optional -- condition to check before registering the class.
          */
         public function register($class_data)
         {
@@ -5239,7 +5322,7 @@ namespace WPForms {
          *
          * @return array List of table names.
          */
-        public function get_existing_custom_tables()
+        public function get_existing_custom_tables() : array
         {
         }
         /**
@@ -5877,6 +5960,7 @@ namespace {
      * Timezone can be based on a PHP timezone string or a ±HH:MM offset.
      *
      * @since 1.6.6
+     * @deprecated 1.8.7
      *
      * @return DateTimeZone Timezone object.
      */
@@ -6516,15 +6600,17 @@ namespace {
      * Process smart tags.
      *
      * @since 1.7.1
+     * @since 1.8.7 Added `$context` parameter.
      *
      * @param string $content   Content.
      * @param array  $form_data Form data.
      * @param array  $fields    List of fields.
      * @param string $entry_id  Entry ID.
+     * @param string $context   Context.
      *
      * @return string
      */
-    function wpforms_process_smart_tags($content, $form_data, $fields = [], $entry_id = '')
+    function wpforms_process_smart_tags($content, $form_data, $fields = [], $entry_id = '', $context = '')
     {
     }
     /**
