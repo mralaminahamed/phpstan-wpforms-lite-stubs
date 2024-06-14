@@ -4969,6 +4969,53 @@ namespace WPForms\Lite\Reports {
         public function get_by_form()
         {
         }
+        /**
+         * Retrieve and calculate form trends data for Lite users.
+         *
+         * This function calculates and returns trends data for Lite users based on the total number
+         * of entries submitted per week compared to the previous week's total entries. Optionally
+         * updates the database with the calculated data.
+         *
+         * @since 1.8.8
+         *
+         * @return array
+         */
+        public function get_form_trends()
+        {
+        }
+        /**
+         * Unsets forms from the results array that lack valid previous week's count data.
+         *
+         * This function checks for the presence of valid previous week's count data for each form in the
+         * provided results array. If all forms in the array lack valid data, the original results array is
+         * returned without any changes. Otherwise, forms without valid data are unset from the array.
+         *
+         * @since 1.8.8
+         *
+         * @param array $results              The original array of form results.
+         * @param array $maybe_unset_form_ids The form IDs that may need to be unset.
+         *
+         * @return array
+         */
+        private function maybe_unset_form_ids($results, $maybe_unset_form_ids)
+        {
+        }
+        /**
+         * Get the calculated trends based on the count and count from the previous week.
+         *
+         * This function calculates and returns the trends based on the current count
+         * and the count from the previous week.
+         *
+         * @since 1.8.8
+         *
+         * @param int $count               The current count.
+         * @param int $count_previous_week The count from the previous week.
+         *
+         * @return int
+         */
+        private function get_calculated_trends($count, $count_previous_week)
+        {
+        }
     }
 }
 namespace WPForms {
