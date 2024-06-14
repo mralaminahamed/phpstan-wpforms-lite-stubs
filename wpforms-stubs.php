@@ -1716,6 +1716,14 @@ namespace {
          */
         public $icon = \false;
         /**
+         * Field keywords for search, eg "checkbox, file, icon, upload".
+         *
+         * @since 1.8.3
+         *
+         * @var string
+         */
+        public $keywords = '';
+        /**
          * Priority order the field button should show inside the "Add Fields" tab.
          *
          * @since 1.0.0
@@ -3328,6 +3336,18 @@ namespace {
          * @return array
          */
         private function get_allowed_tags()
+        {
+        }
+        /**
+         * Adds link parameters to all links in the provided content.
+         *
+         * @since 1.8.3
+         *
+         * @param string $content The content to modify.
+         *
+         * @return string The modified content with UTM parameters added to links.
+         */
+        private function add_link_attributes($content)
         {
         }
         /**
@@ -5273,11 +5293,11 @@ namespace WPForms {
         {
         }
         /**
-         * Populate Country and Keyword filters from AntiSpam settings.
+         * Populate AntiSpam loaded classes.
          *
          * @since 1.7.8
          */
-        private function populate_anti_spam_filters()
+        private function populate_anti_spam()
         {
         }
     }
@@ -6300,6 +6320,18 @@ namespace {
      * @return string
      */
     function wpforms_get_field_required_label()
+    {
+    }
+    /**
+     * Escape unselected choices for radio/checkbox fields.
+     *
+     * @since 1.8.3
+     *
+     * @param string $formatted_field HTML field.
+     *
+     * @return string
+     */
+    function wpforms_esc_unselected_choices($formatted_field)
     {
     }
     /**
