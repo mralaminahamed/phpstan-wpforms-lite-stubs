@@ -48,83 +48,7 @@ class WPForms_Admin_Editor
     }
 }
 /**
- * WordPress class extended for on-the-fly addon installations.
- *
- * @package    WPForms
- * @author     WPForms
- * @since      1.0.0
- * @license    GPL-2.0+
- * @copyright  Copyright (c) 2016, WPForms LLC
-*/
-class WPForms_Install_Skin extends \WP_Upgrader_Skin
-{
-    /**
-     * Primary class constructor.
-     *
-     * @since 1.0.0
-     * @param array $args Empty array of args (we will use defaults).
-     */
-    public function __construct($args = array())
-    {
-    }
-    /**
-     * Set the upgrader object and store it as a property in the parent class.
-     *
-     * @since 1.0.0
-     * @param object $upgrader The upgrader object (passed by reference).
-     */
-    public function set_upgrader(&$upgrader)
-    {
-    }
-    /**
-     * Set the upgrader result and store it as a property in the parent class.
-     *
-     * @since 1.0.0
-     * @param object $result The result of the install process.
-     */
-    public function set_result($result)
-    {
-    }
-    /**
-     * Empty out the header of its HTML content and only check to see if it has
-     * been performed or not.
-     *
-     * @since 1.0.0
-     */
-    public function header()
-    {
-    }
-    /**
-     * Empty out the footer of its HTML contents.
-     *
-     * @since 1.0.0
-     */
-    function footer()
-    {
-    }
-    /**
-     * Instead of outputting HTML for errors, json_encode the errors and send them
-     * back to the Ajax script for processing.
-     *
-     * @since 1.0.0
-     * @param array $errors Array of errors with the install process.
-     */
-    function error($errors)
-    {
-    }
-    /**
-     * Empty out the feedback method to prevent outputting HTML strings as the install
-     * is progressing.
-     *
-     * @since 1.0.0
-     * @param string $string The feedback string.
-     */
-    function feedback($string)
-    {
-    }
-}
-/**
- * Register menu elements.
+ * Register menu elements and do other global tasks.
  *
  * @package    WPForms
  * @author     WPForms
@@ -161,39 +85,15 @@ class WPForms_Admin_Menu
     public function menu_icon()
     {
     }
-}
-/**
- * Handles plugin upgrades.
- *
- * @package    WPForms
- * @author     WPForms
- * @since      1.0.0
- * @license    GPL-2.0+
- * @copyright  Copyright (c) 2016, WPForms LLC
-*/
-class WPForms_Upgrades
-{
     /**
-     * Have we upgraded?
+     * When user is on a WPForms related admin page, display footer text
+     * that graciously asks them to rate us.
      *
-     * @since 1.0.0
-     * @var boolean
+     * @since 1.2.1
+     * @param string $text
+     * @return string
      */
-    private $upgraded = \false;
-    /**
-     * Primary class constructor.
-     *
-     * @since 1.0.0
-     */
-    public function __construct()
-    {
-    }
-    /**
-     * Checks if a new version is detected, if so perform update.
-     *
-     * @since 1.0.0
-     */
-    public function init()
+    public function admin_footer($text)
     {
     }
 }
@@ -468,6 +368,14 @@ class WPForms_Fields
     {
     }
     /**
+     * Load and init the base field class.
+     *
+     * @since 1.2.8
+     */
+    public function init()
+    {
+    }
+    /**
      * Load default field types.
      *
      * @since 1.0.0
@@ -537,6 +445,22 @@ class WPForms_Frontend
     {
     }
     /**
+     * Page Indictor
+     *
+     * This displays if the form contains pagebreaks and is configured to show
+     * a page indicator in the top pagebreak settings.
+     *
+     * @since 1.2.1
+     * @param array $form_data
+     * @param object $form
+     * @param mixed $title
+     * @param mixed $description
+     * @param array $errors
+     */
+    public function page_indicator($form_data, $form, $title, $description, $errors)
+    {
+    }
+    /**
      * Form field area.
      *
      * @since 1.0.0
@@ -545,7 +469,7 @@ class WPForms_Frontend
      * @param mixed $title
      * @param mixed $description
      */
-    public function fields($form_data, $form, $title, $description)
+    public function fields($form_data, $form, $title, $description, $errors)
     {
     }
     /**
@@ -582,6 +506,16 @@ class WPForms_Frontend
      * @param mixed $description
      */
     public function foot($form_data, $form, $title, $description, $errors)
+    {
+    }
+    /**
+     * Determine if we should load assets globally. If false assets will
+     * load conditionally (default).
+     *
+     * @since 1.2.4
+     * @return bool
+     */
+    public function assets_global()
     {
     }
     /**
@@ -745,7 +679,7 @@ class WPForms_Logging
      * @param string $type Log type (default: null)
      * @return int Log ID
      */
-    public function add($title = '', $message = '', $parent = 0, $type = \null)
+    public function add($title = '', $message = '', $parent = 0, $type = \null, $meta = '')
     {
     }
     /**
@@ -847,27 +781,57 @@ class WPForms_Preview
     {
     }
     /**
-     * Preview page header.
-     *
-     * @since 1.1.5
-     */
-    public function preview_header($type = '', $title = '')
-    {
-    }
-    /**
-     * Preview page footer.
-     *
-     * @since 1.1.5
-     */
-    public function preview_footer()
-    {
-    }
-    /**
      * Print Preview.
      *
      * @since 1.1.5
      */
     public function print_preview()
+    {
+    }
+    /**
+     * Check if preview page exists, if not create it.
+     *
+     * @since 1.1.9
+     */
+    public function form_preview_check()
+    {
+    }
+    /**
+     * Preview page URL.
+     *
+     * @since 1.1.9
+     * @param int $form_id
+     * @return string
+     */
+    public function form_preview_url($form_id)
+    {
+    }
+    /**
+     * Fires when form preview might be detected.
+     *
+     * @since 1.1.9
+     */
+    public function form_preview()
+    {
+    }
+    /**
+     * Tweak the page content for form preview page requests.
+     *
+     * @since 1.1.9
+     * @param array $posts
+     * @param object $query
+     * @return array
+     */
+    public function form_preview_query($posts, $query)
+    {
+    }
+    /**
+     * Hide the preview page from admin
+     *
+     * @since 1.2.3
+     * @param object $query
+     */
+    function form_preview_hide($query)
     {
     }
 }
@@ -905,9 +869,12 @@ class WPForms_Smart_Tags
      *
      * @since 1.0.0
      * @param string $content
+     * @param array $form_data
+     * @param array $fields
+     * @param int $entry_id
      * @return string
      */
-    function process($content, $form_data, $fields = '')
+    function process($content, $form_data, $fields = '', $entry_id = '')
     {
     }
 }
@@ -1028,23 +995,23 @@ class WPForms_WP_Emails
      */
     private $template;
     /**
-     * The header text for the email.
-     *
-     * @since 1.1.3
-     */
-    private $heading = '';
-    /**
      * Form data.
      *
      * @since 1.1.3
      */
     private $form_data = '';
     /**
-     * Fields, formatted and sanitized.
+     * Fields, formatted, and sanitized.
      *
      * @since 1.1.3
      */
     private $fields = '';
+    /**
+     * Entry ID.
+     *
+     * @since 1.2.3
+     */
+    public $entry_id = '';
     /**
      * Get things going.
      *
@@ -1296,11 +1263,18 @@ abstract class WPForms_Field
      */
     public $form_id;
     /**
+     * Current form data in admin builder.
+     *
+     * @since 1.1.1
+     * @var mixed, int or false
+     */
+    public $form_data;
+    /**
      * Primary class constructor.
      *
      * @since 1.0.0
      */
-    public function __construct()
+    public function __construct($init = \true)
     {
     }
     /**
@@ -1905,72 +1879,19 @@ class WPForms_Field_Textarea extends \WPForms_Field
     }
 }
 /**
- * Main WPForms class
+ * WPForms Lite. Load Lite specific features/functionality.
  *
- * @since 1.0.0
+ * @since 1.2.0
  * @package WPForms
  */
-final class WPForms_Lite
+class WPForms_Lite
 {
     /**
-     * One is the loneliest number that you'll ever do.
+     * Primary class constructor.
      *
-     * @since 1.0.0
-     * @var object
+     * @since 1.2.x
      */
-    private static $instance;
-    /**
-     * Plugin version for enqueueing, etc.
-     *
-     * @since 1.0.0
-     * @var sting
-     */
-    private $version = '1.1.8';
-    /**
-     * The form data handler instance.
-     *
-     * @var object WPForms_Form_Handler
-     * @since 1.0.0
-     */
-    public $form;
-    /**
-     * The front-end instance.
-     *
-     * @var object WPForms_Frontend
-     * @since 1.0.0
-     */
-    public $frontend;
-    /**
-     * The process instance.
-     *
-     * @var object WPForms_Process
-     * @since 1.0.0
-     */
-    public $process;
-    /**
-     * The smart tags instance.
-     *
-     * @var object WPForms_Smart_Tags
-     * @since 1.0.0
-     */
-    public $smart_tags;
-    /**
-     * The Logging instance.
-     *
-     * @var object WPForms_Logging
-     * @since 1.0.0
-     */
-    public $logs;
-    /**
-     * Main WPForms Instance.
-     *
-     * Insures that only one instance of WPForms exists in memory at any one
-     * time. Also prevents needing to define globals all over the place.
-     *
-     * @since 1.0.0
-     * @return WPForms
-     */
-    public static function instance()
+    public function __construct()
     {
     }
     /**
@@ -1982,32 +1903,83 @@ final class WPForms_Lite
     {
     }
     /**
-     * Setup objects.
+     * Form notification settings, supports multiple notifications.
      *
-     * @since 1.0.0
+     * @since 1.2.3
+     * @param object $settings
      */
-    public function objects()
+    public function form_settings_notifications($settings)
     {
     }
     /**
-     * Setup plugin constants.
+     * Provide upgrade URL.
      *
-     * @since 1.0.0
+     * @since 1.2.0
      */
-    private function constants()
+    public function upgrade_link()
     {
     }
     /**
-     * Loads the plugin language files.
+     * Display/register additional templates available in the Pro version.
+     *
+     * @since 1.0.6
+     */
+    public function form_templates()
+    {
+    }
+    /**
+     * Display/register additional fields available in the Pro version.
+     *
+     * @since 1.0.0
+     * @param array $fields
+     * @return array
+     */
+    public function form_fields($fields)
+    {
+    }
+    /**
+     * Display/register additional panels available in the Pro version.
      *
      * @since 1.0.0
      */
-    public function load_textdomain()
+    public function form_panels()
+    {
+    }
+    /**
+     * Load assets for lite version with the admin builder.
+     *
+     * @since 1.0.0
+     */
+    public function builder_enqueues()
+    {
+    }
+    /**
+     * Notify user that entries is a pro feature.
+     *
+     * @since 1.0.0
+     */
+    public function entries_page()
+    {
+    }
+    /**
+     * Add appropriate styling to addons page.
+     *
+     * @since 1.0.4
+     */
+    public function addon_page_enqueues()
+    {
+    }
+    /**
+     * Notify user that addons are a pro feature.
+     *
+     * @since 1.0.0
+     */
+    public function addons_page()
     {
     }
 }
 /**
- * Ajax actioned used in by admin.
+ * Ajax actions used in by admin.
  *
  * @package    WPForms
  * @author     WPForms
@@ -2018,7 +1990,6 @@ final class WPForms_Lite
 /**
  * Save a form
  *
- * @todo  pull out the saving function to the form handler class
  * @since 1.0.0
  */
 function wpforms_save_form()
@@ -2041,43 +2012,31 @@ function wpforms_update_form_template()
 {
 }
 /**
- * Deactivate addon
+ * Form Builder update next field ID.
  *
- * @since 1.0.0
+ * @since 1.2.9
  */
-function wpforms_deactivate_addon()
+function wpforms_builder_increase_next_field_id()
 {
 }
 /**
- * Activate addon
+ * Form Builder Dynamic Choices option toggle.
  *
- * @since 1.0.0
+ * This can be triggered with select/radio/checkbox fileds.
+ *
+ * @since 1.2.8
  */
-function wpforms_activate_addon()
+function wpforms_builder_dynamic_choices()
 {
 }
 /**
- * Install addon
+ * Form Builder Dynamic Choices Source option toggle.
  *
- * @since 1.0.0
- */
-function wpforms_install_addon()
-{
-}
-/**
- * Toggle entry stars from Entries table.
+ * This can be triggered with select/radio/checkbox fileds.
  *
- * @since 1.1.6
+ * @since 1.2.8
  */
-function wpforms_entry_list_star()
-{
-}
-/**
- * Toggle entry read state from Entries table.
- *
- * @since 1.1.6
- */
-function wpforms_entry_list_read()
+function wpforms_builder_dynamic_source()
 {
 }
 /**
@@ -2170,6 +2129,27 @@ function wpforms_has_pagebreak($form = \false)
 {
 }
 /**
+ * Tries to find and return an top or bottom pagebreak.
+ *
+ * @since 1.2.1
+ * @param boolean $form
+ * @param string $type
+ * @return boolean
+ */
+function wpforms_get_pagebreak($form = \false, $type = \false)
+{
+}
+/**
+ * Sanitizes string of CSS classes.
+ *
+ * @since 1.2.1
+ * @param string $classes
+ * @return string
+ */
+function wpforms_sanitize_classes($classes)
+{
+}
+/**
  * Convert a file size provided, such as "2M", to bytes.
  *
  * @since 1.0.0
@@ -2215,6 +2195,18 @@ function wpforms_get_form_fields($form = \false, $whitelist = array())
 {
 }
 /**
+ * Get meta key value for a form field.
+ *
+ * @since 1.1.9
+ * @param int $id Field ID
+ * @param string $key Meta key
+ * @param array $form_data Form data array
+ * @return string
+ */
+function wpforms_get_form_field_meta($id = '', $key = '', $form_data = '')
+{
+}
+/**
  * US States
  *
  * @since 1.0.0
@@ -2224,6 +2216,49 @@ function wpforms_us_states()
 {
 }
 function wpforms_countries()
+{
+}
+/**
+ * Lookup user IP.
+ *
+ * There are many ways to do this, but we prefer the way EDD does it.
+ * https://github.com/easydigitaldownloads/easy-digital-downloads/blob/master/includes/misc-functions.php#L163
+ *
+ * @since 1.2.5
+ * @return string
+ */
+function wpforms_get_ip()
+{
+}
+/**
+ * Sanitizes hex color.
+ *
+ * @since 1.2.1
+ * @param string $color
+ * @return string
+ */
+function wpforms_sanitize_hex_color($color)
+{
+}
+/**
+ * Detect if we should use a light or dark color based on the color given.
+ *
+ * @since 1.2.5
+ * @link https://docs.woocommerce.com/wc-apidocs/source-function-wc_light_or_dark.html#608-627
+ * @param mixed $color
+ * @param string $dark (default: '#000000')
+ * @param string $light (default: '#FFFFFF')
+ * @return string
+ */
+function wpforms_light_or_dark($color, $dark = '#000000', $light = '#FFFFFF')
+{
+}
+/**
+ * Debug mode bool.
+ *
+ * @since 1.2.3
+ */
+function wpforms_debug()
 {
 }
 /**
@@ -2242,90 +2277,24 @@ function wpforms_debug_data($data, $echo = \true)
  * @since 1.0.0
  * @param string $title
  * @param string $message
- * @param string|array $level
  * @param array $args
  */
-function wpforms_log($title = '', $message = '', $level = 'errors', $args = array())
+function wpforms_log($title = '', $message = '', $args = array())
 {
 }
 /**
- * WPForms Lite.
- *
- * @package    WPForms
- * @author     WPForms
- * @since      1.0.0
- * @license    GPL-2.0+
- * @copyright  Copyright (c) 2016, WPForms LLC
-*/
-/**
- * Display additional templates available in the paid version
- *
- * @since 1.0.6
- */
-function wpfl_setup_templates()
-{
-}
-/**
- * Load templates available in full version.
- *
- * @since 1.0.0
- * @param array $fields
- * @return array
- */
-function wpfl_fields($fields)
-{
-}
-/**
- * Load panels available in full version.
+ * Deactivate if WPForms already activated.
  *
  * @since 1.0.0
  */
-function wpfl_panels()
+function wpforms_deactivate()
 {
 }
 /**
- * Load assets for lite version with the admin builder.
+ * Display notice after deactivation.
  *
  * @since 1.0.0
  */
-function wpfl_builder_enqueues()
-{
-}
-/**
- * Notify user that entries is a paid feature.
- *
- * @since 1.0.0
- */
-function wpfl_entries_page()
-{
-}
-/**
- * Add appropriate styling to addons page.
- *
- * @since 1.0.4
- */
-function wpfl_addons_page_assets()
-{
-}
-/**
- * Notify user that addons are a paid feature.
- *
- * @since 1.0.0
- */
-function wpfl_addons_page()
-{
-}
-/**
- * The function which returns the one WPForms instance.
- *
- * Use this function like you would a global variable, except without needing
- * to declare the global.
- *
- * Example: <?php $wpforms = wpforms(); ?>
- *
- * @since 1.0.0
- * @return object
- */
-function wpforms()
+function wpforms_lite_notice()
 {
 }
