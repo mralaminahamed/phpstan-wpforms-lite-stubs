@@ -4098,9 +4098,9 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @var mixed
+         * @var array
          */
-        public $api = \false;
+        public $api = [];
         /**
          * Service icon.
          *
@@ -4532,6 +4532,22 @@ namespace {
     class WPForms_Constant_Contact extends \WPForms_Provider
     {
         /**
+         * Current form ID.
+         *
+         * @since 1.9.0.4
+         *
+         * @var int
+         */
+        private $form_id = 0;
+        /**
+         * Current entry ID.
+         *
+         * @since 1.9.0.4
+         *
+         * @var int
+         */
+        private $entry_id = 0;
+        /**
          * Provider access token.
          *
          * @since 1.3.6
@@ -4624,7 +4640,7 @@ namespace {
          * @param string $connection_id
          * @param string $account_id
          *
-         * @return mixed array or error object
+         * @return array|WP_Error array or error object
          */
         public function api_lists($connection_id = '', $account_id = '')
         {
@@ -4720,6 +4736,43 @@ namespace {
          * @param string $notice_id Notice ID (slug).
          */
         public function connect_dismiss($notice_id = '')
+        {
+        }
+        /**
+         * Request to the Constant Contact API.
+         *
+         * @since 1.9.0.4
+         *
+         * @param string $url  Request URL.
+         * @param array  $args Request arguments.
+         *
+         * @return array|WP_Error
+         */
+        private function request(string $url, array $args = [])
+        {
+        }
+        /**
+         * Process response.
+         *
+         * @since 1.9.0.4
+         *
+         * @param array|WP_Error $response Response.
+         *
+         * @return array|WP_Error
+         */
+        public function process_response($response)
+        {
+        }
+        /**
+         * Log error message.
+         *
+         * @since 1.9.0.4
+         *
+         * @param WP_Error $error Error.
+         *
+         * @return void
+         */
+        public function log_error(\WP_Error $error)
         {
         }
     }
