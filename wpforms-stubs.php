@@ -691,12 +691,24 @@ namespace {
         {
         }
         /**
+         * Hooks.
+         *
+         * @since 1.9.0
+         *
+         * @return void
+         */
+        private function hooks()
+        {
+        }
+        /**
          * Perform certain actions on plugin activation.
          *
          * @since 1.0.0
          *
          * @param bool $network_wide Whether to enable the plugin for all sites in the network
          *                           or just the current site. Multisite only. Default is false.
+         *
+         * @noinspection DisconnectedForeachInstructionInspection
          */
         public function install($network_wide = \false)
         {
@@ -741,12 +753,13 @@ namespace {
          *
          * @since 1.3.0
          * @since 1.8.4 Added $new_site and $args parameters and removed $blog_id, $user_id, $domain, $path, $site_id,
-         *        $meta parameters.
+         *              and $meta parameters.
          *
          * @param WP_Site $new_site New site object.
          * @param array   $args     Arguments for the initialization.
          *
          * @noinspection PhpUnusedParameterInspection
+         * @noinspection PhpMissingParamTypeInspection
          */
         public function new_multisite_blog($new_site, $args)
         {
@@ -809,7 +822,7 @@ namespace {
          */
         protected $defaults;
         /**
-         * Constructor
+         * Constructor.
          *
          * @since 1.0.2
          */
@@ -1322,18 +1335,6 @@ namespace {
         private function get_prepared_subject($subject)
         {
         }
-        /**
-         * If CL is enabled and the field is conditionally hidden, hide it from message.
-         *
-         * @since 1.7.9
-         *
-         * @param int $field_id Field ID.
-         *
-         * @return bool
-         */
-        private function is_field_conditionally_hidden($field_id)
-        {
-        }
     }
     /**
      * Base field template.
@@ -1585,6 +1586,19 @@ namespace {
          * @return array Modified field properties.
          */
         protected function get_field_populated_single_property_value_normal_choices($get_value, $properties, $field)
+        {
+        }
+        /**
+         * Handle dropdown items field with quantities.
+         *
+         * @since 1.9.0
+         *
+         * @param array $properties Field properties.
+         * @param array $field      Current field specific data.
+         *
+         * @return array
+         */
+        private function add_quantity_to_populated_field_properties($properties, $field) : array
         {
         }
         /**
@@ -2109,6 +2123,16 @@ namespace {
         protected function get_submitted_field_quantity($field, $form_data)
         {
         }
+        /**
+         * Whether to print the script in the footer.
+         *
+         * @since 1.9.0
+         *
+         * @return bool
+         */
+        protected function load_script_in_footer() : bool
+        {
+        }
     }
     /**
      * Checkbox field.
@@ -2229,6 +2253,14 @@ namespace {
          * @since 1.7.5
          */
         const RULES = 'rules';
+        /**
+         * Restricted rules.
+         *
+         * @since 1.8.9
+         *
+         * @var array
+         */
+        private $restricted_rules = [];
         /**
          * Primary class constructor.
          *
@@ -3634,7 +3666,7 @@ namespace {
          *
          * @since 1.6.3
          */
-        const CHOICES_VERSION = '9.0.1';
+        const CHOICES_VERSION = '10.2.0';
         /**
          * Classic (old) style.
          *
@@ -4699,6 +4731,12 @@ namespace {
     class WPForms_Lite
     {
         /**
+         * Custom tables and their handlers.
+         *
+         * @since 1.9.0
+         */
+        const CUSTOM_TABLES = ['wpforms_payments' => \WPForms\Db\Payments\Payment::class, 'wpforms_payment_meta' => \WPForms\Db\Payments\Meta::class, 'wpforms_tasks_meta' => \WPForms\Tasks\Meta::class, 'wpforms_logs' => \WPForms\Logger\Repository::class];
+        /**
          * Primary class constructor.
          *
          * @since 1.2.2
@@ -4719,7 +4757,9 @@ namespace {
          *
          * @since 1.2.3
          *
-         * @param object $settings
+         * @param object $settings Settings.
+         *
+         * @noinspection HtmlUnknownTarget
          */
         public function form_settings_notifications($settings)
         {
@@ -4743,9 +4783,11 @@ namespace {
         {
         }
         /**
-         * Load assets for lite version with the admin builder.
+         * Load assets for the lite version with the admin builder.
          *
          * @since 1.0.0
+         *
+         * @noinspection HtmlUnknownTarget
          */
         public function builder_enqueues()
         {
@@ -4821,6 +4863,9 @@ namespace {
          * @param array $form_data  Form data.
          * @param int   $entry_id   Entry ID.
          * @param int   $payment_id Payment ID for the payment form.
+         *
+         * @noinspection PhpMissingParamTypeInspection
+         * @noinspection PhpUnusedParameterInspection
          */
         public function update_entry_count($fields, $entry, $form_data, $entry_id, $payment_id)
         {
@@ -4836,6 +4881,9 @@ namespace {
          * @param array $form_data  Form data.
          * @param int   $entry_id   Entry ID.
          * @param int   $payment_id Payment ID for the payment form.
+         *
+         * @noinspection PhpMissingParamTypeInspection
+         * @noinspection PhpUnusedParameterInspection
          */
         public function entry_submit($fields, $entry, $form_data, $entry_id, $payment_id)
         {
@@ -5264,7 +5312,7 @@ namespace WPForms {
          *
          * @since 1.0.0
          *
-         * @var \WPForms\WPForms
+         * @var WPForms
          */
         private static $instance;
         /**
@@ -5310,6 +5358,7 @@ namespace WPForms {
          * @param string $name Name of the object to get.
          *
          * @return mixed|null
+         * @noinspection MagicMethodsValidityInspection
          */
         public function __get($name)
         {
@@ -5318,18 +5367,19 @@ namespace WPForms {
          * Main WPForms Instance.
          *
          * Only one instance of WPForms exists in memory at any one time.
-         * Also prevent the need to define globals all over the place.
+         * Also, prevent the need to define globals all over the place.
          *
          * @since 1.0.0
          *
          * @return WPForms
+         * @noinspection UsingInclusionOnceReturnValueInspection
          */
-        public static function instance()
+        public static function instance() : \WPForms\WPForms
         {
         }
         /**
          * Setup plugin constants.
-         * All the path/URL related constants are defined in main plugin file.
+         * All the path/URL related constants are defined in the main plugin file.
          *
          * @since 1.0.0
          */
@@ -5342,6 +5392,16 @@ namespace WPForms {
          * @since 1.0.0
          */
         private function includes()
+        {
+        }
+        /**
+         * Hooks.
+         *
+         * @since 1.9.0
+         *
+         * @return void
+         */
+        private static function hooks()
         {
         }
         /**
@@ -5366,6 +5426,16 @@ namespace WPForms {
          * @since 1.0.0
          */
         public function objects()
+        {
+        }
+        /**
+         * Re-create plugin custom tables if don't exist.
+         *
+         * @since 1.9.0
+         *
+         * @param WPForms_Settings $wpforms_settings WPForms settings object.
+         */
+        public function reinstall_custom_tables(\WPForms_Settings $wpforms_settings)
         {
         }
         /**
@@ -5470,6 +5540,7 @@ namespace {
     {
     }
 }
+// phpcs:ignore Universal.Namespaces.DisallowCurlyBraceSyntax.Forbidden, Universal.Namespaces.DisallowDeclarationWithoutName.Forbidden, Universal.Namespaces.OneDeclarationPerFile.MultipleFound
 namespace {
     /**
      * The function which returns the one WPForms instance.
@@ -5478,7 +5549,7 @@ namespace {
      *
      * @return WPForms\WPForms
      */
-    function wpforms()
+    function wpforms() : \WPForms\WPForms
     {
     }
 }
@@ -5495,6 +5566,8 @@ namespace {
      * Load scripts for all WPForms-related admin screens.
      *
      * @since 1.3.9
+     *
+     * @noinspection HtmlUnknownTarget
      */
     function wpforms_admin_scripts()
     {
@@ -5529,7 +5602,7 @@ namespace {
     {
     }
     /**
-     * Upgrade link used within the various admin pages.
+     * Upgrade a link used within the various admin pages.
      *
      * Previously was only included as a method in wpforms-lite.php, but made
      * available globally in 1.3.9.
@@ -5551,6 +5624,8 @@ namespace {
      * @since 1.5.0 Raising this awareness of old PHP version message from 5.2 to 5.3.
      * @since 1.7.9 Raising this awareness of old PHP version message to 7.1.
      * @since 1.8.4 Raising this awareness of old PHP version message to 7.3.
+     *
+     * @noinspection HtmlUnknownTarget
      */
     function wpforms_check_php_version()
     {
@@ -5563,6 +5638,7 @@ namespace {
      * @param string $type Either "pro" or "elite". Default is "pro".
      *
      * @return string
+     * @noinspection HtmlUnknownTarget
      */
     function wpforms_get_upgrade_modal_text($type = 'pro')
     {
@@ -5641,6 +5717,14 @@ namespace {
     {
     }
     /**
+     * Recreate custom database tables.
+     *
+     * @since 1.9.0
+     */
+    function wpforms_recreate_tables()
+    {
+    }
+    /**
      * Deactivate addon.
      *
      * @since 1.0.0
@@ -5663,6 +5747,8 @@ namespace {
      *
      * @since 1.0.0
      * @since 1.6.2.3 Updated the permissions checking.
+     *
+     * @noinspection HtmlUnknownTarget
      */
     function wpforms_install_addon()
     {
@@ -5676,7 +5762,9 @@ namespace {
     {
     }
     /**
-     * Register WPForms plugin widgets.
+     * Register the WPForms widget.
+     *
+     * @since 1.0.2
      */
     function wpforms_register_widgets()
     {
@@ -6541,7 +6629,7 @@ namespace {
      *
      * @param int|string|array $field Field ID.
      *
-     * @return array
+     * @return int[]
      */
     function wpforms_get_repeater_field_ids($field) : array
     {
@@ -6570,6 +6658,18 @@ namespace {
      * @return bool
      */
     function wpforms_is_repeated_field(int $field_id, array $fields) : bool
+    {
+    }
+    /**
+     * Get field types where user can select more than one item.
+     *
+     * Note: this list does not include File Upload field, even thought it is a multi-field.
+     *
+     * @since 1.9.0
+     *
+     * @return array
+     */
+    function wpforms_get_multi_fields() : array
     {
     }
     /**
@@ -6776,6 +6876,26 @@ namespace {
      * @return string
      */
     function wpforms_process_smart_tags($content, $form_data, $fields = [], $entry_id = '', $context = '')
+    {
+    }
+    /**
+     * Check if form data slashing enabled.
+     *
+     * @since 1.9.0
+     *
+     * @return bool
+     */
+    function wpforms_is_form_data_slashing_enabled()
+    {
+    }
+    /**
+     * Check is frontend JS should be loaded in the header.
+     *
+     * @since 1.9.0
+     *
+     * @return bool
+     */
+    function wpforms_is_frontend_js_header_force_load() : bool
     {
     }
     /**
@@ -7309,6 +7429,19 @@ namespace {
      * @return string
      */
     function wpforms_get_render_engine()
+    {
+    }
+    /**
+     * Get comma-separated list string from requirements' array.
+     *
+     * @since 1.9.0
+     *
+     * @param array $arr Array containing a list.
+     * @param bool  $sep Separator of the last element.
+     *
+     * @return string
+     */
+    function wpforms_list_array(array $arr, bool $sep = \true) : string
     {
     }
     /**
