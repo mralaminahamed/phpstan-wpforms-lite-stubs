@@ -78,7 +78,7 @@ namespace {
         {
         }
         /**
-         * Determining if the user is viewing the our page, if so, party on.
+         * Determining if the user is viewing our page, if so, party on.
          *
          * @since 1.5.0
          */
@@ -2133,6 +2133,18 @@ namespace {
         protected function load_script_in_footer() : bool
         {
         }
+        /**
+         * Wrapper for esc_html() to prevent conversion of `<>` special chars to brackets.
+         *
+         * @since 1.9.1
+         *
+         * @param string $str String to escape.
+         *
+         * @return string
+         */
+        protected function esc_attr_brackets($str) : string
+        {
+        }
     }
     /**
      * Checkbox field.
@@ -2401,6 +2413,7 @@ namespace {
          * Ajax handler to detect restricted email.
          *
          * @since 1.6.3
+         * @since {VERSION Added repeater field compatibility.
          */
         public function ajax_check_restricted_email()
         {
@@ -3027,6 +3040,18 @@ namespace {
          * @return array
          */
         public function remove_internal_fields_on_front_end($form_data)
+        {
+        }
+        /**
+         * Add internal information field to the list of ignored fields for entry preview.
+         *
+         * @since 1.9.1
+         *
+         * @param array|mixed $ignored_fields Ignored fields.
+         *
+         * @return array
+         */
+        public function ignore_entry_preview($ignored_fields) : array
         {
         }
         /**
@@ -5531,14 +5556,28 @@ namespace WPForms {
         }
         /**
          * Get a class instance from a registry.
+         * Use \WPForms\WPForms::obj() instead.
          *
          * @since 1.5.7
+         * @deprecated 1.9.1
          *
          * @param string $name Class name or an alias.
          *
          * @return mixed|stdClass|null
          */
         public function get($name)
+        {
+        }
+        /**
+         * Get a class instance from a registry.
+         *
+         * @since 1.9.1
+         *
+         * @param string $name Class name or an alias.
+         *
+         * @return object|null
+         */
+        public function obj(string $name)
         {
         }
         /**
@@ -5820,20 +5859,6 @@ namespace {
      * @since 1.0.2
      */
     function wpforms_register_widgets()
-    {
-    }
-    /**
-     * Retrieves the current environment type.
-     *
-     * The type can be set via the `WP_ENVIRONMENT_TYPE` global system variable,
-     * or a constant of the same name.
-     *
-     * Possible values are 'local', 'development', 'staging', and 'production'.
-     * If not set, the type defaults to 'production'.
-     *
-     * @return string The current environment type.
-     */
-    function wp_get_environment_type()
     {
     }
     /**
@@ -6382,6 +6407,7 @@ namespace {
      * Escaping for Rich Text field values.
      *
      * @since 1.7.0
+     * @since 1.9.1 Removed new lines after adding paragraphs and breaks tags.
      *
      * @param string $value Text to escape.
      *
