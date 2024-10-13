@@ -2133,18 +2133,6 @@ namespace {
         protected function load_script_in_footer() : bool
         {
         }
-        /**
-         * Wrapper for esc_html() to prevent conversion of `<>` special chars to brackets.
-         *
-         * @since 1.9.1
-         *
-         * @param string $str String to escape.
-         *
-         * @return string
-         */
-        protected function esc_attr_brackets($str) : string
-        {
-        }
     }
     /**
      * Checkbox field.
