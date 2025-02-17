@@ -25,7 +25,7 @@ Require this package as a development dependency with [Composer](https://getcomp
 composer require --dev mralaminahamed/wpforms-lite-stubs
 ```
 
-Alternatively you may download `wpforms-stubs.php` directly.
+Alternatively you may download `wpforms-stubs.stub` directly.
 
 ## Usage in PHPStan
 
@@ -34,6 +34,6 @@ Include stubs in PHPStan configuration file.
 ```yaml
 parameters:
     bootstrapFiles:
-        - vendor/mralaminahamed/wpforms-lite-stubs/wpforms-constants-stubs.php
-        - vendor/mralaminahamed/wpforms-lite-stubs/wpforms-stubs.php
+        - vendor/mralaminahamed/wpforms-lite-stubs/wpforms-constants-stubs.stub
+        - vendor/mralaminahamed/wpforms-lite-stubs/wpforms-stubs.stub
 ```

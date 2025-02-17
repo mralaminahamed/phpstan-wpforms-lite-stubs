@@ -5,8 +5,8 @@
 
 HEADER=$'/**\n * Generated stub declarations for WPForms.\n * @see https://wpforms.com\n * @see https://github.com/mralaminahamed/phpstan-wpforms-stubs\n */'
 
-FILE="wpforms-stubs.php"
-FILE_CONSTANTS="wpforms-constants-stubs.php"
+FILE="wpforms-stubs.stub"
+FILE_CONSTANTS="wpforms-constants-stubs.stub"
 
 set -e
 
