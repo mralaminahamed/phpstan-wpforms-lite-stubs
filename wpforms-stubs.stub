@@ -1846,9 +1846,9 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param int   $field_id     Field ID.
-         * @param mixed $field_submit Submitted field value (raw data).
-         * @param array $form_data    Form data and settings.
+         * @param string|int $field_id     Field ID as a numeric string.
+         * @param mixed      $field_submit Submitted field value (raw data).
+         * @param array      $form_data    Form data and settings.
          */
         public function validate($field_id, $field_submit, $form_data)
         {
@@ -2131,6 +2131,18 @@ namespace {
          * @return bool
          */
         protected function load_script_in_footer() : bool
+        {
+        }
+        /**
+         * Get formatted price after label.
+         *
+         * @since 1.9.2
+         *
+         * @param float $amount Amount.
+         *
+         * @return string
+         */
+        protected function get_price_after_label($amount) : string
         {
         }
     }
@@ -6533,7 +6545,7 @@ namespace {
      *
      * @return bool
      */
-    function wpforms_show_fields_options_setting()
+    function wpforms_show_fields_options_setting() : bool
     {
     }
     /**
@@ -6551,8 +6563,7 @@ namespace {
     {
     }
     /**
-     * Build and return either a taxonomy or post type object that is
-     * nested to accommodate any hierarchy.
+     * Build and return either a taxonomy or post type object nested to accommodate any hierarchy.
      *
      * @since 1.3.9
      * @since 1.5.0 Return array only. Empty array of no data.
@@ -6562,7 +6573,7 @@ namespace {
      *
      * @return array
      */
-    function wpforms_get_hierarchical_object($args = [], $flat = \false)
+    function wpforms_get_hierarchical_object($args = [], $flat = \false) : array
     {
     }
     /**
@@ -6574,7 +6585,7 @@ namespace {
      * @param string $orderby The object field to order by.
      * @param string $order   Order direction.
      */
-    function _wpforms_sort_hierarchical_object(&$objects, $orderby, $order)
+    function _wpforms_sort_hierarchical_object($objects, $orderby, $order)
     {
     }
     /**
@@ -6595,32 +6606,32 @@ namespace {
      *
      * @since 1.3.9
      *
-     * @param array  $array    Array to process.
+     * @param array  $h_array  Hierarchical array to process.
      * @param array  $output   Processed output.
      * @param string $ref_name Name reference.
      * @param int    $level    Nesting level.
      */
-    function _wpforms_get_hierarchical_object_flatten($array, &$output, $ref_name = 'name', $level = 0)
+    function _wpforms_get_hierarchical_object_flatten($h_array, &$output, $ref_name = 'name', $level = 0)
     {
     }
     /**
      * Get sanitized post title or "no title" placeholder.
      *
-     * The placeholder is prepended with post ID.
+     * The placeholder is prepended with the post ID.
      *
      * @since 1.7.6
      *
-     * @param WP_Post|object $post Post object.
+     * @param WP_Post|mixed $post Post object.
      *
      * @return string Post title.
      */
-    function wpforms_get_post_title($post)
+    function wpforms_get_post_title($post) : string
     {
     }
     /**
      * Get sanitized term name or "no name" placeholder.
      *
-     * The placeholder is prepended with term ID.
+     * The placeholder is prepended with the term ID.
      *
      * @since 1.7.6
      *
@@ -6628,7 +6639,7 @@ namespace {
      *
      * @return string Term name.
      */
-    function wpforms_get_term_name($term)
+    function wpforms_get_term_name(\WP_Term $term) : string
     {
     }
     /**
@@ -6652,7 +6663,7 @@ namespace {
      *
      * @return array
      */
-    function wpforms_get_builder_fields($group = '')
+    function wpforms_get_builder_fields(string $group = '') : array
     {
     }
     /**
@@ -6662,7 +6673,7 @@ namespace {
      *
      * @return array
      */
-    function wpforms_get_payments_fields()
+    function wpforms_get_payments_fields() : array
     {
     }
     /**
