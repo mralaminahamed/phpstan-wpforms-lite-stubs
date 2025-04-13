@@ -499,6 +499,16 @@ namespace {
         {
         }
         /**
+         * Hooks.
+         *
+         * @since 1.9.4
+         *
+         * @return void
+         */
+        private function hooks() : void
+        {
+        }
+        /**
          * Add admin notices as needed for reviews.
          *
          * @since 1.3.2
@@ -531,17 +541,7 @@ namespace {
         {
         }
         /**
-         * Dismiss the review admin notice.
-         *
-         * @deprecated 1.6.7.1
-         *
-         * @since 1.3.2
-         */
-        public function review_dismiss()
-        {
-        }
-        /**
-         * When user is on a WPForms related admin page, display footer text
+         * When a user is on a WPForms related admin page, display footer text
          * that graciously asks them to rate us.
          *
          * @since 1.3.2
@@ -549,6 +549,7 @@ namespace {
          * @param string $text Footer text.
          *
          * @return string
+         * @noinspection HtmlUnknownTarget
          */
         public function admin_footer($text)
         {
@@ -670,6 +671,7 @@ namespace {
          * Load default field types.
          *
          * @since 1.0.0
+         * @since 1.9.4 Removed Pro fields from the list. They loaded in the main Loader class.
          */
         public function load()
         {
@@ -878,11 +880,11 @@ namespace WPForms {
     {
         /**
          * List of removed classes in the next format:
-         * Fully-Qualified Class Name => version.
+         * Fully Qualified Class Name => version.
          *
          * @since 1.8.0
          */
-        const CLASSES = ['WPForms\\Pro\\Admin\\Entries\\DefaultScreen' => '1.8.2'];
+        const CLASSES = ['WPForms\\Pro\\Admin\\Entries\\DefaultScreen' => '1.8.2', 'WPForms\\Pro\\Integrations\\AI\\AI' => '1.9.4', 'WPForms\\Pro\\Integrations\\AI\\Helpers' => '1.9.4'];
         /**
          * Inform clients that the class is removed.
          *
@@ -963,7 +965,7 @@ namespace WPForms\Forms {
 }
 namespace WPForms\Pro\Admin\Entries {
     /**
-     * Default Entries screen showed a chart and the form entries stats.
+     * The default Entries screen showed a chart and the form entries stats.
      * Replaced with "WPForms\Pro\Admin\Entries\Overview".
      *
      * @since 1.5.5
@@ -1344,7 +1346,15 @@ namespace {
     abstract class WPForms_Field
     {
         /**
-         * Full name of the field type, eg "Paragraph Text".
+         * Common default field settings.
+         *
+         * @since 1.9.4
+         *
+         * @var array
+         */
+        private const COMMON_DEFAULT_SETTINGS = ['id' => 0, 'type' => '', 'label' => '', 'description' => '', 'size' => 'medium', 'default_value' => '', 'css' => ''];
+        /**
+         * Full name of the field type, e.g. "Paragraph Text".
          *
          * @since 1.0.0
          *
@@ -1360,7 +1370,7 @@ namespace {
          */
         public $type;
         /**
-         * Font Awesome Icon used for the editor button, eg "fa-list".
+         * Font Awesome Icon used for the editor button, e.g. "fa-list".
          *
          * @since 1.0.0
          *
@@ -1368,7 +1378,7 @@ namespace {
          */
         public $icon = \false;
         /**
-         * Field keywords for search, eg "checkbox, file, icon, upload".
+         * Field keywords for search, e.g. "checkbox, file, icon, upload".
          *
          * @since 1.8.3
          *
@@ -1399,6 +1409,14 @@ namespace {
          * @var mixed
          */
         public $defaults;
+        /**
+         * Default field settings.
+         *
+         * @since 1.9.4
+         *
+         * @var mixed
+         */
+        public $default_settings;
         /**
          * Current form ID in the admin builder.
          *
@@ -1444,9 +1462,17 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param bool $init Pass false to allow to shortcut the whole initialization, if needed.
+         * @param bool $init Pass false to allow shortcutting the whole initialization, if needed.
          */
         public function __construct($init = \true)
+        {
+        }
+        /**
+         * Common field hooks.
+         *
+         * @since 1.9.4
+         */
+        protected function common_hooks() : void
         {
         }
         /**
@@ -1484,7 +1510,7 @@ namespace {
         {
         }
         /**
-         * Whether current field can be populated dynamically.
+         * Whether the current field can be populated dynamically.
          *
          * @since 1.5.0
          *
@@ -1520,7 +1546,7 @@ namespace {
          * @since 1.6.0.1
          *
          * @param string $raw_value  Value from a GET param, always a string.
-         * @param string $input      Represent a subfield inside the field. May be empty.
+         * @param string $input      Represent a subfield inside the field. Maybe empty.
          * @param array  $properties Field properties.
          * @param array  $field      Current field specific data.
          *
@@ -1536,7 +1562,7 @@ namespace {
          * @since 1.5.0
          *
          * @param string $raw_value  Value from a GET param, always a string.
-         * @param string $input      Represent a subfield inside the field. May be empty.
+         * @param string $input      Represent a subfield inside the field. Maybe empty.
          * @param array  $properties Field properties.
          * @param array  $field      Current field specific data.
          *
@@ -1602,7 +1628,7 @@ namespace {
         {
         }
         /**
-         * Whether current field can be populated dynamically.
+         * Whether the current field can be populated dynamically.
          *
          * @since 1.5.0
          *
@@ -1625,6 +1651,28 @@ namespace {
          * @return array Modified field properties.
          */
         protected function field_prefill_value_property_fallback($properties, $field)
+        {
+        }
+        /**
+         * Init and return field default settings.
+         *
+         * @since 1.9.4
+         *
+         * @return array
+         */
+        public function field_default_settings() : array
+        {
+        }
+        /**
+         * Get field data for the field.
+         *
+         * @since 1.8.2
+         *
+         * @param array $field Current field.
+         *
+         * @return array
+         */
+        public function field_new_default($field) : array
         {
         }
         /**
@@ -1702,14 +1750,16 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param string $option Field option to render.
-         * @param array  $field  Field data and settings.
-         * @param array  $args   Field preview arguments.
-         * @param bool   $echo   Print or return the value. Print by default.
+         * @param string $option  Field option to render.
+         * @param array  $field   Field data and settings.
+         * @param array  $args    Field preview arguments.
+         * @param bool   $do_echo Print or return the value. Print by default.
          *
-         * @return mixed echo or return string
+         * @return string|null echo or return string
+         * @noinspection HtmlUnknownAttribute
+         * @noinspection HtmlWrongAttributeValue
          */
-        public function field_element($option, $field, $args = [], $echo = \true)
+        public function field_element($option, $field, $args = [], $do_echo = \true)
         {
         }
         /**
@@ -1717,15 +1767,15 @@ namespace {
          *
          * @since 1.6.8
          *
-         * @param array   $args  Arguments.
-         * @param integer $id    Field ID.
-         * @param string  $slug  Field slug.
-         * @param string  $attrs Attributes.
-         * @param string  $class Class.
+         * @param array   $args       Arguments.
+         * @param integer $id         Field ID.
+         * @param string  $slug       Field slug.
+         * @param string  $attrs      Attributes.
+         * @param string  $class_name Class name.
          *
          * @return string
          */
-        private function field_element_toggle($args, $id, $slug, $attrs, $class)
+        private function field_element_toggle($args, $id, $slug, $attrs, $class_name) : string
         {
         }
         /**
@@ -1733,14 +1783,19 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param string $option Field option to render.
-         * @param array  $field  Field data and settings.
-         * @param array  $args   Field preview arguments.
-         * @param bool   $echo   Print or return the value. Print by default.
+         * @param string $option  Field option to render.
+         * @param array  $field   Field data and settings.
+         * @param array  $args    Field preview arguments.
+         * @param bool   $do_echo Print or return the value. Print by default.
          *
-         * @return mixed echo or return string
+         * @return string|null echo or return string
+         * @noinspection HtmlUnknownAttribute
+         * @noinspection HtmlUnknownTarget
+         * @noinspection HtmlWrongAttributeValue
+         * @noinspection PhpMissingReturnTypeInspection
+         * @noinspection ReturnTypeCanBeDeclaredInspection
          */
-        public function field_option($option, $field, $args = [], $echo = \true)
+        public function field_option($option, $field, $args = [], $do_echo = \true)
         {
         }
         /**
@@ -1751,14 +1806,17 @@ namespace {
          * @since 1.5.0 Added support for <select> HTML tag for choices.
          * @since 1.6.1 Added multiple select support.
          *
-         * @param string $option Field option to render.
-         * @param array  $field  Field data and settings.
-         * @param array  $args   Field preview arguments.
-         * @param bool   $echo   Print or return the value. Print by default.
+         * @param string $option  Field option to render.
+         * @param array  $field   Field data and settings.
+         * @param array  $args    Field preview arguments.
+         * @param bool   $do_echo Print or return the value. Print by default.
          *
-         * @return mixed Print or return a string.
+         * @return ?string Print or return a string.
+         * @noinspection HtmlUnknownAttribute
+         * @noinspection HtmlUnknownTarget
+         * @noinspection HtmlWrongAttributeValue
          */
-        public function field_preview_option($option, $field, $args = [], $echo = \true)
+        public function field_preview_option($option, $field, $args = [], $do_echo = \true)
         {
         }
         /**
@@ -1790,11 +1848,11 @@ namespace {
          * @since 1.0.0
          * @since 1.5.0 Converted to abstract method, as it's required for all fields.
          *
-         * @param array $field      Field data and settings.
-         * @param array $field_atts Field attributes (deprecated).
-         * @param array $form_data  Form data and settings.
+         * @param array      $field      Field data and settings.
+         * @param array|null $deprecated Field attributes (deprecated).
+         * @param array      $form_data  Form data and settings.
          */
-        public abstract function field_display($field, $field_atts, $form_data);
+        public abstract function field_display($field, $deprecated, $form_data);
         /**
          * Display the field using classic rendering.
          *
@@ -1837,12 +1895,14 @@ namespace {
          * @param string $key      Input key.
          * @param string $position Sublabel position.
          * @param array  $field    Field data and settings.
+         *
+         * @noinspection HtmlUnknownAttribute
          */
         public function field_display_sublabel($key, $position, $field)
         {
         }
         /**
-         * Validate field on form submit.
+         * Validate field on form submitting.
          *
          * @since 1.0.0
          *
@@ -1886,8 +1946,8 @@ namespace {
          * @since 1.8.4.1
          * @since 1.8.9 Add $form_data parameter.
          *
-         * @param array  $field Field settings.
-         * @param string $value Field value.
+         * @param array  $field     Field settings.
+         * @param string $value     Field value.
          * @param array  $form_data Form data.
          *
          * @return string
@@ -1904,6 +1964,7 @@ namespace {
          * @param string $label Field value.
          *
          * @return string
+         * @noinspection HtmlUnknownTarget
          */
         private function get_field_html_image($url, $label)
         {
@@ -1911,7 +1972,7 @@ namespace {
         /**
          * Return boolean determining if field HTML values uses images.
          *
-         * Bail if field type is not set.
+         * Bail if a field type is not set.
          *
          * @since 1.8.2
          *
@@ -2039,7 +2100,7 @@ namespace {
         {
         }
         /**
-         * Get empty dynamic choices message.
+         * Get an empty dynamic choices message.
          *
          * @since 1.8.2
          *
@@ -2051,7 +2112,7 @@ namespace {
         {
         }
         /**
-         * Display empty dynamic choices message.
+         * Display an empty dynamic choices message.
          *
          * @since 1.8.2
          *
@@ -2081,6 +2142,8 @@ namespace {
          * @since 1.8.7
          *
          * @param array $field Field data and settings.
+         *
+         * @noinspection HtmlUnknownAttribute
          */
         protected function display_quantity_dropdown($field)
         {
@@ -2786,9 +2849,16 @@ namespace {
         {
         }
         /**
-         * @inheritdoc
+         * Whether the current field can be populated dynamically.
+         *
+         * @since 1.9.4
+         *
+         * @param array $properties Field properties.
+         * @param array $field      Current field specific data.
+         *
+         * @return bool
          */
-        public function is_dynamic_population_allowed($properties, $field)
+        public function is_dynamic_population_allowed($properties, $field) : bool
         {
         }
         /**
@@ -2819,6 +2889,8 @@ namespace {
          * @param array $field      Field settings.
          * @param array $deprecated Deprecated array.
          * @param array $form_data  Form data and settings.
+         *
+         * @noinspection HtmlUnknownAttribute
          */
         public function field_display($field, $deprecated, $form_data)
         {
@@ -2870,7 +2942,7 @@ namespace {
         {
         }
         /**
-         * Whether current field can be populated dynamically.
+         * Whether the current field can be populated dynamically.
          *
          * @since 1.7.6
          *
@@ -2879,11 +2951,11 @@ namespace {
          *
          * @return bool
          */
-        public function is_dynamic_population_allowed($properties, $field)
+        public function is_dynamic_population_allowed($properties, $field) : bool
         {
         }
         /**
-         * Whether current field can be populated using a fallback.
+         * Whether the current field can be populated using a fallback.
          *
          * @since 1.7.6
          *
@@ -2892,11 +2964,11 @@ namespace {
          *
          * @return bool
          */
-        public function is_fallback_population_allowed($properties, $field)
+        public function is_fallback_population_allowed($properties, $field) : bool
         {
         }
         /**
-         * Define field options to display in left panel.
+         * Define field options to display in the left panel.
          *
          * @since 1.7.6
          *
@@ -2933,10 +3005,10 @@ namespace {
          * @since 1.7.6
          *
          * @param array $field      Field data and settings.
-         * @param array $field_atts Field attributes.
+         * @param array $deprecated Field attributes.
          * @param array $form_data  Form data.
          */
-        public function field_display($field, $field_atts, $form_data)
+        public function field_display($field, $deprecated, $form_data)
         {
         }
         /**
@@ -2994,14 +3066,14 @@ namespace {
          *
          * @since 1.7.6
          *
-         * @param string $option Field option to render.
-         * @param array  $field  Field data and settings.
-         * @param array  $args   Field preview arguments.
-         * @param bool   $echo   Print or return the value. Print by default.
+         * @param string $option  Field option to render.
+         * @param array  $field   Field data and settings.
+         * @param array  $args    Field preview arguments.
+         * @param bool   $do_echo Print or return the value. Print by default.
          *
-         * @return string
+         * @return string|null
          */
-        public function field_element($option, $field, $args = [], $echo = \true)
+        public function field_element($option, $field, $args = [], $do_echo = \true)
         {
         }
         /**
@@ -3014,12 +3086,13 @@ namespace {
          * @param array  $args   Field arguments.
          *
          * @return string
+         * @noinspection HtmlUnknownTarget
          */
         private function render_custom_preview($option, $field, $args = [])
         {
         }
         /**
-         * Display field button in left panel only if the field is editable.
+         * Display field button in the left panel only if the field is editable.
          *
          * @since 1.7.6
          *
@@ -3031,7 +3104,7 @@ namespace {
         {
         }
         /**
-         * When the form is going to be displayed on front-end, remove internal information fields.
+         * When the form is going to be displayed on the front-end, remove internal information fields.
          *
          * @since 1.7.6
          *
@@ -3063,6 +3136,8 @@ namespace {
          * @param array $entry     Form submission raw data ($_POST).
          *
          * @return array
+         * @noinspection PhpMissingParamTypeInspection
+         * @noinspection PhpUnusedParameterInspection
          */
         public function process_before_form_data($form_data, $entry)
         {
@@ -3077,6 +3152,8 @@ namespace {
          * @param array $form_data  Form data and settings.
          *
          * @return bool
+         * @noinspection PhpMissingParamTypeInspection
+         * @noinspection PhpUnusedParameterInspection
          */
         public function display_duplicate_button($is_visible, $field, $form_data)
         {
@@ -3165,7 +3242,7 @@ namespace {
         /**
          * Render result of field_preview_option into custom div.
          *
-         * If field has no value, do not echo anything.
+         * If the field has no value, do not echo anything.
          *
          * @since 1.7.6
          *
@@ -3187,6 +3264,7 @@ namespace {
          * @param array  $field       Field data and settings.
          *
          * @return string
+         * @noinspection HtmlUnknownAttribute
          */
         private function replace_checkboxes($description, array $field)
         {
@@ -3301,9 +3379,9 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param array $field Field information.
+         * @param array $field      Field information.
          * @param array $deprecated Deprecated parameter, not used anymore.
-         * @param array $form_data Form data and settings.
+         * @param array $form_data  Form data and settings.
          */
         public function field_display($field, $deprecated, $form_data)
         {
@@ -3369,6 +3447,7 @@ namespace {
      */
     class WPForms_Field_Number_Slider extends \WPForms_Field
     {
+        use \WPForms\Forms\Fields\Traits\NumberField;
         /**
          * Default minimum value of the field.
          *
@@ -3500,6 +3579,18 @@ namespace {
         private function sanitize_value($value)
         {
         }
+        /**
+         * Sets default field settings.
+         *
+         * @since 1.9.4
+         *
+         * @param array $field Field settings.
+         *
+         * @return array Modified array.
+         */
+        private function set_default_field_args($field)
+        {
+        }
     }
     /**
      * Number text field.
@@ -3508,12 +3599,37 @@ namespace {
      */
     class WPForms_Field_Number extends \WPForms_Field
     {
+        use \WPForms\Forms\Fields\Traits\NumberField;
         /**
          * Primary class constructor.
          *
          * @since 1.0.0
          */
         public function init()
+        {
+        }
+        /**
+         * Hooks.
+         *
+         * @since 1.9.4
+         */
+        private function hooks()
+        {
+        }
+        /**
+         * Define additional field properties.
+         *
+         * @since 1.9.4
+         *
+         * @param array|mixed $properties Field properties.
+         * @param array       $field      Field settings.
+         * @param array       $form_data  Form data and settings.
+         *
+         * @return array
+         * @noinspection PhpMissingParamTypeInspection
+         * @noinspection PhpUnusedParameterInspection
+         */
+        public function field_properties($properties, $field, $form_data) : array
         {
         }
         /**
@@ -5280,7 +5396,7 @@ namespace WPForms {
          *
          * @since 1.5.8
          */
-        public function init()
+        public function init() : void
         {
         }
         /**
@@ -5288,7 +5404,7 @@ namespace WPForms {
          *
          * @since 1.5.8
          */
-        protected function populate_classes()
+        protected function populate_classes() : void
         {
         }
         /**
@@ -5296,7 +5412,7 @@ namespace WPForms {
          *
          * @since 1.8.6
          */
-        private function populate_common()
+        private function populate_common() : void
         {
         }
         /**
@@ -5304,7 +5420,7 @@ namespace WPForms {
          *
          * @since 1.6.2
          */
-        private function populate_forms()
+        private function populate_forms() : void
         {
         }
         /**
@@ -5312,7 +5428,7 @@ namespace WPForms {
          *
          * @since 1.8.1
          */
-        private function populate_frontend()
+        private function populate_frontend() : void
         {
         }
         /**
@@ -5320,7 +5436,7 @@ namespace WPForms {
          *
          * @since 1.6.0
          */
-        private function populate_admin()
+        private function populate_admin() : void
         {
         }
         /**
@@ -5328,7 +5444,7 @@ namespace WPForms {
          *
          * @since 1.8.7
          */
-        private function populate_caches()
+        private function populate_caches() : void
         {
         }
         /**
@@ -5336,7 +5452,7 @@ namespace WPForms {
          *
          * @since 1.8.2
          */
-        private function populate_fields()
+        private function populate_fields() : void
         {
         }
         /**
@@ -5344,7 +5460,7 @@ namespace WPForms {
          *
          * @since 1.7.5
          */
-        private function populate_forms_overview()
+        private function populate_forms_overview() : void
         {
         }
         /**
@@ -5352,7 +5468,7 @@ namespace WPForms {
          *
          * @since 1.8.6
          */
-        private function populate_entries()
+        private function populate_entries() : void
         {
         }
         /**
@@ -5360,7 +5476,7 @@ namespace WPForms {
          *
          * @since 1.6.8
          */
-        private function populate_builder()
+        private function populate_builder() : void
         {
         }
         /**
@@ -5368,7 +5484,7 @@ namespace WPForms {
          *
          * @since 1.8.2
          */
-        private function populate_db()
+        private function populate_db() : void
         {
         }
         /**
@@ -5376,7 +5492,7 @@ namespace WPForms {
          *
          * @since 1.5.9
          */
-        private function populate_migrations()
+        private function populate_migrations() : void
         {
         }
         /**
@@ -5384,7 +5500,7 @@ namespace WPForms {
          *
          * @since 1.5.8
          */
-        private function populate_capabilities()
+        private function populate_capabilities() : void
         {
         }
         /**
@@ -5392,7 +5508,7 @@ namespace WPForms {
          *
          * @since 1.5.9
          */
-        private function populate_tasks()
+        private function populate_tasks() : void
         {
         }
         /**
@@ -5400,7 +5516,7 @@ namespace WPForms {
          *
          * @since 1.6.7
          */
-        private function populate_smart_tags()
+        private function populate_smart_tags() : void
         {
         }
         /**
@@ -5408,7 +5524,7 @@ namespace WPForms {
          *
          * @since 1.6.3
          */
-        private function populate_logger()
+        private function populate_logger() : void
         {
         }
         /**
@@ -5416,7 +5532,7 @@ namespace WPForms {
          *
          * @since 1.6.6
          */
-        private function populate_education()
+        private function populate_education() : void
         {
         }
         /**
@@ -5424,7 +5540,7 @@ namespace WPForms {
          *
          * @since 1.7.0
          */
-        private function populate_robots()
+        private function populate_robots() : void
         {
         }
         /**
@@ -5432,7 +5548,7 @@ namespace WPForms {
          *
          * @since 1.7.8
          */
-        private function populate_anti_spam()
+        private function populate_anti_spam() : void
         {
         }
     }
@@ -5451,7 +5567,7 @@ namespace WPForms {
          *
          * @var string[]
          */
-        const HEARTBEAT_ALLOWED_SCREEN_IDS = ['wpforms_page_wpforms-entries'];
+        private const HEARTBEAT_ALLOWED_SCREEN_IDS = ['wpforms_page_wpforms-entries'];
         /**
          * One is the loneliest number that you'll ever do.
          *
@@ -5584,7 +5700,7 @@ namespace WPForms {
         {
         }
         /**
-         * Re-create plugin custom tables if don't exist.
+         * Re-create plugin custom tables if they don't exist.
          *
          * @since 1.9.0
          *
@@ -5607,7 +5723,7 @@ namespace WPForms {
          * - run: optional -- method to run on class instantiation -- default init.
          * - condition: optional -- condition to check before registering the class.
          */
-        public function register($class_data)
+        public function register($class_data) : void
         {
         }
         /**
@@ -5830,6 +5946,18 @@ namespace {
     {
     }
     /**
+     * Prepare form data.
+     *
+     * @since 1.9.4
+     *
+     * @param object $form_post Form data received from $_POST.
+     *
+     * @return array
+     */
+    function wpforms_prepare_form_data($form_post) : array
+    {
+    }
+    /**
      * Create a new form.
      *
      * @since 1.0.0
@@ -5993,7 +6121,7 @@ namespace {
      * Get the current installation license key.
      *
      * @since 1.6.2.3
-     * @since 1.8.0 WPFORMS_LICENSE_KEY constant has higher priority than the DB option.
+     * @since 1.8.0 The WPFORMS_LICENSE_KEY constant has higher priority than the DB option.
      *
      * @return string
      */
@@ -6005,7 +6133,7 @@ namespace {
      *
      * @since 1.6.0
      *
-     * @param string $type Specific install type to check for.
+     * @param string $type Specific installation type to check for.
      *
      * @return int|false Unix timestamp. False on failure.
      */
@@ -6039,22 +6167,22 @@ namespace {
     {
     }
     /**
-     * Check WPForms permissions for currently logged in user.
+     * Check WPForms permissions for currently logged-in user.
      * Both short (e.g. 'view_own_forms') or long (e.g. 'wpforms_view_own_forms') capability name can be used.
      * Only WPForms capabilities get processed.
      *
      * @since 1.4.4
      *
      * @param array|string $caps Capability name(s).
-     * @param int          $id   ID of the specific object to check against if capability is a "meta" cap. "Meta"
-     *                           capabilities, e.g. 'edit_post', 'edit_user', etc., are capabilities used by
-     *                           map_meta_cap() to map to other "primitive" capabilities, e.g. 'edit_posts',
-     *                           edit_others_posts', etc. Accessed via func_get_args() and passed to
-     *                           WP_User::has_cap(), then map_meta_cap().
+     * @param int|mixed    $id   ID of the specific object to check against if capability is a "meta" cap.
+     *                           "Meta" capabilities, e.g. 'edit_post', 'edit_user', etc.,
+     *                           are capabilities used by map_meta_cap() to map to other "primitive" capabilities,
+     *                           e.g. 'edit_posts', 'edit_others_posts', etc.
+     *                           Accessed via func_get_args() and passed to WP_User::has_cap(), then map_meta_cap().
      *
      * @return bool
      */
-    function wpforms_current_user_can($caps = [], $id = 0)
+    function wpforms_current_user_can($caps = [], $id = 0) : bool
     {
     }
     /**
@@ -6955,16 +7083,16 @@ namespace {
     {
     }
     /**
-     * Decode json-encoded string if it is in json format.
+     * Decode json-encoded string if it is in JSON format.
      *
      * @since 1.7.5
      *
-     * @param string $string      A string.
-     * @param bool   $associative Decode to the associative array if true. Decode to object if false.
+     * @param string $encoded_string A string.
+     * @param bool   $associative    Decode to the associative array if true. Decode to object if false.
      *
      * @return array|string
      */
-    function wpforms_json_decode($string, $associative = \false)
+    function wpforms_json_decode($encoded_string, $associative = \false)
     {
     }
     /**
@@ -6972,17 +7100,17 @@ namespace {
      *
      * @since 1.0.0
      *
-     * @param string $key     Setting name.
-     * @param mixed  $default Default value to return if the setting is not available.
-     * @param string $option  Option key, defaults to `wpforms_settings` in the `wp_options` table.
+     * @param string $key           Setting name.
+     * @param mixed  $default_value Default value to return if the setting is not available.
+     * @param string $option        Option key, defaults to `wpforms_settings` in the `wp_options` table.
      *
      * @return mixed
      */
-    function wpforms_setting($key, $default = \false, $option = 'wpforms_settings')
+    function wpforms_setting($key, $default_value = \false, $option = 'wpforms_settings')
     {
     }
     /**
-     * Update plugin settings option and allow it to be filterable.
+     * Update the plugin settings option and allow it to be filterable.
      *
      * The purpose of this function is to save settings when the "Save Settings" button is clicked.
      * If you are programmatically saving setting in the database in cases not triggered by user,
@@ -6990,7 +7118,7 @@ namespace {
      *
      * @since 1.6.6
      *
-     * @param array $settings A plugin settings array that is saved into options table.
+     * @param array $settings A plugin settings array that is saved into option table.
      *
      * @return bool
      */
@@ -6998,7 +7126,7 @@ namespace {
     {
     }
     /**
-     * Check if form provided contains the specified field type.
+     * Check an if form provided contains the specified field type.
      *
      * @since 1.0.5
      *
@@ -7012,7 +7140,7 @@ namespace {
     {
     }
     /**
-     * Check if form provided contains a field which a specific setting.
+     * Check if the form provided contains a field which a specific setting.
      *
      * @since 1.4.5
      *
@@ -7303,7 +7431,7 @@ namespace {
      *
      * @return string
      */
-    function wpforms_get_ip()
+    function wpforms_get_ip() : string
     {
     }
     /**
@@ -7647,7 +7775,7 @@ namespace {
     {
     }
     /**
-     * Get comma-separated list string from requirements' array.
+     * Get comma-separated list string from an array.
      *
      * @since 1.9.0
      *
