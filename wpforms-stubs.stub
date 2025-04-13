@@ -2413,7 +2413,7 @@ namespace {
          * Ajax handler to detect restricted email.
          *
          * @since 1.6.3
-         * @since {VERSION Added repeater field compatibility.
+         * @since 1.9.1 Added repeater field compatibility.
          */
         public function ajax_check_restricted_email()
         {
@@ -4167,7 +4167,7 @@ namespace {
         {
         }
         /**
-         * Add to list of registered providers.
+         * Add to a list of registered providers.
          *
          * @since 1.0.0
          *
@@ -4210,6 +4210,8 @@ namespace {
          * @param array $connection List of connection settings.
          *
          * @return bool
+         * @noinspection PhpMissingParamTypeInspection
+         * @noinspection PhpUnusedParameterInspection
          */
         public function process_conditionals($fields, $entry, $form_data, $connection)
         {
@@ -4217,30 +4219,28 @@ namespace {
         /**
          * Retrieve all available forms in a field.
          *
-         * Not all fields should be available for merge tags so we compare against a
-         * white-list. Also some fields, such as Name, should have additional
-         * variations.
+         * Not all fields should be available for merge tags, so we compare against an allowlist.
+         * Also, some fields, such as Name, should have additional variations.
          *
          * @since 1.0.0
          *
-         * @param object|bool $form
-         * @param array $whitelist
+         * @param object|int $form      Form object or form ID.
+         * @param array      $allowlist Allowlist of field types to allow.
          *
          * @return bool|array
          */
-        public function get_form_fields($form = \false, $whitelist = [])
+        public function get_form_fields($form = \false, $allowlist = [])
         {
         }
         /**
          * Get form fields ready for select list options.
          *
-         * In this function we also do the logic to limit certain fields to certain
-         * provider field types.
+         * In this function, we also do the logic to limit certain fields to certain provider field types.
          *
          * @since 1.0.0
          *
-         * @param array $form_fields
-         * @param string $form_field_type
+         * @param array  $form_fields     List of form fields.
+         * @param string $form_field_type Provider field type.
          *
          * @return array
          */
@@ -4255,10 +4255,10 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param array $data
-         * @param string $form_id
+         * @param array  $data    Form data.
+         * @param string $form_id Form ID.
          *
-         * @return mixed id or error object
+         * @return string|WP_Error id or error object
          */
         public function api_auth($data = [], $form_id = '')
         {
@@ -4268,9 +4268,9 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param string $account_id
+         * @param string $account_id Account ID.
          *
-         * @return mixed array or error object
+         * @return WP_Error|array|object
          */
         public function api_connect($account_id)
         {
@@ -4280,10 +4280,12 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param string $connection_id
-         * @param string $account_id
+         * @param string $connection_id Unique connection ID.
+         * @param string $account_id    Account ID.
          *
-         * @return mixed array or error object
+         * @return WP_Error|array|object
+         * @noinspection PhpMissingParamTypeInspection
+         * @noinspection PhpUnusedParameterInspection
          */
         public function api_lists($connection_id = '', $account_id = '')
         {
@@ -4293,11 +4295,13 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param string $connection_id
-         * @param string $account_id
-         * @param string $list_id
+         * @param string $connection_id Unique connection ID.
+         * @param string $account_id    Account ID.
+         * @param string $list_id       List ID.
          *
          * @return mixed array or error object
+         * @noinspection PhpMissingParamTypeInspection
+         * @noinspection PhpUnusedParameterInspection
          */
         public function api_groups($connection_id = '', $account_id = '', $list_id = '')
         {
@@ -4307,11 +4311,13 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param string $connection_id
-         * @param string $account_id
-         * @param string $list_id
+         * @param string $connection_id Unique connection ID.
+         * @param string $account_id    Account ID.
+         * @param string $list_id       List ID.
          *
          * @return mixed array or error object
+         * @noinspection PhpMissingParamTypeInspection
+         * @noinspection PhpUnusedParameterInspection
          */
         public function api_fields($connection_id = '', $account_id = '', $list_id = '')
         {
@@ -4324,13 +4330,14 @@ namespace {
          *
          * This method compiles all the HTML necessary for a connection to a provider.
          *
-         * @since 1.0.0
+         * @since        1.0.0
          *
-         * @param string $connection_id
-         * @param array $connection
-         * @param mixed $form Form id or form data.
+         * @param string $connection_id Unique connection ID.
+         * @param array  $connection    Connection data.
+         * @param mixed  $form          Form id or form data.
          *
          * @return string
+         * @noinspection NonSecureUniqidUsageInspection
          */
         public function output_connection($connection_id = '', $connection = [], $form = '')
         {
@@ -4340,8 +4347,8 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param string $connection_id
-         * @param array $connection
+         * @param string $connection_id Unique connection ID.
+         * @param array  $connection    Connection data.
          *
          * @return string
          */
@@ -4353,7 +4360,7 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @return mixed
+         * @return string
          */
         public function output_auth()
         {
@@ -4364,9 +4371,10 @@ namespace {
          * @since 1.0.0
          *
          * @param string $connection_id Unique connection ID.
-         * @param array  $connection Array of connection data.
+         * @param array  $connection    Array of connection data.
          *
          * @return string
+         * @noinspection HtmlUnknownAttribute
          */
         public function output_accounts($connection_id = '', $connection = [])
         {
@@ -4376,10 +4384,11 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param string $connection_id
-         * @param array $connection
+         * @param string $connection_id Unique connection ID.
+         * @param array  $connection    Connection data.
          *
          * @return WP_Error|string
+         * @noinspection HtmlUnknownAttribute
          */
         public function output_lists($connection_id = '', $connection = [])
         {
@@ -4389,10 +4398,11 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param string $connection_id
-         * @param array $connection
+         * @param string $connection_id Unique connection ID.
+         * @param array  $connection    Connection data.
          *
          * @return string
+         * @noinspection HtmlUnknownAttribute
          */
         public function output_groups($connection_id = '', $connection = [])
         {
@@ -4402,11 +4412,12 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param string $connection_id
-         * @param array $connection
-         * @param mixed $form
+         * @param string $connection_id Unique connection ID.
+         * @param array  $connection    Connection data.
+         * @param mixed  $form          Form id or form data.
          *
          * @return WP_Error|string
+         * @noinspection HtmlUnknownAttribute
          */
         public function output_fields($connection_id = '', $connection = [], $form = '')
         {
@@ -4421,6 +4432,8 @@ namespace {
          * @param string|array $form          Form properties.
          *
          * @return string
+         * @noinspection PhpMissingParamTypeInspection
+         * @noinspection PhpUnusedParameterInspection
          */
         public function output_conditionals($connection_id = '', $connection = [], $form = '')
         {
@@ -4430,8 +4443,8 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param string $connection_id
-         * @param array $connection
+         * @param string $connection_id Connection ID.
+         * @param array  $connection    Connection data.
          *
          * @return string
          */
@@ -4530,7 +4543,7 @@ namespace {
          * @since 1.0.0
          *
          * @param array $active   Array of active connections.
-         * @param array $settings Array of all connections settings.
+         * @param array $settings Array of all connection settings.
          */
         public function integrations_tab_options($active, $settings)
         {
@@ -4538,14 +4551,16 @@ namespace {
         /**
          * Error wrapper for WP_Error.
          *
-         * @since 1.0.0
+         * @since        1.0.0
          *
-         * @param string $message
-         * @param string $parent
+         * @param string $message      Error message.
+         * @param string $parent_error Parent error. Unused.
          *
          * @return WP_Error
+         * @noinspection PhpMissingParamTypeInspection
+         * @noinspection PhpUnusedParameterInspection
          */
-        public function error($message = '', $parent = '0')
+        public function error($message = '', $parent_error = '0')
         {
         }
     }
@@ -4597,6 +4612,27 @@ namespace {
          */
         public $sign_up = 'https://constant-contact.evyy.net/c/11535/341874/3411?sharedid=wpforms';
         /**
+         * Constructor.
+         *
+         * Empty to overload parent constructor and allow method to be instantiated without running parents' logic.
+         *
+         * @since 1.9.3
+         *
+         * @noinspection MagicMethodsValidityInspection
+         * @noinspection PhpMissingParentConstructorInspection
+         */
+        public function __construct()
+        {
+        }
+        /**
+         * Setup.
+         *
+         * @since 1.9.3
+         */
+        public function setup()
+        {
+        }
+        /**
          * Initialize.
          *
          * @since 1.3.6
@@ -4631,6 +4667,7 @@ namespace {
          * @param string $form_id Form ID.
          *
          * @return WP_Error|string Unique ID or error object
+         * @noinspection NonSecureUniqidUsageInspection
          */
         public function api_auth($data = [], $form_id = '')
         {
@@ -4650,7 +4687,7 @@ namespace {
          *
          * @since 1.3.6
          *
-         * @param string $account_id
+         * @param string $account_id Account ID.
          *
          * @return mixed array or error object.
          */
@@ -4662,8 +4699,8 @@ namespace {
          *
          * @since 1.3.6
          *
-         * @param string $connection_id
-         * @param string $account_id
+         * @param string $connection_id Connection ID.
+         * @param string $account_id    Account ID.
          *
          * @return array|WP_Error array or error object
          */
@@ -4675,11 +4712,11 @@ namespace {
          *
          * @since 1.3.6
          *
-         * @param string $connection_id
-         * @param string $account_id
-         * @param string $list_id
+         * @param string $connection_id Connection ID.
+         * @param string $account_id    Account ID.
+         * @param string $list_id       List ID.
          *
-         * @return mixed array or error object
+         * @return array array or error object
          */
         public function api_fields($connection_id = '', $account_id = '', $list_id = '')
         {
@@ -4702,7 +4739,7 @@ namespace {
          *
          * @since 1.3.6
          *
-         * @param string $connection_id Connection Id.
+         * @param string $connection_id Connection ID.
          * @param array  $connection    Connection data.
          *
          * @return string
@@ -4718,8 +4755,17 @@ namespace {
          * @param string $content Default content.
          *
          * @return string
+         * @noinspection HtmlUnknownTarget
          */
         public function builder_settings_default_content($content)
+        {
+        }
+        /**
+         * Display content inside the panel sidebar area.
+         *
+         * @since 1.0.0
+         */
+        public function builder_sidebar()
         {
         }
         /*************************************************************************
@@ -4737,8 +4783,20 @@ namespace {
          * Form fields to add a new provider account.
          *
          * @since 1.3.6
+         * @noinspection HtmlUnknownTarget
          */
         public function integrations_tab_new_form()
+        {
+        }
+        /**
+         * Add provider to the Settings Integrations tab.
+         *
+         * @since 1.9.3
+         *
+         * @param array $active   Array of active connections.
+         * @param array $settings Array of all connection settings.
+         */
+        public function integrations_tab_options($active, $settings)
         {
         }
         /************************
@@ -4748,6 +4806,7 @@ namespace {
          * Add admin notices to connect to Constant Contact.
          *
          * @since 1.3.6
+         * @noinspection HtmlUnknownTarget
          */
         public function connect_request()
         {
@@ -5386,6 +5445,14 @@ namespace WPForms {
     final class WPForms
     {
         /**
+         * List of screen IDs where heartbeat requests are allowed.
+         *
+         * @since 1.9.3
+         *
+         * @var string[]
+         */
+        const HEARTBEAT_ALLOWED_SCREEN_IDS = ['wpforms_page_wpforms-entries'];
+        /**
          * One is the loneliest number that you'll ever do.
          *
          * @since 1.0.0
@@ -5450,9 +5517,18 @@ namespace WPForms {
          * @since 1.0.0
          *
          * @return WPForms
-         * @noinspection UsingInclusionOnceReturnValueInspection
          */
         public static function instance() : \WPForms\WPForms
+        {
+        }
+        /**
+         * Initialize the plugin.
+         *
+         * @since 1.9.3
+         *
+         * @noinspection UsingInclusionOnceReturnValueInspection
+         */
+        private function init()
         {
         }
         /**
@@ -5476,10 +5552,11 @@ namespace WPForms {
          * Hooks.
          *
          * @since 1.9.0
+         * @since 1.9.3 No longer static.
          *
          * @return void
          */
-        private static function hooks()
+        private function hooks()
         {
         }
         /**
@@ -5597,7 +5674,17 @@ namespace WPForms {
          *
          * @return bool
          */
-        public function is_pro()
+        public function is_pro() : bool
+        {
+        }
+        /**
+         * Whether the current request is restricted heartbeat.
+         *
+         * @since 1.9.3
+         *
+         * @return bool
+         */
+        public static function is_restricted_heartbeat() : bool
         {
         }
     }
@@ -5629,19 +5716,6 @@ namespace {
      * @return string
      */
     function wpforms_size_to_megabytes($bytes)
-    {
-    }
-}
-// phpcs:ignore Universal.Namespaces.DisallowCurlyBraceSyntax.Forbidden, Universal.Namespaces.DisallowDeclarationWithoutName.Forbidden, Universal.Namespaces.OneDeclarationPerFile.MultipleFound
-namespace {
-    /**
-     * The function which returns the one WPForms instance.
-     *
-     * @since 1.0.0
-     *
-     * @return WPForms\WPForms
-     */
-    function wpforms() : \WPForms\WPForms
     {
     }
 }
@@ -6434,7 +6508,8 @@ namespace {
      *
      * @param array $array Data to sanitize.
      *
-     * @return mixed If not an array is passed (or empty var) - return unmodified var. Otherwise - a merged array into multiline string.
+     * @return mixed If not an array is passed (or empty var) - return unmodified var.
+     *               Otherwise - a merged array into multiline string.
      */
     function wpforms_sanitize_array_combine($array)
     {
@@ -6546,6 +6621,40 @@ namespace {
      * @noinspection PhpMissingParamTypeInspection
      */
     function wpforms_html_entity_decode_deep(string $html, int $flags = \ENT_QUOTES | \ENT_SUBSTITUTE | \ENT_HTML401, $encoding = \null) : string
+    {
+    }
+    /**
+     * Sanitize form data.
+     *
+     * @since 1.9.3
+     *
+     * @param array $data Form data.
+     *
+     * @return array
+     */
+    function wpforms_sanitize_form_data(array $data) : array
+    {
+    }
+    /**
+     * Sanitize form field.
+     *
+     * @since 1.9.3
+     *
+     * @param array $field Field.
+     *
+     * @return array
+     */
+    function wpforms_sanitize_field(array $field) : array
+    {
+    }
+    /**
+     * Get allowed HTML purifier object.
+     *
+     * @since 1.9.3
+     *
+     * @return HTMLPurifier
+     */
+    function wpforms_get_html_purifier() : \WPForms\Vendor\HTMLPurifier
     {
     }
     /**
@@ -6764,6 +6873,18 @@ namespace {
      * @return array
      */
     function wpforms_get_multi_fields() : array
+    {
+    }
+    /**
+     * Get column width.
+     *
+     * @since 1.9.3
+     *
+     * @param array $column Column data.
+     *
+     * @return float
+     */
+    function wpforms_get_column_width(array $column) : float
     {
     }
     /**
