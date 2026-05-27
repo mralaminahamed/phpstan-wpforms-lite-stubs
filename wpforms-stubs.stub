@@ -3286,7 +3286,7 @@ namespace {
          *
          * @since 1.8.1
          */
-        private function hooks()
+        private function hooks(): void
         {
         }
         /**
@@ -3294,13 +3294,13 @@ namespace {
          *
          * @since 1.3.7
          *
-         * @param array $properties Field properties.
-         * @param array $field      Field data and settings.
-         * @param array $form_data  Form data and settings.
+         * @param array|mixed $properties Field properties.
+         * @param array       $field      Field data and settings.
+         * @param array       $form_data  Form data and settings.
          *
          * @return array
          */
-        public function field_properties($properties, $field, $form_data)
+        public function field_properties($properties, $field, $form_data): array
         {
         }
         /**
@@ -3308,12 +3308,12 @@ namespace {
          *
          * @since 1.0.8
          *
-         * @param bool  $required
-         * @param array $field
+         * @param bool|mixed $required Whether the field is required.
+         * @param array      $field    Field data.
          *
          * @return bool
          */
-        public function default_required($required, $field)
+        public function default_required($required, $field): bool
         {
         }
         /**
@@ -3321,7 +3321,7 @@ namespace {
          *
          * @since 1.0.0
          *
-         * @param array $field
+         * @param array $field Field information.
          */
         public function field_options($field)
         {
@@ -3344,12 +3344,14 @@ namespace {
          * @param array $field      Field information.
          * @param array $deprecated Deprecated parameter, not used anymore.
          * @param array $form_data  Form data and settings.
+         *
+         * @noinspection HtmlUnknownAttribute
          */
         public function field_display($field, $deprecated, $form_data)
         {
         }
         /**
-         * Validate field on form submit.
+         * Validate field on submitting a form.
          *
          * @since 1.0.0
          *
@@ -3377,7 +3379,7 @@ namespace {
          *
          * @since 1.8.1
          *
-         * @param bool  $requires_fieldset True if requires fieldset.
+         * @param bool  $requires_fieldset True if it requires fieldset.
          * @param array $field             Field data.
          *
          * @return bool
@@ -6135,6 +6137,23 @@ namespace {
     {
     }
     /**
+     * Helpers functions for builder.
+     *
+     * @since 1.9.6.1
+     */
+    /**
+     * Outputs a button element to display the connection status for a given connection.
+     *
+     * @since 1.9.6.1
+     *
+     * @param string $connection_id The unique identifier for the connection.
+     * @param string $name          The name attribute value to be used for the status input field.
+     * @param bool   $is_active     Connection status, where true represents active and false represents inactive.
+     */
+    function wpforms_connection_status_button(string $connection_id, string $name, bool $is_active)
+    {
+    }
+    /**
      * Helper functions to work with colors.
      *
      * @since 1.8.0
@@ -6393,25 +6412,29 @@ namespace {
      * Get the button.
      *
      * @since 1.8.2.2
+     * @since 1.9.6.1 Add $license_level parameter.
      *
-     * @param string $action       Action to perform.
-     * @param bool   $plugin_allow Is plugin allowed.
-     * @param string $path         Plugin file.
-     * @param string $url          URL for download plugin.
-     * @param array  $utm          UTM parameters.
+     * @param string $action        Action to perform.
+     * @param bool   $plugin_allow  Is plugin allowed.
+     * @param string $path          Plugin file.
+     * @param string $url           URL for download plugin.
+     * @param array  $utm           UTM parameters.
+     * @param string $license_level License level.
      */
-    function wpforms_edu_get_button($action, $plugin_allow, $path, $url, $utm)
+    function wpforms_edu_get_button($action, $plugin_allow, $path, $url, $utm, $license_level = '')
     {
     }
     /**
      * Get the upgrade button.
      *
      * @since 1.8.2.2
+     * @since 1.9.6.1 Add $license_level parameter.
      *
-     * @param array $utm     UTM parameters.
-     * @param array $classes Classes.
+     * @param array  $utm           UTM parameters.
+     * @param array  $classes       Classes.
+     * @param string $license_level License level.
      */
-    function wpforms_edu_get_upgrade_button($utm, $classes = [])
+    function wpforms_edu_get_upgrade_button($utm, $classes = [], $license_level = '')
     {
     }
     /**
