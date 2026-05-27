@@ -3101,7 +3101,7 @@ namespace {
     class WPForms_Field_Internal_Information extends \WPForms_Field
     {
         /**
-         * The key used to save form checkboxes in post meta table.
+         * The key used to save form checkboxes in the post meta table.
          *
          * @since 1.7.6
          *
@@ -3181,7 +3181,7 @@ namespace {
          *
          * @return bool
          */
-        private function is_button_displayable($field)
+        private function is_button_displayable($field): bool
         {
         }
         /**
@@ -3273,7 +3273,7 @@ namespace {
          * @return string
          * @noinspection HtmlUnknownTarget
          */
-        private function render_custom_preview($option, $field, $args = [])
+        private function render_custom_preview($option, $field, $args = []): string
         {
         }
         /**
@@ -3377,7 +3377,7 @@ namespace {
         {
         }
         /**
-         * Localized strings for wpforms-internal-information-field JS script.
+         * Localized strings for a wpforms-internal-information-field JS script.
          *
          * @since 1.7.6
          *
@@ -3409,7 +3409,7 @@ namespace {
          *
          * @return bool
          */
-        private function is_editable()
+        private function is_editable(): bool
         {
         }
         /**
@@ -3421,11 +3421,11 @@ namespace {
          *
          * @return bool
          */
-        private function is_internal_information_field($field)
+        private function is_internal_information_field($field): bool
         {
         }
         /**
-         * Render result of field_preview_option into custom div.
+         * Render the result of the field_preview_option into a custom div.
          *
          * If the field has no value, do not echo anything.
          *
@@ -3434,8 +3434,10 @@ namespace {
          * @param string $label Field label.
          * @param array  $field Field settings and data.
          * @param array  $args  Field arguments.
+         *
+         * @noinspection PhpSameParameterValueInspection
          */
-        private function render_preview($label, $field, $args = [])
+        private function render_preview($label, $field, $args = []): void
         {
         }
         /**
@@ -3451,7 +3453,7 @@ namespace {
          * @return string
          * @noinspection HtmlUnknownAttribute
          */
-        private function replace_checkboxes($description, array $field)
+        private function replace_checkboxes(string $description, array $field): string
         {
         }
         /**
@@ -3461,7 +3463,7 @@ namespace {
          *
          * @return array
          */
-        private function get_allowed_tags()
+        private function get_allowed_tags(): array
         {
         }
         /**
@@ -3473,7 +3475,7 @@ namespace {
          *
          * @return string The modified content with UTM parameters added to links.
          */
-        private function add_link_attributes($content)
+        private function add_link_attributes(string $content): string
         {
         }
         /**
@@ -3485,7 +3487,7 @@ namespace {
          *
          * @return string
          */
-        private function add_url_utm($field)
+        private function add_url_utm(array $field): string
         {
         }
     }
@@ -7253,6 +7255,18 @@ namespace {
     {
     }
     /**
+     * Check whether the field type is in the list of types that support the Show Values option.
+     *
+     * @since 1.10.0
+     *
+     * @param array $field Field data.
+     *
+     * @return bool True if the field type supports Show Values, false otherwise.
+     */
+    function wpforms_is_support_show_values(array $field): bool
+    {
+    }
+    /**
      * Determine if the field was repeated.
      *
      * @since 1.8.9
@@ -7304,7 +7318,7 @@ namespace {
     /**
      * Get icon SVG by its name, style and size.
      *
-     * @since 1.9.9.3
+     * @since 1.10.0
      *
      * @param string $icon  Icon name.
      * @param string $style Icon style.
@@ -7508,8 +7522,8 @@ namespace {
      * Process smart tags.
      *
      * @since 1.7.1
-     * @since 1.8.7     Added `$context` parameter.
-     * @since 1.9.9.2 Added `$context` parameter.
+     * @since 1.8.7   Added `$context` parameter.
+     * @since 1.9.9.2 Added `$context_data` parameter.
      *
      * @param string $content      Content.
      * @param array  $form_data    Form data.
@@ -7521,6 +7535,19 @@ namespace {
      * @return string|mixed
      */
     function wpforms_process_smart_tags($content, $form_data, $fields = [], $entry_id = '', $context = '', array $context_data = [])
+    {
+    }
+    /**
+     * Get all smart tags in the content.
+     * This function has been moved from the existing \WPForms\SmartTags\SmartTags::class.
+     *
+     * @since 1.10.0
+     *
+     * @param string $content Content.
+     *
+     * @return array
+     */
+    function wpforms_get_all_smart_tags($content)
     {
     }
     /**
