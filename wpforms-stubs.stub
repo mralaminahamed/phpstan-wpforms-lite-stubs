@@ -6,6 +6,8 @@
  */
 
 namespace {
+    // phpcs:ignore Generic.Commenting.DocComment.MissingShort
+    /** @noinspection AutoloadingIssuesInspection */
     /**
      * About WPForms admin page class.
      *
@@ -20,7 +22,7 @@ namespace {
          *
          * @var string
          */
-        const SLUG = 'wpforms-about';
+        public const SLUG = 'wpforms-about';
         /**
          * Default view for a page.
          *
@@ -28,15 +30,15 @@ namespace {
          *
          * @var string
          */
-        const DEFAULT_TAB = 'about';
+        private const DEFAULT_TAB = 'about';
         /**
-         * Array of license types, that are considered being top level and has no features difference.
+         * Array of license types that are considered being pro + top level and has no features difference.
          *
          * @since 1.5.0
          *
          * @var array
          */
-        public static $licenses_top = ['pro', 'agency', 'ultimate', 'elite'];
+        public static $licenses_pro_and_top = ['pro', 'agency', 'ultimate', 'elite'];
         /**
          * List of features that licenses are different with.
          *
@@ -74,7 +76,7 @@ namespace {
          *
          * @since 1.8.2.3
          */
-        private function hooks()
+        private function hooks(): void
         {
         }
         /**
@@ -82,15 +84,17 @@ namespace {
          *
          * @since 1.5.0
          */
-        public function init()
+        public function init(): void
         {
         }
         /**
          * Output the basic page structure.
          *
          * @since 1.5.0
+         *
+         * @noinspection HtmlUnknownTarget
          */
-        public function output()
+        public function output(): void
         {
         }
         /**
@@ -98,27 +102,29 @@ namespace {
          *
          * @since 1.5.0
          */
-        protected function output_about()
+        protected function output_about(): void
         {
         }
         /**
-         * Display the General Info section of About tab.
+         * Display the General Info section of the About tab.
+         *
+         * @since 1.5.8
+         *
+         * @noinspection HtmlUnknownTarget
+         */
+        protected function output_about_info(): void
+        {
+        }
+        /**
+         * Display the Addons section of the About tab.
          *
          * @since 1.5.8
          */
-        protected function output_about_info()
+        protected function output_about_addons(): void
         {
         }
         /**
-         * Display the Addons section of About tab.
-         *
-         * @since 1.5.8
-         */
-        protected function output_about_addons()
-        {
-        }
-        /**
-         * Get AM plugin data to display in the Addons section of About tab.
+         * Get AM plugin data to display in the Addons section of the About tab.
          *
          * @since 1.5.8
          *
@@ -128,15 +134,17 @@ namespace {
          *
          * @return array
          */
-        protected function get_plugin_data($plugin, $details, $all_plugins)
+        protected function get_plugin_data(string $plugin, array $details, array $all_plugins): array
         {
         }
         /**
          * Display the Getting Started tab content.
          *
          * @since 1.5.0
+         *
+         * @noinspection HtmlUnknownTarget
          */
-        protected function output_getting_started()
+        protected function output_getting_started(): void
         {
         }
         /**
@@ -148,15 +156,17 @@ namespace {
          *
          * @return string Next license type slug.
          */
-        protected function get_next_license($current)
+        protected function get_next_license(string $current): string
         {
         }
         /**
          * Display the Versus tab content.
          *
          * @since 1.5.0
+         *
+         * @noinspection HtmlUnknownTarget
          */
-        protected function output_versus()
+        protected function output_versus(): void
         {
         }
         /**
@@ -166,7 +176,7 @@ namespace {
          *
          * @return array
          */
-        protected function get_am_plugins()
+        protected function get_am_plugins(): array
         {
         }
         /**
@@ -179,7 +189,7 @@ namespace {
          *
          * @return array|false
          */
-        protected function get_license_data($feature, $license)
+        protected function get_license_data(string $feature, string $license)
         {
         }
         /**
@@ -189,7 +199,7 @@ namespace {
          *
          * @return string
          */
-        protected function get_license_type()
+        protected function get_license_type(): string
         {
         }
         /**
@@ -199,7 +209,27 @@ namespace {
          *
          * @return array
          */
-        private function get_licenses_features_list()
+        private function get_licenses_features_list(): array
+        {
+        }
+        /**
+         * Get the list of addons included in Pro license.
+         *
+         * @since 1.9.8.3
+         *
+         * @return string
+         */
+        private function get_pro_addon_list(): string
+        {
+        }
+        /**
+         * Get the list of addons included in Elite, Ultimate, and Agency licenses.
+         *
+         * @since 1.9.8.3
+         *
+         * @return string
+         */
+        private static function get_top_addons_list(): string
         {
         }
     }
@@ -1795,6 +1825,18 @@ namespace {
         {
         }
         /**
+         * Get choice images hide option field element.
+         *
+         * @since 1.9.8.3
+         *
+         * @param array $field Field data and settings.
+         *
+         * @return string
+         */
+        private function choices_images_hide_option(array $field): string
+        {
+        }
+        /**
          * Get choice limit option field element.
          *
          * @since 1.9.7
@@ -1934,7 +1976,8 @@ namespace {
         {
         }
         /**
-         * Return images, if any, for HTML-supported values.
+         * Format field returning value due to the context and field type:
+         * E.g., return images, if any, for HTML-supported values, use separate formatting for the Other option.
          *
          * @since 1.4.5
          *
@@ -1946,6 +1989,20 @@ namespace {
          * @return string
          */
         public function field_html_value($value, $field, $form_data = [], $context = '')
+        {
+        }
+        /**
+         * Filter whether to use HTML formatting for a field with image choices enabled.
+         *
+         * @since 1.9.8.3
+         *
+         * @param bool   $filtering Whether to use HTML formatting.
+         * @param string $context   Value display context.
+         * @param array  $field     Field settings.
+         *
+         * @return bool
+         */
+        public function field_html_value_images($filtering, string $context, array $field): bool
         {
         }
         /**
@@ -1961,6 +2018,21 @@ namespace {
          * @return string
          */
         private function get_field_html(array $field, string $value, array $form_data): string
+        {
+        }
+        /**
+         * Return choice value.
+         *
+         * This is only a wrapper for the wpforms_get_choices_value() global function.
+         *
+         * @since 1.9.8.3
+         *
+         * @param array $field     Field settings.
+         * @param array $form_data Form data.
+         *
+         * @return string
+         */
+        protected function get_choices_value(array $field, array $form_data): string
         {
         }
         /**
@@ -1985,10 +2057,11 @@ namespace {
          * @since 1.8.2
          *
          * @param string $context Context of the field.
+         * @param array  $field   Field settings.
          *
          * @return bool
          */
-        private function filter_field_html_value_images($context): bool
+        private function filter_field_html_value_images(string $context, array $field): bool
         {
         }
         /**
@@ -2091,7 +2164,7 @@ namespace {
          *
          * @return bool
          */
-        protected function is_dynamic_choices($field)
+        protected function is_dynamic_choices(array $field): bool
         {
         }
         /**
@@ -2226,6 +2299,18 @@ namespace {
          * @param array $form_data    Form data and settings.
          */
         protected function validate_field_choice_limit(int $field_id, array $field_submit, array $form_data): void
+        {
+        }
+        /**
+         * Determines if the field has the "Add Other Choice" option enabled.
+         *
+         * @since 1.9.8.3
+         *
+         * @param array $field The field data to check for the "Add Other Choice" option.
+         *
+         * @return bool True, if the "Add Other Choice" option is enabled, false otherwise.
+         */
+        protected function has_other_choice(array $field): bool
         {
         }
     }
@@ -3748,6 +3833,30 @@ namespace {
         {
         }
         /**
+         * Enqueue assets for the builder.
+         *
+         * @since 1.9.8.3
+         */
+        public function builder_assets()
+        {
+        }
+        /**
+         * Adjust builder preview container classes.
+         *
+         * Adds size-{small|medium|large} to the Radio field container in the Builder
+         * when the "Add Other Choice" option is enabled.
+         *
+         * @since 1.9.8.3
+         *
+         * @param string $css   Existing class string.
+         * @param array  $field Field data and settings.
+         *
+         * @return string
+         */
+        public function preview_field_class($css, $field): string
+        {
+        }
+        /**
          * Define additional field properties.
          *
          * @since 1.4.5
@@ -3809,12 +3918,103 @@ namespace {
          * Format and sanitize field.
          *
          * @since 1.0.2
+         * @since 1.9.8.3 Changed the expected $field_submit from string to mixed as in case with the Other option we can expect the array to arrive here.
          *
-         * @param int    $field_id     Field ID.
-         * @param string $field_submit Submitted form data.
-         * @param array  $form_data    Form data and settings.
+         * @param int   $field_id     Field ID.
+         * @param mixed $field_submit Submitted form data.
+         * @param array $form_data    Form data and settings.
          */
         public function format($field_id, $field_submit, $form_data)
+        {
+        }
+        /**
+         * Export entry field data.
+         *
+         * @since 1.9.8.3
+         *
+         * @param array|mixed $field Field data.
+         *
+         * @return array
+         */
+        public function export_entry_field_data($field): array
+        {
+        }
+        /**
+         * Include a radio field in allowed field types for keyword search.
+         *
+         * @since 1.9.8.3
+         *
+         * @param array|mixed $fields Array of field types.
+         *
+         * @return array
+         */
+        public function add_field_to_anti_spam_keyword_filter($fields): array
+        {
+        }
+        /**
+         * Generate the HTML value for a field.
+         *
+         * It overrides the parent method because of fields with Other choices.
+         *
+         * @since 1.9.8.3
+         *
+         * @param mixed  $value     The value of the field.
+         * @param array  $field     Field data and settings.
+         * @param array  $form_data Optional. Additional form data.
+         * @param string $context   Optional. The context in which the value is being rendered.
+         *
+         * @return string
+         */
+        public function field_html_value($value, $field, $form_data = [], $context = '')
+        {
+        }
+        /**
+         * Return choice value, including Other label if applicable.
+         * It overrides the parent method because of fields with Other choices.
+         *
+         * @since 1.9.8.3
+         *
+         * @param array $field     Field settings.
+         * @param array $form_data Form data.
+         *
+         * @return string
+         */
+        protected function get_choices_value(array $field, array $form_data): string
+        {
+        }
+        /**
+         * Retrieve the value for the "Other" choice option in a field.
+         *
+         * This method handles the retrieval of the "Other" choice value, considering
+         * both raw and processed values. It supports cases where the "Other" choice
+         * is enabled and attempts to construct a meaningful representation of the value
+         * based on the available inputs.
+         *
+         * @since 1.9.8.3
+         *
+         * @param array $field Field data.
+         *
+         * @return string|null Returns the constructed "Other" choice value if available,
+         *                     or null if the "Other" choice is not enabled.
+         */
+        private function get_other_choice_value(array $field): ?string
+        {
+        }
+        /**
+         * Adjust the entry field before saving.
+         *
+         * It's necessary for fields with other choices.
+         *
+         * @since 1.9.8.3
+         *
+         * @param array $field     Field data.
+         * @param array $form_data Form data.
+         * @param int   $entry_id  Entry ID.
+         *
+         * @return array
+         * @noinspection PhpUnused
+         */
+        public function save_field($field, $form_data, $entry_id)
         {
         }
     }
