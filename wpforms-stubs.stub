@@ -2260,6 +2260,267 @@ namespace {
         {
         }
         /**
+         * Determine whether the submission uses the associative "Other" form.
+         *
+         * The Other choice submits as an array with an `other` key carrying the free-text value.
+         *
+         * @since 1.10.0.5
+         *
+         * @param mixed $field_submit Submitted value.
+         *
+         * @return bool
+         */
+        protected function is_other_submission($field_submit): bool
+        {
+        }
+        /**
+         * Filter a choice-field submission to only include configured allowlist values.
+         *
+         * Provides a defense-in-depth layer for format() methods. When show_values is
+         * enabled, submitted values are compared against choice values; otherwise against
+         * labels (or the "Choice N" fallback). Dynamic-choice fields pass through
+         * unchanged because format() already handles invalid IDs by skipping unmatched
+         * posts or terms. The "other" free-text key in array submissions is preserved
+         * only when the field has an Other choice.
+         *
+         * @since 1.10.0.5
+         *
+         * @param string|array $field_submit Submitted value.
+         * @param array        $field        Field configuration.
+         * @param array        $form_data    Form data.
+         *
+         * @return string|array Filtered submission containing only allowlist items.
+         *
+         * @noinspection PhpUnusedParameterInspection
+         */
+        protected function sanitize_choices_submission($field_submit, array $field, array $form_data)
+        {
+        }
+        /**
+         * Validate a choice-field submission against the configured choice allowlist.
+         *
+         * Rejects submissions whose values do not match any configured choice label, value,
+         * or `Choice N` fallback. Dynamic-choice modes (post_type, taxonomy) are validated by
+         * ID and existence. The associative `Other` submission form is accepted only when a
+         * choice has `'other' => true`. Rejections are logged via `wpforms_log()` under
+         * `type=[security, entry]` and surface a generic user-facing error.
+         *
+         * The `wpforms_field_choices_allow_unknown_value` filter (default false) short-circuits
+         * enforcement for rare legitimate off-list workflows.
+         *
+         * @since 1.10.0.5
+         *
+         * @param int          $field_id     Field ID.
+         * @param string|array $field_submit Submitted value.
+         * @param array        $form_data    Form data.
+         *
+         * @return void
+         */
+        protected function validate_choices_allowlist($field_id, $field_submit, array $form_data): void
+        {
+        }
+        /**
+         * Check the early-return guards that suppress allowlist enforcement.
+         *
+         * Skips empty submissions (handled by the required-field check), dynamic choice
+         * fields rendered without items, and sites that opt out via the
+         * wpforms_field_choices_allow_unknown_value filter.
+         *
+         * @since 1.10.0.5
+         *
+         * @param array        $field        Field configuration.
+         * @param string|array $field_submit Submitted value.
+         * @param array        $form_data    Form data.
+         *
+         * @return bool
+         */
+        private function should_skip_choices_allowlist(array $field, $field_submit, array $form_data): bool
+        {
+        }
+        /**
+         * Route a dynamic-choice submission to its ID-based validator.
+         *
+         * @since 1.10.0.5
+         *
+         * @param int          $field_id     Field ID.
+         * @param string|array $field_submit Submitted value.
+         * @param array        $field        Field configuration.
+         * @param array        $form_data    Form data.
+         *
+         * @return bool True when the dispatcher handled the submission, false otherwise.
+         */
+        private function validate_dynamic_choice_submission($field_id, $field_submit, array $field, array $form_data): bool
+        {
+        }
+        /**
+         * Build the label/value allowlist for a static-choice field.
+         *
+         * Prefers choice values when show_values is enabled, falls back to labels, then to
+         * the `Choice N` placeholder used by the render paths.
+         *
+         * @since 1.10.0.5
+         *
+         * @param array $field Field configuration.
+         *
+         * @return array Tuple of [ string[] $allowlist, bool $has_other ].
+         */
+        private function build_choices_allowlist(array $field): array
+        {
+        }
+        /**
+         * Resolve the single allowlist entry for one configured choice.
+         *
+         * @since 1.10.0.5
+         *
+         * @param array      $choice      Choice configuration.
+         * @param int|string $key         Choice key as stored in form_data.
+         * @param bool       $show_values Whether the field uses explicit values.
+         *
+         * @return string
+         */
+        private function get_choice_allowlist_value($choice, $key, bool $show_values): string
+        {
+        }
+        /**
+         * Normalize a choice label/value for allowlist comparison.
+         *
+         * Trims surrounding whitespace because render paths like the Select field's
+         * get_choices_label() emit trimmed text while form_data retains the raw label.
+         * Applied to both sides of the in_array check so stored vs. submitted strings
+         * compare consistently.
+         *
+         * @since 1.10.0.5
+         *
+         * @param mixed $value Value to normalize.
+         *
+         * @return string
+         */
+        private function normalize_choice_comparable($value): string
+        {
+        }
+        /**
+         * Validate a submission that uses the associative "Other" shape.
+         *
+         * The shape is accepted only when the field has an Other choice. Non-`other`
+         * array elements must still match the allowlist so mixed payloads like
+         * `[ 'Label', 'other' => 'freetext' ]` cannot sneak in an off-list value.
+         *
+         * @since 1.10.0.5
+         *
+         * @param int   $field_id     Field ID.
+         * @param array $field_submit Submitted value.
+         * @param array $field        Field configuration.
+         * @param array $form_data    Form data.
+         * @param array $allowlist    Allowlist built from configured choices.
+         * @param bool  $has_other    Whether the field has an Other choice.
+         *
+         * @return void
+         */
+        private function validate_other_shape_submission(int $field_id, array $field_submit, array $field, array $form_data, array $allowlist, bool $has_other): void
+        {
+        }
+        /**
+         * Validate a regular scalar or indexed-array submission against the allowlist.
+         *
+         * @since 1.10.0.5
+         *
+         * @param int          $field_id     Field ID.
+         * @param string|array $field_submit Submitted value.
+         * @param array        $field        Field configuration.
+         * @param array        $form_data    Form data.
+         * @param array        $allowlist    Allowlist built from configured choices.
+         *
+         * @return void
+         */
+        private function validate_flat_submission($field_id, $field_submit, array $field, array $form_data, array $allowlist): void
+        {
+        }
+        /**
+         * Whether a single submission element carries no user input.
+         *
+         * @since 1.10.0.5
+         *
+         * @param mixed $item Single submission element.
+         *
+         * @return bool
+         */
+        private function is_valueless_submission_item($item): bool
+        {
+        }
+        /**
+         * Validate a dynamic post-type choice submission.
+         *
+         * Each submitted ID must cast to a positive integer AND map to a post of the
+         * field's configured `dynamic_post_type`.
+         *
+         * @since 1.10.0.5
+         *
+         * @param int          $field_id     Field ID.
+         * @param string|array $field_submit Submitted value.
+         * @param array        $field        Field configuration.
+         * @param array        $form_data    Form data.
+         *
+         * @return void
+         */
+        private function validate_dynamic_post_type_submission($field_id, $field_submit, array $field, array $form_data): void
+        {
+        }
+        /**
+         * Validate a dynamic taxonomy choice submission.
+         *
+         * Each submitted ID must cast to a positive integer AND map to a term in the
+         * field's configured `dynamic_taxonomy`.
+         *
+         * @since 1.10.0.5
+         *
+         * @param int          $field_id     Field ID.
+         * @param string|array $field_submit Submitted value.
+         * @param array        $field        Field configuration.
+         * @param array        $form_data    Form data.
+         *
+         * @return void
+         */
+        private function validate_dynamic_taxonomy_submission($field_id, $field_submit, array $field, array $form_data): void
+        {
+        }
+        /**
+         * Iterate an ID-based submission and reject on the first invalid element.
+         *
+         * Shared scaffolding for dynamic post-type and taxonomy validation; the
+         * type-specific existence check is passed as a callback.
+         *
+         * @since 1.10.0.5
+         *
+         * @param int          $field_id     Field ID.
+         * @param string|array $field_submit Submitted value.
+         * @param array        $field        Field configuration.
+         * @param array        $form_data    Form data.
+         * @param callable     $is_valid_id  Receives an int ID, returns bool.
+         *
+         * @return void
+         */
+        private function validate_dynamic_id_submission($field_id, $field_submit, array $field, array $form_data, callable $is_valid_id): void
+        {
+        }
+        /**
+         * Record a rejected choice submission.
+         *
+         * Sets a generic per-field error and writes a structured entry to the WPForms log
+         * so site operators can audit tampering attempts.
+         *
+         * @since 1.10.0.5
+         *
+         * @param int          $field_id     Field ID.
+         * @param string|array $field_submit Submitted value.
+         * @param array        $field        Field configuration.
+         * @param array        $form_data    Form data.
+         *
+         * @return void
+         */
+        private function reject_choice_submission($field_id, $field_submit, array $field, array $form_data): void
+        {
+        }
+        /**
          * Get an empty dynamic choices message.
          *
          * @since 1.8.2
@@ -3078,6 +3339,23 @@ namespace {
          * @noinspection HtmlUnknownAttribute
          */
         public function field_display($field, $deprecated, $form_data)
+        {
+        }
+        /**
+         * Validate field.
+         *
+         * Delegates the required/empty check to the base class, then rejects any
+         * submission whose value is not the configured consent-choice label.
+         *
+         * @since 1.10.0.5
+         *
+         * @param int          $field_id     Field ID.
+         * @param string|array $field_submit Submitted field value.
+         * @param array        $form_data    Form data and settings.
+         *
+         * @return void
+         */
+        public function validate($field_id, $field_submit, $form_data)
         {
         }
         /**
@@ -5587,6 +5865,182 @@ namespace WPForms\Access {
          * @return string
          */
         public function get_menu_cap($caps)
+        {
+        }
+    }
+}
+namespace WPForms\Education\ActiveLayer {
+    /**
+     * ActiveLayer plugin state and CTA-data helper.
+     *
+     * Single source of truth for ActiveLayer education surfaces: detects
+     * install/active state, exposes the WordPress.org install zip URL, the
+     * post-install dashboard URL, and the data-* attribute payload that the
+     * existing Education modal JS understands.
+     *
+     * @since 1.10.0.5
+     */
+    class Helper
+    {
+        /**
+         * WordPress.org plugin slug. Matches the folder name created on install.
+         *
+         * @since 1.10.0.5
+         */
+        const SLUG = 'activelayer-anti-spam-spam-protection-for-forms-comments';
+        /**
+         * Canonical WordPress.org zip download URL.
+         *
+         * @since 1.10.0.5
+         */
+        const INSTALL_ZIP_URL = 'https://downloads.wordpress.org/plugin/activelayer-anti-spam-spam-protection-for-forms-comments.zip';
+        /**
+         * Admin page slug ActiveLayer registers as its top-level dashboard menu.
+         *
+         * @since 1.10.0.5
+         */
+        const DASHBOARD_PAGE_SLUG = 'activelayer-dashboard';
+        /**
+         * Cached plugin basename ('folder/main-file.php') once resolved.
+         *
+         * @since 1.10.0.5
+         *
+         * @var string|null
+         */
+        private static $basename = null;
+        /**
+         * Whether ActiveLayer is present in the plugins directory.
+         *
+         * @since 1.10.0.5
+         *
+         * @return bool
+         */
+        public static function is_installed(): bool
+        {
+        }
+        /**
+         * Whether ActiveLayer is currently active.
+         *
+         * @since 1.10.0.5
+         *
+         * @return bool
+         */
+        public static function is_activated(): bool
+        {
+        }
+        /**
+         * Resolve ActiveLayer's plugin basename ('slug/main-file.php') by
+         * scanning get_plugins() for an entry whose folder matches our slug.
+         * The main file inside the folder may not match the slug — never
+         * hard-code it.
+         *
+         * @since 1.10.0.5
+         *
+         * @return string Plugin basename, or empty string if not installed.
+         */
+        public static function get_basename(): string
+        {
+        }
+        /**
+         * WordPress.org zip URL — used as the `plugin` argument the
+         * `wpforms_install_addon` AJAX handler passes to PluginSilentUpgrader.
+         *
+         * @since 1.10.0.5
+         *
+         * @return string
+         */
+        public static function get_install_zip_url(): string
+        {
+        }
+        /**
+         * Admin URL of the ActiveLayer dashboard menu page. Callers should only
+         * render this link when `is_activated()` is true; we don't validate that
+         * the page actually exists.
+         *
+         * @since 1.10.0.5
+         *
+         * @return string
+         */
+        public static function get_dashboard_url(): string
+        {
+        }
+        /**
+         * Build the ($link, $link_text, $class, $attrs) payload consumed by
+         * any surface that wants to show the ActiveLayer CTA.
+         *
+         * Three discrete states:
+         *   - Not installed → 'install' modal action, points at the WP.org zip.
+         *   - Installed but inactive → 'activate' modal action, points at the basename.
+         *   - Active → plain link to the ActiveLayer dashboard, no modal.
+         *
+         * The 'attrs' array is rendered as data-* attributes by callers; the
+         * keys already include the `data-` prefix so the template can iterate
+         * them blindly.
+         *
+         * @since 1.10.0.5
+         *
+         * @return array{link:string,link_text:string,class:string,attrs:array<string,string>}
+         */
+        public static function get_modal_data(): array
+        {
+        }
+    }
+    /**
+     * Records the install/activate source on first-time activation of the
+     * ActiveLayer plugin via WPForms's product education flows. Mirrors the
+     * `<plugin_name>_source` + `<plugin_name>_date` convention used for the
+     * other partner plugins (WPConsent, UncannyAutomator, Duplicator,
+     * SugarCalendar) — see
+     * \WPForms\Integrations\UsageTracking\UsageTracking::add_promotion_plugin_data()
+     * for the corresponding reader.
+     *
+     * The two options are picked up by the WPForms Usage Tracking opt-in
+     * payload (weekly POST to wpformsusage.com/v1/track) so installs
+     * originating from the Form Builder card / CAPTCHA notice / first-spam
+     * admin notice can be attributed.
+     *
+     * @since 1.10.0.5
+     */
+    class InstallTracker
+    {
+        /**
+         * Option key — install source ('WPForms' or 'WPForms Lite').
+         *
+         * @since 1.10.0.5
+         */
+        const SOURCE_OPTION = 'activelayer_source';
+        /**
+         * Option key — unix timestamp of the first activation through WPForms.
+         *
+         * @since 1.10.0.5
+         */
+        const DATE_OPTION = 'activelayer_date';
+        /**
+         * Init.
+         *
+         * @since 1.10.0.5
+         */
+        public function init()
+        {
+        }
+        /**
+         * Register hooks.
+         *
+         * @since 1.10.0.5
+         */
+        private function hooks()
+        {
+        }
+        /**
+         * Write `activelayer_source` and `activelayer_date` when the activated
+         * plugin is ActiveLayer. Idempotent — once a source is recorded, later
+         * activations through WPForms do NOT overwrite it.
+         *
+         * @since 1.10.0.5
+         *
+         * @param string $plugin_basename Path to the activated plugin file relative to the plugins directory.
+         */
+        public function maybe_record_source($plugin_basename)
         {
         }
     }
