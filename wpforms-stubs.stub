@@ -1761,6 +1761,18 @@ namespace {
         {
         }
         /**
+         * Get choice limit option field element.
+         *
+         * @since 1.9.7
+         *
+         * @param array $field Field data and settings.
+         *
+         * @return string
+         */
+        private function choice_limit_option(array $field): string
+        {
+        }
+        /**
          * Helper function to create common field options that are used frequently
          * in the field preview.
          *
@@ -2168,6 +2180,18 @@ namespace {
          * @return string
          */
         protected function get_price_after_label($amount): string
+        {
+        }
+        /**
+         * Validate field choice limit.
+         *
+         * @since 1.9.7
+         *
+         * @param int   $field_id     Field ID.
+         * @param array $field_submit Submitted field value (raw data).
+         * @param array $form_data    Form data and settings.
+         */
+        protected function validate_field_choice_limit(int $field_id, array $field_submit, array $form_data): void
         {
         }
     }
@@ -2884,7 +2908,7 @@ namespace {
          *
          * @var string
          */
-        const CHECKBOX_META_KEY = 'wpforms_iif_checkboxes';
+        private const CHECKBOX_META_KEY = 'wpforms_iif_checkboxes';
         /**
          * Class initialization method.
          *
@@ -2950,7 +2974,7 @@ namespace {
         {
         }
         /**
-         * Checks if button is displayable.
+         * Checks if the button is displayable.
          *
          * @since 1.7.6
          *
@@ -3024,7 +3048,7 @@ namespace {
         {
         }
         /**
-         * Add CSS class to hide field settings when field is not editable.
+         * Add a CSS class to hide field settings when the field is not editable.
          *
          * @since 1.7.6
          *
@@ -3039,7 +3063,7 @@ namespace {
         {
         }
         /**
-         * Render custom option preview on the right side of builder.
+         * Render a custom option preview on the right side of the builder.
          *
          * @since 1.7.6
          *
@@ -3054,7 +3078,7 @@ namespace {
         {
         }
         /**
-         * Display field button in the left panel only if the field is editable.
+         * Display the field button in the left panel only if the field is editable.
          *
          * @since 1.7.6
          *
@@ -3078,7 +3102,7 @@ namespace {
         {
         }
         /**
-         * Add internal information field to the list of ignored fields for entry preview.
+         * Add the internal information field to the list of ignored fields for entry preview.
          *
          * @since 1.9.1
          *
@@ -3121,7 +3145,7 @@ namespace {
         {
         }
         /**
-         * Hide column from the entry list table.
+         * Hide the column from the entry list table.
          *
          * @since 1.7.6
          *
@@ -3133,7 +3157,7 @@ namespace {
         {
         }
         /**
-         * Add CSS class for the field parent div informing about mode (editable or not).
+         * Add a CSS class for the field parent div informing about mode (editable or not).
          *
          * @since 1.7.6
          *
@@ -3146,7 +3170,7 @@ namespace {
         {
         }
         /**
-         * Save checkbox state to the post meta table.
+         * Save the checkbox state to the post meta table.
          *
          * @since 1.7.6
          */
@@ -3180,7 +3204,7 @@ namespace {
         {
         }
         /**
-         * Checks if user is allowed to edit the field's content.
+         * Checks if the user is allowed to edit the field's content.
          *
          * @since 1.7.6
          *
@@ -3218,7 +3242,7 @@ namespace {
         /**
          * Replace `[] some text` with checkboxes.
          *
-         * Additionally, generates input name by hashing the line of text where the checkbox is.
+         * Additionally, generates the input name by hashing the line of text where the checkbox is.
          *
          * @since 1.7.6
          *
@@ -6991,11 +7015,13 @@ namespace {
      * Using wpforms_decode() on wpforms_encode() result directly
      * (without using wp_insert_post() or wp_update_post() first) always returns null or false.
      *
+     * The json_decode failure returns an empty array.
+     *
      * @since 1.0.0
      *
      * @param string $data Data to decode.
      *
-     * @return array|false|null
+     * @return array|false|null Empty array if json_decode fails, false if $data is empty, or decoded data.
      */
     function wpforms_decode($data)
     {
