@@ -1175,6 +1175,14 @@ namespace {
          */
         public $notification_id = '';
         /**
+         * Context data to be passed to the tag.
+         *
+         * @since 1.9.9.2
+         *
+         * @var array|array[]
+         */
+        private $context_data = [];
+        /**
          * Get things going.
          *
          * @since 1.1.3
@@ -1313,16 +1321,16 @@ namespace {
          * Process a smart tag.
          * Decodes entities and sanitized (keeping line breaks) by default.
          *
-         * @uses wpforms_decode_string()
+         * @uses  wpforms_decode_string()
          *
          * @since 1.1.3
          * @since 1.6.0 Deprecated 2 params: $sanitize, $linebreaks.
          *
-         * @param string $string String that may contain tags.
+         * @param string $content String that may contain tags.
          *
-         * @return string
+         * @return string|mixed
          */
-        public function process_tag($string = '')
+        public function process_tag($content = '')
         {
         }
         /**
@@ -1422,6 +1430,7 @@ namespace {
      */
     abstract class WPForms_Field
     {
+        use \WPForms\Forms\Fields\Traits\MultiFieldMenu;
         use \WPForms\Forms\Fields\Traits\ReadOnlyField;
         /**
          * Common default field settings.
@@ -1500,7 +1509,7 @@ namespace {
          *
          * @since 1.1.1
          *
-         * @var int|bool
+         * @var int|false
          */
         public $form_id;
         /**
@@ -1895,7 +1904,7 @@ namespace {
         {
         }
         /**
-         * Get choice images hide option field element.
+         * Get choice images hide an option field element.
          *
          * @since 1.9.8.3
          *
@@ -7485,17 +7494,19 @@ namespace {
      * Process smart tags.
      *
      * @since 1.7.1
-     * @since 1.8.7 Added `$context` parameter.
+     * @since 1.8.7     Added `$context` parameter.
+     * @since 1.9.9.2 Added `$context` parameter.
      *
-     * @param string $content   Content.
-     * @param array  $form_data Form data.
-     * @param array  $fields    List of fields.
-     * @param string $entry_id  Entry ID.
-     * @param string $context   Context.
+     * @param string $content      Content.
+     * @param array  $form_data    Form data.
+     * @param array  $fields       List of fields.
+     * @param string $entry_id     Entry ID.
+     * @param string $context      Context.
+     * @param array  $context_data Context data.
      *
-     * @return string
+     * @return string|mixed
      */
-    function wpforms_process_smart_tags($content, $form_data, $fields = [], $entry_id = '', $context = '')
+    function wpforms_process_smart_tags($content, $form_data, $fields = [], $entry_id = '', $context = '', array $context_data = [])
     {
     }
     /**
@@ -7783,7 +7794,7 @@ namespace {
      *
      * @return string
      */
-    function wpforms_get_min_suffix()
+    function wpforms_get_min_suffix(): string
     {
     }
     /**
@@ -8002,6 +8013,8 @@ namespace {
      * Register and setup WPForms as a Visual Composer element.
      *
      * @since 1.3.0
+     *
+     * @noinspection PhpUndefinedFunctionInspection
      */
     function wpforms_visual_composer_shortcode()
     {
