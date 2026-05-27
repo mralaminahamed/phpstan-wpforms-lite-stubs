@@ -252,26 +252,6 @@ namespace {
         }
     }
     /**
-     * Skin for on-the-fly addon installations.
-     *
-     * @since 1.0.0
-     * @since 1.5.6.1 Extend PluginSilentUpgraderSkin and clean up the class.
-     */
-    class WPForms_Install_Skin extends \WPForms\Helpers\PluginSilentUpgraderSkin
-    {
-        /**
-         * Instead of outputting HTML for errors, json_encode the errors and send them
-         * back to the Ajax script for processing.
-         *
-         * @since 1.0.0
-         *
-         * @param array $errors Array of errors with the install process.
-         */
-        public function error($errors)
-        {
-        }
-    }
-    /**
      * Register menu elements and do other global tasks.
      *
      * @since 1.0.0
@@ -308,15 +288,6 @@ namespace {
          * @since 1.5.8
          */
         public function hide_wpforms_menu_item()
-        {
-        }
-        /**
-         * Alias method for backward compatibility.
-         *
-         * @since 1.7.4
-         * @deprecated 1.7.8
-         */
-        public function style_upgrade_pro_link()
         {
         }
         /**
@@ -505,7 +476,7 @@ namespace {
          *
          * @return void
          */
-        private function hooks() : void
+        private function hooks(): void
         {
         }
         /**
@@ -884,7 +855,7 @@ namespace WPForms {
          *
          * @since 1.8.0
          */
-        const CLASSES = ['WPForms\\Pro\\Admin\\Entries\\DefaultScreen' => '1.8.2', 'WPForms\\Pro\\Integrations\\AI\\AI' => '1.9.4', 'WPForms\\Pro\\Integrations\\AI\\Helpers' => '1.9.4'];
+        const CLASSES = ['WPForms\Pro\Admin\Entries\DefaultScreen' => '1.8.2', 'WPForms\Pro\Integrations\AI\AI' => '1.9.4', 'WPForms\Pro\Integrations\AI\Helpers' => '1.9.4', 'WPForms_Install_Skin' => '1.9.5', 'WPForms_Install_Silent_Skin' => '1.5.6.1', 'WPForms\Helpers\PluginSilentUpgraderSkin' => '1.9.5'];
         /**
          * Inform clients that the class is removed.
          *
@@ -1472,7 +1443,7 @@ namespace {
          *
          * @since 1.9.4
          */
-        protected function common_hooks() : void
+        protected function common_hooks(): void
         {
         }
         /**
@@ -1481,7 +1452,7 @@ namespace {
          * @since 1.0.0
          * @since 1.5.0 Converted to abstract method, as it's required for all fields.
          */
-        public abstract function init();
+        abstract public function init();
         /**
          * Prefill field value with either fallback or dynamic data.
          * This needs to be public (although internal) to be used in WordPress hooks.
@@ -1624,7 +1595,7 @@ namespace {
          *
          * @return array
          */
-        private function add_quantity_to_populated_field_properties($properties, $field) : array
+        private function add_quantity_to_populated_field_properties($properties, $field): array
         {
         }
         /**
@@ -1660,7 +1631,7 @@ namespace {
          *
          * @return array
          */
-        public function field_default_settings() : array
+        public function field_default_settings(): array
         {
         }
         /**
@@ -1672,7 +1643,7 @@ namespace {
          *
          * @return array
          */
-        public function field_new_default($field) : array
+        public function field_new_default($field): array
         {
         }
         /**
@@ -1709,7 +1680,7 @@ namespace {
          *
          * @return array
          */
-        public function enhance_template_fields_with_keywords(array $template_fields) : array
+        public function enhance_template_fields_with_keywords(array $template_fields): array
         {
         }
         /**
@@ -1732,7 +1703,7 @@ namespace {
          *
          * @param array $field Field data and settings.
          */
-        public abstract function field_options($field);
+        abstract public function field_options($field);
         /**
          * Create the field preview. Used by subclasses.
          *
@@ -1741,14 +1712,14 @@ namespace {
          *
          * @param array $field Field data and settings.
          */
-        public abstract function field_preview($field);
+        abstract public function field_preview($field);
         /**
          * Helper function to create field option elements.
          *
          * Field option elements are pieces that help create a field option.
          * They are used to quickly build field options.
          *
-         * @since 1.0.0
+         * @since        1.0.0
          *
          * @param string $option  Field option to render.
          * @param array  $field   Field data and settings.
@@ -1775,7 +1746,7 @@ namespace {
          *
          * @return string
          */
-        private function field_element_toggle($args, $id, $slug, $attrs, $class_name) : string
+        private function field_element_toggle($args, $id, $slug, $attrs, $class_name): string
         {
         }
         /**
@@ -1852,7 +1823,7 @@ namespace {
          * @param array|null $deprecated Field attributes (deprecated).
          * @param array      $form_data  Form data and settings.
          */
-        public abstract function field_display($field, $deprecated, $form_data);
+        abstract public function field_display($field, $deprecated, $form_data);
         /**
          * Display the field using classic rendering.
          *
@@ -2193,7 +2164,7 @@ namespace {
          *
          * @return bool
          */
-        protected function load_script_in_footer() : bool
+        protected function load_script_in_footer(): bool
         {
         }
         /**
@@ -2205,7 +2176,7 @@ namespace {
          *
          * @return string
          */
-        protected function get_price_after_label($amount) : string
+        protected function get_price_after_label($amount): string
         {
         }
     }
@@ -2858,7 +2829,7 @@ namespace {
          *
          * @return bool
          */
-        public function is_dynamic_population_allowed($properties, $field) : bool
+        public function is_dynamic_population_allowed($properties, $field): bool
         {
         }
         /**
@@ -2951,7 +2922,7 @@ namespace {
          *
          * @return bool
          */
-        public function is_dynamic_population_allowed($properties, $field) : bool
+        public function is_dynamic_population_allowed($properties, $field): bool
         {
         }
         /**
@@ -2964,7 +2935,7 @@ namespace {
          *
          * @return bool
          */
-        public function is_fallback_population_allowed($properties, $field) : bool
+        public function is_fallback_population_allowed($properties, $field): bool
         {
         }
         /**
@@ -3124,7 +3095,7 @@ namespace {
          *
          * @return array
          */
-        public function ignore_entry_preview($ignored_fields) : array
+        public function ignore_entry_preview($ignored_fields): array
         {
         }
         /**
@@ -3167,7 +3138,7 @@ namespace {
          *
          * @return array
          */
-        public function hide_column_in_entries_table($disallowed) : array
+        public function hide_column_in_entries_table($disallowed): array
         {
         }
         /**
@@ -3188,7 +3159,7 @@ namespace {
          *
          * @since 1.7.6
          */
-        public function save_internal_information_checkbox()
+        public function save_internal_information_checkbox(): void
         {
         }
         /**
@@ -3629,7 +3600,7 @@ namespace {
          * @noinspection PhpMissingParamTypeInspection
          * @noinspection PhpUnusedParameterInspection
          */
-        public function field_properties($properties, $field, $form_data) : array
+        public function field_properties($properties, $field, $form_data): array
         {
         }
         /**
@@ -4988,7 +4959,7 @@ namespace {
          *
          * @since 1.9.0
          */
-        const CUSTOM_TABLES = ['wpforms_payments' => \WPForms\Db\Payments\Payment::class, 'wpforms_payment_meta' => \WPForms\Db\Payments\Meta::class, 'wpforms_tasks_meta' => \WPForms\Tasks\Meta::class, 'wpforms_logs' => \WPForms\Logger\Repository::class];
+        public const CUSTOM_TABLES = ['wpforms_payments' => \WPForms\Db\Payments\Payment::class, 'wpforms_payment_meta' => \WPForms\Db\Payments\Meta::class, 'wpforms_tasks_meta' => \WPForms\Tasks\Meta::class, 'wpforms_logs' => \WPForms\Logger\Repository::class];
         /**
          * Primary class constructor.
          *
@@ -5088,24 +5059,6 @@ namespace {
         {
         }
         /**
-         * Add appropriate styling to addons page.
-         *
-         * @since 1.0.4
-         * @deprecated 1.6.7
-         */
-        public function addon_page_enqueues()
-        {
-        }
-        /**
-         * Addons page.
-         *
-         * @since 1.0.0
-         * @deprecated 1.6.7
-         */
-        public function addons_page()
-        {
-        }
-        /**
          * Increase entries count once a form is submitted.
          *
          * @since 1.5.9
@@ -5175,7 +5128,7 @@ namespace {
          *
          * @return string
          */
-        private function admin_upgrade_link(string $medium = 'link', string $content = '') : string
+        private function admin_upgrade_link(string $medium = 'link', string $content = ''): string
         {
         }
         /**
@@ -5193,7 +5146,7 @@ namespace {
          *
          * @return array
          */
-        private function get_entries_utm() : array
+        private function get_entries_utm(): array
         {
         }
         /**
@@ -5203,7 +5156,7 @@ namespace {
          *
          * return array
          */
-        private function get_entries_list_data() : array
+        private function get_entries_list_data(): array
         {
         }
     }
@@ -5396,7 +5349,7 @@ namespace WPForms {
          *
          * @since 1.5.8
          */
-        public function init() : void
+        public function init(): void
         {
         }
         /**
@@ -5404,7 +5357,7 @@ namespace WPForms {
          *
          * @since 1.5.8
          */
-        protected function populate_classes() : void
+        protected function populate_classes(): void
         {
         }
         /**
@@ -5412,7 +5365,7 @@ namespace WPForms {
          *
          * @since 1.8.6
          */
-        private function populate_common() : void
+        private function populate_common(): void
         {
         }
         /**
@@ -5420,7 +5373,7 @@ namespace WPForms {
          *
          * @since 1.6.2
          */
-        private function populate_forms() : void
+        private function populate_forms(): void
         {
         }
         /**
@@ -5428,7 +5381,7 @@ namespace WPForms {
          *
          * @since 1.8.1
          */
-        private function populate_frontend() : void
+        private function populate_frontend(): void
         {
         }
         /**
@@ -5436,7 +5389,7 @@ namespace WPForms {
          *
          * @since 1.6.0
          */
-        private function populate_admin() : void
+        private function populate_admin(): void
         {
         }
         /**
@@ -5444,7 +5397,7 @@ namespace WPForms {
          *
          * @since 1.8.7
          */
-        private function populate_caches() : void
+        private function populate_caches(): void
         {
         }
         /**
@@ -5452,7 +5405,7 @@ namespace WPForms {
          *
          * @since 1.8.2
          */
-        private function populate_fields() : void
+        private function populate_fields(): void
         {
         }
         /**
@@ -5460,7 +5413,7 @@ namespace WPForms {
          *
          * @since 1.7.5
          */
-        private function populate_forms_overview() : void
+        private function populate_forms_overview(): void
         {
         }
         /**
@@ -5468,7 +5421,7 @@ namespace WPForms {
          *
          * @since 1.8.6
          */
-        private function populate_entries() : void
+        private function populate_entries(): void
         {
         }
         /**
@@ -5476,7 +5429,7 @@ namespace WPForms {
          *
          * @since 1.6.8
          */
-        private function populate_builder() : void
+        private function populate_builder(): void
         {
         }
         /**
@@ -5484,7 +5437,7 @@ namespace WPForms {
          *
          * @since 1.8.2
          */
-        private function populate_db() : void
+        private function populate_db(): void
         {
         }
         /**
@@ -5492,7 +5445,7 @@ namespace WPForms {
          *
          * @since 1.5.9
          */
-        private function populate_migrations() : void
+        private function populate_migrations(): void
         {
         }
         /**
@@ -5500,7 +5453,7 @@ namespace WPForms {
          *
          * @since 1.5.8
          */
-        private function populate_capabilities() : void
+        private function populate_capabilities(): void
         {
         }
         /**
@@ -5508,7 +5461,7 @@ namespace WPForms {
          *
          * @since 1.5.9
          */
-        private function populate_tasks() : void
+        private function populate_tasks(): void
         {
         }
         /**
@@ -5516,7 +5469,7 @@ namespace WPForms {
          *
          * @since 1.6.7
          */
-        private function populate_smart_tags() : void
+        private function populate_smart_tags(): void
         {
         }
         /**
@@ -5524,7 +5477,7 @@ namespace WPForms {
          *
          * @since 1.6.3
          */
-        private function populate_logger() : void
+        private function populate_logger(): void
         {
         }
         /**
@@ -5532,7 +5485,7 @@ namespace WPForms {
          *
          * @since 1.6.6
          */
-        private function populate_education() : void
+        private function populate_education(): void
         {
         }
         /**
@@ -5540,7 +5493,7 @@ namespace WPForms {
          *
          * @since 1.7.0
          */
-        private function populate_robots() : void
+        private function populate_robots(): void
         {
         }
         /**
@@ -5548,7 +5501,7 @@ namespace WPForms {
          *
          * @since 1.7.8
          */
-        private function populate_anti_spam() : void
+        private function populate_anti_spam(): void
         {
         }
     }
@@ -5634,7 +5587,7 @@ namespace WPForms {
          *
          * @return WPForms
          */
-        public static function instance() : \WPForms\WPForms
+        public static function instance(): \WPForms\WPForms
         {
         }
         /**
@@ -5723,7 +5676,7 @@ namespace WPForms {
          * - run: optional -- method to run on class instantiation -- default init.
          * - condition: optional -- condition to check before registering the class.
          */
-        public function register($class_data) : void
+        public function register($class_data): void
         {
         }
         /**
@@ -5780,7 +5733,7 @@ namespace WPForms {
          *
          * @return array List of table names.
          */
-        public function get_existing_custom_tables() : array
+        public function get_existing_custom_tables(): array
         {
         }
         /**
@@ -5790,7 +5743,7 @@ namespace WPForms {
          *
          * @return bool
          */
-        public function is_pro() : bool
+        public function is_pro(): bool
         {
         }
         /**
@@ -5800,39 +5753,9 @@ namespace WPForms {
          *
          * @return bool
          */
-        public static function is_restricted_heartbeat() : bool
+        public static function is_restricted_heartbeat(): bool
         {
         }
-    }
-}
-namespace {
-    /**
-     * Get notification state, whether it's opened or closed.
-     *
-     * @since      1.4.1
-     * @deprecated 1.4.8
-     *
-     * @param int $notification_id Notification ID.
-     *
-     * @param int $form_id         Form ID.
-     *
-     * @return string
-     */
-    function wpforms_builder_notification_get_state($form_id, $notification_id)
-    {
-    }
-    /**
-     * Convert bytes to megabytes (or in some cases KB).
-     *
-     * @since      1.0.0
-     * @deprecated 1.6.2
-     *
-     * @param int $bytes Bytes to convert to a readable format.
-     *
-     * @return string
-     */
-    function wpforms_size_to_megabytes($bytes)
-    {
     }
 }
 namespace {
@@ -5954,7 +5877,7 @@ namespace {
      *
      * @return array
      */
-    function wpforms_prepare_form_data($form_post) : array
+    function wpforms_prepare_form_data($form_post): array
     {
     }
     /**
@@ -6182,7 +6105,7 @@ namespace {
      *
      * @return bool
      */
-    function wpforms_current_user_can($caps = [], $id = 0) : bool
+    function wpforms_current_user_can($caps = [], $id = 0): bool
     {
     }
     /**
@@ -6748,7 +6671,7 @@ namespace {
      * @return string
      * @noinspection PhpMissingParamTypeInspection
      */
-    function wpforms_html_entity_decode_deep(string $html, int $flags = \ENT_QUOTES | \ENT_SUBSTITUTE | \ENT_HTML401, $encoding = \null) : string
+    function wpforms_html_entity_decode_deep(string $html, int $flags = \ENT_QUOTES | \ENT_SUBSTITUTE | \ENT_HTML401, $encoding = \null): string
     {
     }
     /**
@@ -6760,7 +6683,7 @@ namespace {
      *
      * @return array
      */
-    function wpforms_sanitize_form_data(array $data) : array
+    function wpforms_sanitize_form_data(array $data): array
     {
     }
     /**
@@ -6772,7 +6695,7 @@ namespace {
      *
      * @return array
      */
-    function wpforms_sanitize_field(array $field) : array
+    function wpforms_sanitize_field(array $field): array
     {
     }
     /**
@@ -6782,7 +6705,7 @@ namespace {
      *
      * @return HTMLPurifier
      */
-    function wpforms_get_html_purifier() : \WPForms\Vendor\HTMLPurifier
+    function wpforms_get_html_purifier(): \WPForms\Vendor\HTMLPurifier
     {
     }
     /**
@@ -6798,7 +6721,7 @@ namespace {
      *
      * @return bool
      */
-    function wpforms_show_fields_options_setting() : bool
+    function wpforms_show_fields_options_setting(): bool
     {
     }
     /**
@@ -6826,7 +6749,7 @@ namespace {
      *
      * @return array
      */
-    function wpforms_get_hierarchical_object($args = [], $flat = \false) : array
+    function wpforms_get_hierarchical_object($args = [], $flat = \false): array
     {
     }
     /**
@@ -6878,7 +6801,7 @@ namespace {
      *
      * @return string Post title.
      */
-    function wpforms_get_post_title($post) : string
+    function wpforms_get_post_title($post): string
     {
     }
     /**
@@ -6892,7 +6815,7 @@ namespace {
      *
      * @return string Term name.
      */
-    function wpforms_get_term_name(\WP_Term $term) : string
+    function wpforms_get_term_name(\WP_Term $term): string
     {
     }
     /**
@@ -6916,7 +6839,7 @@ namespace {
      *
      * @return array
      */
-    function wpforms_get_builder_fields(string $group = '') : array
+    function wpforms_get_builder_fields(string $group = ''): array
     {
     }
     /**
@@ -6926,7 +6849,7 @@ namespace {
      *
      * @return array
      */
-    function wpforms_get_payments_fields() : array
+    function wpforms_get_payments_fields(): array
     {
     }
     /**
@@ -6950,7 +6873,7 @@ namespace {
      *
      * @return bool
      */
-    function wpforms_is_repeater_child_field($field) : bool
+    function wpforms_is_repeater_child_field($field): bool
     {
     }
     /**
@@ -6962,7 +6885,7 @@ namespace {
      *
      * @return int[]
      */
-    function wpforms_get_repeater_field_ids($field) : array
+    function wpforms_get_repeater_field_ids($field): array
     {
     }
     /**
@@ -6975,7 +6898,7 @@ namespace {
      *
      * @return string
      */
-    function wpforms_get_choices_value(array $field, array $form_data) : string
+    function wpforms_get_choices_value(array $field, array $form_data): string
     {
     }
     /**
@@ -6988,7 +6911,7 @@ namespace {
      *
      * @return bool
      */
-    function wpforms_is_repeated_field(int $field_id, array $fields) : bool
+    function wpforms_is_repeated_field(int $field_id, array $fields): bool
     {
     }
     /**
@@ -7000,7 +6923,7 @@ namespace {
      *
      * @return array
      */
-    function wpforms_get_multi_fields() : array
+    function wpforms_get_multi_fields(): array
     {
     }
     /**
@@ -7012,7 +6935,7 @@ namespace {
      *
      * @return float
      */
-    function wpforms_get_column_width(array $column) : float
+    function wpforms_get_column_width(array $column): float
     {
     }
     /**
@@ -7238,7 +7161,7 @@ namespace {
      *
      * @return bool
      */
-    function wpforms_is_frontend_js_header_force_load() : bool
+    function wpforms_is_frontend_js_header_force_load(): bool
     {
     }
     /**
@@ -7367,7 +7290,7 @@ namespace {
      *
      * @return array
      */
-    function wpforms_list_insert_after(array $target, string $key, array $data) : array
+    function wpforms_list_insert_after(array $target, string $key, array $data): array
     {
     }
     /**
@@ -7382,7 +7305,7 @@ namespace {
      *
      * @return array
      */
-    function wpforms_list_insert_before(array $target, string $key, array $data) : array
+    function wpforms_list_insert_before(array $target, string $key, array $data): array
     {
     }
     /**
@@ -7398,7 +7321,7 @@ namespace {
      *
      * @return array
      */
-    function wpforms_list_insert(array $target, string $key, array $data, string $position) : array
+    function wpforms_list_insert(array $target, string $key, array $data, string $position): array
     {
     }
     /**
@@ -7431,7 +7354,7 @@ namespace {
      *
      * @return string
      */
-    function wpforms_get_ip() : string
+    function wpforms_get_ip(): string
     {
     }
     /**
@@ -7497,113 +7420,6 @@ namespace {
      * @param string      $key      Optional key to identify which connection to update. If empty - generate a new one.
      */
     function wpforms_update_providers_options($provider, $options, $key = '')
-    {
-    }
-    /**
-     * Helper functions that were deprecated and can be removed in future.
-     *
-     * @since 1.8.0
-     */
-    /**
-     * Get formatted [ id => title ] pages list.
-     *
-     * @since 1.7.2
-     * @deprecated 1.7.9
-     *
-     * @todo Move to includes/deprecated.php
-     *
-     * @param array|string $args Array or string of arguments to retrieve pages.
-     *
-     * @return array
-     */
-    function wpforms_get_pages_list($args = [])
-    {
-    }
-    /**
-     * Dequeue enqueues by URI list.
-     * Parts of URI (e.g. filename) is also supported.
-     *
-     * @since 1.6.1
-     *
-     * @param array|string         $uris     List of URIs or individual URI to dequeue.
-     * @param WP_Scripts|WP_Styles $enqueues Enqueues list to dequeue from.
-     */
-    function wpforms_dequeue_by_uri($uris, $enqueues)
-    {
-    }
-    /**
-     * Dequeue scripts by URI list.
-     * Parts of URI (e.g. filename) is also supported.
-     *
-     * @since 1.6.1
-     *
-     * @param array|string $uris List of URIs or individual URI to dequeue.
-     */
-    function wpforms_dequeue_scripts_by_uri($uris)
-    {
-    }
-    /**
-     * Dequeue styles by URI list.
-     * Parts of URI (e.g. filename) is also supported.
-     *
-     * @since 1.6.1
-     *
-     * @param array|string $uris List of URIs or individual URI to dequeue.
-     */
-    function wpforms_dequeue_styles_by_uri($uris)
-    {
-    }
-    /**
-     * Check if form provided contains Page Break, if so give details.
-     *
-     * @since 1.0.0
-     *
-     * @todo It is not used since 1.4.0. Probably, it should be deprecated and suggest using the wpforms_get_pagebreak_details() function.
-     *
-     * @param WP_Post|array $form Form data.
-     *
-     * @return int|bool Pages count or false.
-     */
-    function wpforms_has_pagebreak($form = \false)
-    {
-    }
-    /**
-     * Try to find and return a top or bottom Page Break.
-     *
-     * @since 1.2.1
-     *
-     * @todo It is not used since 1.4.0. Probably, it should be deprecated and suggest using the wpforms_get_pagebreak_details() function.
-     *
-     * @param WP_Post|array $form Form data.
-     * @param string|bool   $type Type of Page Break fields (top, bottom, pages or false).
-     *
-     * @return array|bool
-     */
-    function wpforms_get_pagebreak($form = \false, $type = \false)
-    {
-    }
-    /**
-     * Get meta key value for a form field.
-     *
-     * @since 1.1.9
-     *
-     * @param int|string $id        Field ID.
-     * @param string     $key       Meta key.
-     * @param mixed      $form_data Form data array.
-     *
-     * @return string
-     */
-    function wpforms_get_form_field_meta($id = '', $key = '', $form_data = '')
-    {
-    }
-    /**
-     * Get an array of all possible provider addons.
-     *
-     * @since 1.5.5
-     *
-     * @return array
-     */
-    function wpforms_get_providers_all()
     {
     }
     /**
@@ -7784,7 +7600,7 @@ namespace {
      *
      * @return string
      */
-    function wpforms_list_array(array $arr, bool $sep = \true) : string
+    function wpforms_list_array(array $arr, bool $sep = \true): string
     {
     }
     /**
