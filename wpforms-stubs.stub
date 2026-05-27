@@ -5742,6 +5742,8 @@ namespace WPForms {
          * Populate Fields related classes.
          *
          * @since 1.8.2
+         *
+         * @noinspection ClassConstantCanBeUsedInspection
          */
         private function populate_fields(): void
         {
@@ -7091,7 +7093,7 @@ namespace {
      * Build and return either a taxonomy or post type object nested to accommodate any hierarchy.
      *
      * @since 1.3.9
-     * @since 1.5.0 Return array only. Empty array of no data.
+     * @since 1.5.0 Return an array only. Empty array of no data.
      *
      * @param array $args Object arguments to pass to data retrieval function.
      * @param bool  $flat Preserve hierarchy or not. False by default - preserve it.
@@ -7154,7 +7156,7 @@ namespace {
     {
     }
     /**
-     * Get sanitized term name or "no name" placeholder.
+     * Get a sanitized term name or "no name" placeholder.
      *
      * The placeholder is prepended with the term ID.
      *
@@ -7202,7 +7204,7 @@ namespace {
     {
     }
     /**
-     * Validate field ID for repeater field.
+     * Validate field ID for the repeater field.
      *
      * @since 1.8.9
      *
@@ -7266,7 +7268,7 @@ namespace {
     /**
      * Get field types where user can select more than one item.
      *
-     * Note: this list does not include File Upload field, even thought it is a multi-field.
+     * Note: this list does not include the File Upload field, even though it is a multi-field.
      *
      * @since 1.9.0
      *
@@ -7297,6 +7299,18 @@ namespace {
      * @return array Parsed field components.
      */
     function wpforms_parse_field_id($field_id): array
+    {
+    }
+    /**
+     * Get icon SVG by its name, style and size.
+     *
+     * @since 1.9.9.3
+     *
+     * @param string $icon  Icon name.
+     * @param string $style Icon style.
+     * @param int    $size  Icon font size in pixels.
+     */
+    function wpforms_get_icon_svg(string $icon, string $style, int $size): string
     {
     }
     /**
