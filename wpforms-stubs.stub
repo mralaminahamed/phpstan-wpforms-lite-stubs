@@ -251,6 +251,8 @@ namespace {
         {
         }
     }
+    // phpcs:ignore Generic.Commenting.DocComment.MissingShort
+    /** @noinspection AutoloadingIssuesInspection */
     /**
      * Register menu elements and do other global tasks.
      *
@@ -267,27 +269,37 @@ namespace {
         {
         }
         /**
+         * Hooks.
+         *
+         * @since 1.9.7.3
+         *
+         * @return void
+         */
+        private function hooks(): void
+        {
+        }
+        /**
          * Register our menus.
          *
          * @since 1.0.0
          */
-        public function register_menus()
+        public function register_menus(): void
         {
         }
         /**
-         * Hide "Add New" admin menu item if a user can't create forms.
+         * Hide the "Add New" admin menu item if a user can't create forms.
          *
          * @since 1.5.8
          */
-        public function hide_wpforms_submenu_items()
+        public function hide_wpforms_submenu_items(): void
         {
         }
         /**
-         * Hide "WPForms" admin menu if it has no submenu items.
+         * Hide the "WPForms" admin menu if it has no submenu items.
          *
          * @since 1.5.8
          */
-        public function hide_wpforms_menu_item()
+        public function hide_wpforms_menu_item(): void
         {
         }
         /**
@@ -295,7 +307,7 @@ namespace {
          *
          * @since 1.8.1
          */
-        public function adjust_pro_menu_item()
+        public function adjust_pro_menu_item(): void
         {
         }
         /**
@@ -303,22 +315,25 @@ namespace {
          *
          * @since 1.0.0
          */
-        public function admin_page()
+        public function admin_page(): void
         {
         }
         /**
-         * Add settings link to the Plugins page.
+         * Add a settings link to the Plugins page.
          *
-         * @since 1.3.9
+         * @since        1.3.9
          *
-         * @param array  $links       Plugin row links.
-         * @param string $plugin_file Path to the plugin file relative to the plugins directory.
-         * @param array  $plugin_data An array of plugin data. See `get_plugin_data()`.
-         * @param string $context     The plugin context.
+         * @param array|mixed $links       Plugin row links.
+         * @param string      $plugin_file Path to the plugin file relative to the plugins' directory.
+         * @param array       $plugin_data An array of plugin data. See `get_plugin_data()`.
+         * @param string      $context     The plugin context.
          *
          * @return array $links
+         * @noinspection PhpUnusedParameterInspection
+         * @noinspection HtmlUnknownTarget
+         * @noinspection PhpMissingParamTypeInspection
          */
-        public function settings_link($links, $plugin_file, $plugin_data, $context)
+        public function settings_link($links, $plugin_file, $plugin_data, $context): array
         {
         }
         /**
@@ -328,7 +343,7 @@ namespace {
          *
          * @return string
          */
-        private function get_new_badge_html()
+        private function get_new_badge_html(): string
         {
         }
         /**
@@ -336,7 +351,7 @@ namespace {
          *
          * @since 1.7.8
          */
-        public function admin_menu_styles()
+        public function admin_menu_styles(): void
         {
         }
     }
@@ -5394,7 +5409,7 @@ namespace WPForms {
         {
         }
         /**
-         * Populate Frontend related classes.
+         * Populate Frontend-related classes.
          *
          * @since 1.8.1
          */
@@ -5402,7 +5417,7 @@ namespace WPForms {
         {
         }
         /**
-         * Populate Admin related classes.
+         * Populate Admin-related classes.
          *
          * @since 1.6.0
          */
@@ -5490,7 +5505,7 @@ namespace WPForms {
         {
         }
         /**
-         * Populate logger loaded classes.
+         * Populate logger-loaded classes.
          *
          * @since 1.6.3
          */
@@ -5498,7 +5513,7 @@ namespace WPForms {
         {
         }
         /**
-         * Populate education related classes.
+         * Populate education-related classes.
          *
          * @since 1.6.6
          */
@@ -6383,13 +6398,13 @@ namespace {
     {
     }
     /**
-     * Check whether plugin works in a debug mode.
+     * Check whether the plugin works in a debug mode.
      *
      * @since 1.2.3
      *
      * @return bool
      */
-    function wpforms_debug()
+    function wpforms_debug(): bool
     {
     }
     /**
@@ -6397,12 +6412,12 @@ namespace {
      *
      * @since 1.0.0
      *
-     * @param mixed $data What to dump, can be any type.
-     * @param bool  $echo Whether to print or return. Default is to print.
+     * @param mixed $data    What to dump - can be any type.
+     * @param bool  $do_echo Whether to print or return. The default is to print.
      *
      * @return string|void
      */
-    function wpforms_debug_data($data, $echo = \true)
+    function wpforms_debug_data($data, bool $do_echo = \true)
     {
     }
     /**
