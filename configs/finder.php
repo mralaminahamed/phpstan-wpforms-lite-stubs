@@ -1,9 +1,11 @@
 <?php
 
-return \StubsGenerator\Finder::create()
+use StubsGenerator\Finder;
+
+return Finder::create()
     ->in( array( 'source/wpforms-lite' ) )
     ->append(
-        \StubsGenerator\Finder::create()
+        Finder::create()
             ->in(['source/wpforms-lite'])
             ->files()
             ->depth('< 1')
