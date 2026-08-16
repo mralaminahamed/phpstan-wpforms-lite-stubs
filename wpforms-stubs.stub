@@ -7599,6 +7599,46 @@ namespace {
     {
     }
     /**
+     * Sanitize an SVG file in place, stripping scripts, event handlers and other
+     * potentially malicious markup.
+     *
+     * Non-SVG files are left untouched. Sites that explicitly enable SVG support
+     * would otherwise store SVG uploads unsanitized, allowing stored XSS. To stay
+     * safe by default, this function fails closed: when the SVG sanitizer is
+     * unavailable or sanitization fails, it returns false so the caller can reject
+     * the file rather than store it unsanitized.
+     *
+     * Gzipped SVG variants (e.g. .svgz) cannot be parsed as plain XML, so they fail
+     * sanitization and are rejected rather than stored unsanitized.
+     *
+     * @since 1.10.1.1
+     *
+     * @param string $file_path Absolute path to the file to sanitize.
+     * @param string $file_name Optional. Original file name used to determine the extension when
+     *                          the path itself has none (e.g. a PHP upload temp file). Default ''.
+     *
+     * @return bool True if the file is not an SVG or was sanitized successfully, false on failure.
+     */
+    function wpforms_sanitize_svg_file(string $file_path, string $file_name = ''): bool
+    {
+    }
+    /**
+     * Sanitize an SVG markup string, stripping scripts, event handlers and other
+     * potentially malicious markup.
+     *
+     * Fails closed: returns false when the sanitizer library is unavailable or when
+     * the markup cannot be sanitized (e.g. it is not valid SVG XML).
+     *
+     * @since 1.10.1.1
+     *
+     * @param string $markup SVG markup to sanitize.
+     *
+     * @return string|false Sanitized markup, or false on failure.
+     */
+    function wpforms_sanitize_svg_markup(string $markup)
+    {
+    }
+    /**
      * Helper functions to work with form fields, generic and specific to certain field types.
      *
      * @since 1.8.0
