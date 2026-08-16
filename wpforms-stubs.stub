@@ -566,7 +566,7 @@ namespace {
          *
          * @var array
          */
-        private const PAGES = ['wpforms-about', 'wpforms-addons', 'wpforms-community', 'wpforms-entries', 'wpforms-overview', 'wpforms-payments', 'wpforms-settings', 'wpforms-smtp', 'wpforms-templates', 'wpforms-tools', 'wpforms-wpconsent', 'wpforms-sugar-calendar', 'wpforms-duplicator', 'wpforms-uncanny-automator'];
+        private const PAGES = ['wpforms-about', 'wpforms-addons', 'wpforms-analytics', 'wpforms-community', 'wpforms-entries', 'wpforms-overview', 'wpforms-payments', 'wpforms-settings', 'wpforms-setup-checklist', 'wpforms-smtp', 'wpforms-templates', 'wpforms-tools', 'wpforms-wpconsent', 'wpforms-sugar-calendar', 'wpforms-duplicator', 'wpforms-uncanny-automator'];
         /**
          * Primary class constructor.
          *
@@ -701,6 +701,33 @@ namespace {
          * @since 1.0.0
          */
         public function redirect(): void
+        {
+        }
+        /**
+         * Whether the Setup Wizard, not this page, owns the first-run experience.
+         *
+         * True when the wizard will auto-launch on this request or has already
+         * finished. Guarded so the page degrades to its legacy behaviour if the
+         * wizard class is unavailable (e.g. filtered out).
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         * @noinspection ClassConstantCanBeUsedInspection
+         */
+        private function setup_wizard_handles_first_run(): bool
+        {
+        }
+        /**
+         * Output a notice offering to launch the Setup Wizard manually.
+         *
+         * Shown on the Welcome page so users who landed here as the wizard fallback
+         * can still start the guided setup on demand. Hidden when the wizard class is
+         * unavailable (e.g. filtered out).
+         *
+         * @since 2.0.0
+         */
+        private function output_setup_wizard_notice(): void
         {
         }
         /**
@@ -2619,6 +2646,39 @@ namespace {
          * @return string
          */
         protected function get_choices_label($label, int $key, array $field)
+        {
+        }
+        /**
+         * Remove fully-empty leftover choices from a choice-type field before it is saved.
+         *
+         * Public seam used by the form-save flow. Skips dynamic-choice fields, whose
+         * choices come from posts or taxonomies and are not the persisted source of
+         * truth, and bails when the field has no choices array to prune.
+         *
+         * @since 2.0.0
+         *
+         * @param array $field_data Field data being saved.
+         *
+         * @return array
+         */
+        public function remove_empty_choices_on_save(array $field_data): array
+        {
+        }
+        /**
+         * Prune fully-empty leftover choices from a saved choices array.
+         *
+         * A choice is removed only when its label and value are both missing or
+         * empty, and it is not the real "Other" choice. A blank label paired with a
+         * non-empty value is preserved because it legitimately renders as a numbered
+         * choice (see PR #8654), and a value of '0' is treated as non-empty.
+         *
+         * @since 2.0.0
+         *
+         * @param array $choices Choices array keyed by choice ID.
+         *
+         * @return array
+         */
+        protected function remove_empty_choices(array $choices): array
         {
         }
         /**
@@ -5666,7 +5726,7 @@ namespace {
          *
          * @since 1.9.0
          */
-        public const CUSTOM_TABLES = ['wpforms_payments' => \WPForms\Db\Payments\Payment::class, 'wpforms_payment_meta' => \WPForms\Db\Payments\Meta::class, 'wpforms_tasks_meta' => \WPForms\Tasks\Meta::class, 'wpforms_logs' => \WPForms\Logger\Repository::class];
+        public const CUSTOM_TABLES = ['wpforms_payments' => \WPForms\Db\Payments\Payment::class, 'wpforms_payment_meta' => \WPForms\Db\Payments\Meta::class, 'wpforms_tasks_meta' => \WPForms\Tasks\Meta::class, 'wpforms_logs' => \WPForms\Logger\Repository::class, 'wpforms_analytics_snapshots' => \WPForms\Db\Analytics\Snapshots::class, 'wpforms_analytics_forms' => \WPForms\Db\Analytics\Forms::class];
         /**
          * Primary class constructor.
          *
@@ -5958,6 +6018,664 @@ namespace WPForms\Access {
         }
     }
 }
+namespace WPForms\Analytics {
+    /**
+     * Form-level aggregation — shared base.
+     *
+     * Runs nightly via AnalyticsAggregationTask. Aggregates form-level daily
+     * rows, maintains lifetime sentinel rows, marks processed snapshots, and
+     * purges expired rows.
+     *
+     * @since 2.0.0
+     */
+    class Aggregation
+    {
+        /**
+         * Grace window between local midnight and aggregation run (seconds).
+         *
+         * Replaces the previous SQL-level "abandonment threshold". By the time
+         * the task fires, every aggregated snapshot is at least this many
+         * seconds old, so still-active sessions cannot be falsely abandoned.
+         *
+         * @since 2.0.0
+         */
+        public const ABANDONMENT_GRACE_SECONDS = 3600;
+        /**
+         * Default retention window (days) for processed analytics snapshots.
+         *
+         * Used as the default for the `wpforms_analytics_aggregation_purge_old_retention_days`
+         * filter in both Lite and Pro. The 30-day window also acts as the race-safety
+         * margin for the Pro application-level cascade delete.
+         *
+         * @since 2.0.0
+         */
+        public const DEFAULT_RETENTION_DAYS = 30;
+        /**
+         * Injected DB instance. Null until first lazy resolve.
+         *
+         * @since 2.0.0
+         *
+         * @var DB|null
+         */
+        private $db;
+        /**
+         * Class constructor.
+         *
+         * Production code instantiated by the Loader passes nothing; the class
+         * lazy-resolves the analytics DB from the container on first use. Tests
+         * inject a concrete instance (real or spy) to bypass container wiring.
+         *
+         * @since 2.0.0
+         *
+         * @param DB|null $db Optional DB instance. Null = lazy container lookup.
+         */
+        public function __construct(?\WPForms\Db\Analytics\DB $db = null)
+        {
+        }
+        /**
+         * Resolve the DB instance — injected or lazy from the container.
+         *
+         * @since 2.0.0
+         *
+         * @return DB|null Null if neither injection nor container resolution worked.
+         */
+        protected function db(): ?\WPForms\Db\Analytics\DB
+        {
+        }
+        /**
+         * Execute the aggregation pipeline.
+         *
+         * @since 2.0.0
+         */
+        public function run(): void
+        {
+        }
+        /**
+         * Run the additive aggregation steps inside a single DB transaction.
+         *
+         * Aggregate upserts are additive; pairing them with mark_processed in one
+         * transaction means a fatal mid-run cannot leave committed deltas behind
+         * unprocessed rows that would be re-aggregated on retry. Any Throwable
+         * triggers a ROLLBACK and is logged. purge_old() runs outside this wrap.
+         *
+         * @since 2.0.0
+         *
+         * @param string $today_start Today's start datetime in site timezone.
+         */
+        private function aggregate_in_transaction(string $today_start): void
+        {
+        }
+        /**
+         * Log a forced analytics-aggregation error.
+         *
+         * Centralizes the shared wpforms_log() error arguments
+         * ( type = error, force = true ) used across the pipeline steps.
+         *
+         * @since 2.0.0
+         *
+         * @param string $title   Log entry title.
+         * @param array  $context Context data for the log entry.
+         */
+        private function log_error(string $title, array $context): void
+        {
+        }
+        /**
+         * Aggregate snapshot rows into analytics_forms (daily + sentinel).
+         *
+         * @since 2.0.0
+         *
+         * @param string $today_start Today's start datetime in site timezone.
+         */
+        public function aggregate_forms(string $today_start): void
+        {
+        }
+        /**
+         * Pro-only aggregation hook. No-op in Lite.
+         *
+         * @since 2.0.0
+         *
+         * @param string $today_start Today's start datetime in site timezone.
+         */
+        public function aggregate_extended(string $today_start): void
+        {
+        }
+        /**
+         * Mark every snapshot in the aggregation window as processed.
+         *
+         * Part of the aggregation transaction: a failed UPDATE here throws, just as
+         * a Throwable in aggregate_forms/aggregate_extended does, so
+         * aggregate_in_transaction rolls the whole window back. This prevents the
+         * additive deltas from being committed while their snapshots stay
+         * unprocessed — which would re-aggregate and double-count on the next run.
+         * Idempotent: re-running on the same window is a no-op.
+         *
+         * @since 2.0.0
+         *
+         * @param string $today_start Today's start datetime in site timezone.
+         *
+         * @throws RuntimeException When the snapshot UPDATE fails, so the surrounding transaction rolls back.
+         */
+        public function mark_processed(string $today_start): void
+        {
+        }
+        /**
+         * Delete processed snapshots older than the retention cutoff.
+         *
+         * @since 2.0.0
+         */
+        public function purge_old(): void
+        {
+        }
+        /**
+         * Today's start in site timezone (delegates to DB::today_boundaries()).
+         *
+         * @since 2.0.0
+         *
+         * @return string DATETIME string 'Y-m-d H:i:s'.
+         */
+        protected function get_today_start(): string
+        {
+        }
+    }
+    /**
+     * Form Analytics bootstrap.
+     *
+     * Form Analytics feature gate and static utilities.
+     *
+     * @since 2.0.0
+     */
+    class Analytics
+    {
+        /**
+         * Documentation URL for the Form Analytics feature.
+         *
+         * Shared by the "Learn More" links in the feature-discovery tooltip and the
+         * analytics page conversion-goal popover.
+         *
+         * @since 2.0.0
+         */
+        public const DOC_URL = 'https://wpforms.com/docs/complete-guide-to-form-analytics/';
+        /**
+         * Single source of truth for the Analytics kill-switch.
+         *
+         * Wraps the `wpforms_analytics_is_enabled` filter that the Loader uses to
+         * gate the entire feature.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public static function is_enabled(): bool
+        {
+        }
+        /**
+         * Whether the current user's frontend activity should be tracked.
+         *
+         * Excludes site staff — anyone who can publish posts, which in default
+         * WordPress is the Author, Editor, and Administrator roles — so their own
+         * form views and submissions never pollute visitor analytics. Anonymous
+         * visitors and low-privilege roles (Subscriber, Contributor) are always
+         * tracked. The decision is read fresh on every request, so it is immune
+         * to full-page caching.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public static function should_track_user(): bool
+        {
+        }
+    }
+    /**
+     * Ingest snapshots from the frontend tracker.
+     *
+     * Handles two ingestion paths: the wpforms_analytics_snapshot AJAX action
+     * (tab_switch beacons from navigator.sendBeacon) and the wpforms_process_complete
+     * hook (submission snapshots piggybacked onto wpforms_submit).
+     *
+     * @since 2.0.0
+     */
+    class Process
+    {
+        /**
+         * Upper bound for SMALLINT UNSIGNED counter columns (focus/click/input/errors).
+         *
+         * Clamps a tampered client so it cannot overflow the snapshot_fields write.
+         *
+         * @since 2.0.0
+         */
+        private const MAX_SMALLINT = 65535;
+        /**
+         * Upper bound for the INT(10) UNSIGNED duration_ms column.
+         *
+         * @since 2.0.0
+         */
+        private const MAX_UNSIGNED_INT = 4294967295;
+        /**
+         * Maximum stored length of a session ID (matches the VARCHAR(64) column).
+         *
+         * @since 2.0.0
+         */
+        private const SESSION_ID_MAX_LENGTH = 64;
+        /**
+         * Maximum stored length of a subfield key (matches the VARCHAR(64) column).
+         *
+         * @since 2.0.0
+         */
+        private const SUBFIELD_KEY_MAX_LENGTH = 64;
+        /**
+         * Maximum accepted byte length of the raw snapshot payload.
+         *
+         * The endpoint is `nopriv`, so an anonymous client could otherwise POST an
+         * arbitrarily large body into the LONGTEXT payload column. 64 KB is generous
+         * for the largest realistic form snapshot while bounding the write. Filterable
+         * via `wpforms_analytics_process_max_payload_bytes`.
+         *
+         * @since 2.0.0
+         */
+        private const MAX_PAYLOAD_BYTES = 65535;
+        /**
+         * Maximum number of snapshot writes allowed per form+IP within the throttle window.
+         *
+         * Filterable via `wpforms_analytics_process_register_snapshot_throttle_max`.
+         *
+         * @since 2.0.0
+         */
+        private const SNAPSHOT_THROTTLE_MAX = 60;
+        /**
+         * Throttle window, in seconds, over which SNAPSHOT_THROTTLE_MAX applies.
+         *
+         * @since 2.0.0
+         */
+        private const SNAPSHOT_THROTTLE_WINDOW = 60;
+        /**
+         * Start the engine.
+         *
+         * @since 2.0.0
+         */
+        public function init(): void
+        {
+        }
+        /**
+         * Register WordPress hooks.
+         *
+         * @since 2.0.0
+         */
+        private function hooks(): void
+        {
+        }
+        /**
+         * Handle tab_switch beacons sent via navigator.sendBeacon().
+         *
+         * @since 2.0.0
+         */
+        public function handle_snapshot_ajax(): void
+        {
+        }
+        /**
+         * Resolve the decoded form config for a published form.
+         *
+         * Fetches the form as a WP_Post to assert 'publish' status, then decodes its
+         * post_content into the config array. Returns null when the form is missing,
+         * unpublished, or its config cannot be decoded — an unreadable config can't be
+         * field-validated, so the caller rejects the snapshot rather than recording a
+         * fieldless view.
+         *
+         * @since 2.0.0
+         *
+         * @param int $form_id Form ID.
+         *
+         * @return array|null Decoded form config, or null when the form is unusable.
+         */
+        private function resolve_published_form_data(int $form_id): ?array
+        {
+        }
+        /**
+         * Read and sanitize the snapshot beacon fields from $_POST.
+         *
+         * @since 2.0.0
+         *
+         * @return array Sanitized inputs: form_id, session_id, trigger, form_visible, payload_raw.
+         */
+        private function read_snapshot_input(): array
+        {
+        }
+        /**
+         * Validate the sanitized snapshot input envelope (pre-payload).
+         *
+         * Payload shape is checked separately by parse_inner_payload().
+         *
+         * @since 2.0.0
+         *
+         * @param array $input Sanitized input from read_snapshot_input().
+         *
+         * @return bool True when form_id, session_id, trigger and form_visible are shaped correctly.
+         */
+        private function is_valid_snapshot_input(array $input): bool
+        {
+        }
+        /**
+         * Whether the raw payload is within the accepted byte limit.
+         *
+         * @since 2.0.0
+         *
+         * @param string $payload_raw Raw JSON payload string.
+         *
+         * @return bool True when the payload is small enough to accept.
+         */
+        private function is_payload_within_limit(string $payload_raw): bool
+        {
+        }
+        /**
+         * Register a snapshot write against the per-form+IP throttle.
+         *
+         * Counts writes in a short rolling window using a transient. Returns false
+         * once the cap is exceeded so the caller can bail. Fails OPEN: if the cache
+         * layer cannot store the counter, the write is allowed rather than blocked,
+         * so a broken object cache never silently drops legitimate tracking.
+         *
+         * Keyed on form_id + IP rather than session_id: the client generates a fresh
+         * session_id per page-load and rotates it on flush, so a session-keyed cap is
+         * trivially bypassed. form_id + IP caps a flooding source while keeping
+         * separate buckets per form to limit shared-NAT false positives.
+         *
+         * @since 2.0.0
+         *
+         * @param int $form_id Form ID the snapshot belongs to.
+         *
+         * @return bool True when the write is allowed, false when the cap is exceeded.
+         */
+        private function register_snapshot_throttle(int $form_id): bool
+        {
+        }
+        /**
+         * Parse and shape the inner JSON payload shared by both ingestion paths.
+         *
+         * The tab_switch beacon and the submission envelope both carry this same
+         * inner shape: { page: ?int, fields: [ ... ] }. Centralizing the decode,
+         * structure check, page coercion and field-row build prevents the two
+         * handlers from drifting.
+         *
+         * @since 2.0.0
+         *
+         * @param string $payload_raw Raw JSON string from either the AJAX payload or the submission envelope.
+         * @param array  $valid_ids   Field IDs eligible for tracking. Rows for other IDs are dropped.
+         *
+         * @return array|null [ 'page' => int|null, 'field_rows' => array ] on success, null when malformed.
+         */
+        private function parse_inner_payload(string $payload_raw, array $valid_ids): ?array
+        {
+        }
+        /**
+         * Save a form-submission snapshot (trigger_type = 2).
+         *
+         * Reads the envelope from $_POST['wpforms']['analytics'], which the JS tracker
+         * appends to the existing wpforms_submit AJAX request. The envelope is JSON-encoded
+         * once (its payload is a nested object, not a pre-stringified string) so the form
+         * POST carries no backslash-escaped quotes for WAF anomaly rules to score. When the
+         * key is absent (CLI/REST/internal caller), we early-return without logging.
+         *
+         * @since 2.0.0
+         *
+         * @param array $fields    Sanitized submission fields (unused here).
+         * @param array $entry     Raw entry data (unused here).
+         * @param array $form_data Form config array.
+         * @param int   $entry_id  Entry ID (unused here).
+         *
+         * @noinspection PhpUnusedParameterInspection
+         */
+        public function handle_submission(array $fields, array $entry, array $form_data, int $entry_id): void
+        {
+        }
+        /**
+         * Resolve and validate the form_id + session_id for a submission snapshot.
+         *
+         * The envelope was already unslashed when decoded in
+         * extract_submission_envelope(), so session_id is clipped here without a
+         * second wp_unslash(). Returns null when either value is empty.
+         *
+         * @since 2.0.0
+         *
+         * @param array $envelope  Decoded submission envelope.
+         * @param array $form_data Form config array.
+         *
+         * @return array|null [ 'form_id' => int, 'session_id' => string ], or null when invalid.
+         */
+        private function resolve_submission_identity(array $envelope, array $form_data): ?array
+        {
+        }
+        /**
+         * Normalize the submission envelope's form_visible flag to 0 or 1.
+         *
+         * The is_scalar guard matters because a non-empty array would otherwise
+         * coerce to 1 via (int), silently flipping a malformed payload to "visible".
+         * When the envelope's form_visible isn't a scalar — or isn't one of 0/1 —
+         * fall back to 1 (submissions are always on a visible form by construction).
+         *
+         * @since 2.0.0
+         *
+         * @param mixed $raw Raw form_visible value from the decoded envelope.
+         *
+         * @return int Either 0 or 1.
+         */
+        private function normalize_submission_visible($raw): int
+        {
+        }
+        /**
+         * Extract and decode the analytics envelope piggy-backed on wpforms_submit.
+         *
+         * The upstream wpforms_submit handler has already validated the submission
+         * nonce before wpforms_process_complete fires, so we do not re-check it here.
+         *
+         * @since 2.0.0
+         *
+         * @return array|null Decoded envelope array, or null when missing/invalid.
+         */
+        private function extract_submission_envelope(): ?array
+        {
+        }
+        /**
+         * Persist a snapshot header and, on Pro, its field rows.
+         *
+         * @since 2.0.0
+         *
+         * @param int      $form_id      Form ID.
+         * @param string   $session_id   Sanitized session ID.
+         * @param int      $trigger_type Trigger type: 1 = tab_switch, 2 = form_submission.
+         * @param int      $form_visible Visibility flag: 0 or 1.
+         * @param string   $payload_raw  Raw JSON payload string.
+         * @param int|null $page         Page number or null.
+         * @param array    $fields       Normalized field rows.
+         *
+         * @return int Snapshot ID, or 0 on failure.
+         */
+        private function save_snapshot(int $form_id, string $session_id, int $trigger_type, int $form_visible, string $payload_raw, ?int $page, array $fields): int
+        {
+        }
+        /**
+         * Build normalized rows for analytics_snapshot_fields from the raw payload.
+         *
+         * Invalid entries (missing or non-numeric id) are skipped. Counts are
+         * clamped to column limits so a broken client cannot overflow writes.
+         *
+         * @since 2.0.0
+         *
+         * @param array $fields    Raw fields array from the decoded payload.
+         * @param array $valid_ids Field IDs eligible for tracking. Rows for other IDs are dropped.
+         *
+         * @return array List of sanitized row arrays ready for DB::save_fields().
+         */
+        private function build_field_rows(array $fields, array $valid_ids): array
+        {
+        }
+        /**
+         * Normalize a single raw field entry into a sanitized row.
+         *
+         * @since 2.0.0
+         *
+         * @param mixed $field     Raw field entry from the decoded payload.
+         * @param array $valid_ids Field IDs eligible for tracking. Rows for other IDs are dropped.
+         *
+         * @return array|null Sanitized row, or null when the entry is invalid.
+         */
+        private function build_field_row($field, array $valid_ids): ?array
+        {
+        }
+        /**
+         * Assemble the sanitized metric row for an already-validated field entry.
+         *
+         * Counts are clamped to their column limits so a broken client cannot
+         * overflow the write. duration_ms stays null when absent — null (never
+         * interacted) is semantically distinct from 0 (interacted, took 0 ms).
+         *
+         * @since 2.0.0
+         *
+         * @param int   $id    Validated field ID.
+         * @param array $field Raw field entry from the decoded payload.
+         *
+         * @return array Sanitized row ready for DB::save_fields().
+         */
+        private function build_field_metrics(int $id, array $field): array
+        {
+        }
+        /**
+         * Build the list of field IDs eligible for analytics tracking.
+         *
+         * By default, this is every field ID present in form_data['fields']. Field
+         * IDs outside this list are dropped before reaching analytics_snapshot_fields:
+         *  - The AntiSpam v3 honeypot field (assigned an ID that is deliberately
+         *    absent from form_data['fields'] — see AntiSpam::get_honeypot_field_id).
+         *  - Any other phantom field IDs a tampered client might inject.
+         *
+         * @since 2.0.0
+         *
+         * @param array $form_data Form data array.
+         *
+         * @return array Sanitized list of int field IDs.
+         */
+        private function get_tracked_field_ids(array $form_data): array
+        {
+        }
+        /**
+         * Coerce a request value to a string, returning '' for non-scalar inputs.
+         *
+         * Raw request members ($_POST values and decoded envelope members) can
+         * arrive as arrays or objects. A direct (string) cast on those would
+         * emit an "Array to string conversion" warning that pollutes the JSON
+         * response body on the AJAX path. Returning '' for non-scalars feeds
+         * cleanly into the downstream validation (empty session_id / malformed
+         * JSON payload both trigger silent rejection).
+         *
+         * @since 2.0.0
+         *
+         * @param mixed $value Raw value from $_POST or a decoded JSON envelope.
+         *
+         * @return string The value cast to string, or '' when the input isn't scalar.
+         */
+        private function to_scalar_string($value): string
+        {
+        }
+        /**
+         * Coerce a request value to an int, returning a default for non-scalars.
+         *
+         * A direct (int) cast on a non-empty array would yield 1, silently letting
+         * shapes like form_visible[]=x slip past the downstream 0/1 validation.
+         * Guarding with is_scalar keeps malformed values mapped to a value that
+         * fails those checks (the supplied default).
+         *
+         * @since 2.0.0
+         *
+         * @param mixed $value    Raw value from $_POST or a decoded JSON envelope.
+         * @param int   $fallback Value returned when $value isn't scalar.
+         *
+         * @return int The value cast to int, or the fallback when not scalar.
+         */
+        private function scalar_int($value, int $fallback): int
+        {
+        }
+        /**
+         * Coerce a request value to a non-negative int, 0 for non-scalars.
+         *
+         * This is the absint() variant of scalar_int(): the is_scalar guard prevents
+         * a non-empty array from coercing to 1 and slipping a shape like form_id[]=x
+         * past the form_id === 0 gate.
+         *
+         * @since 2.0.0
+         *
+         * @param mixed $value Raw value from $_POST or a decoded JSON envelope.
+         *
+         * @return int The value cast via absint(), or 0 when not scalar.
+         */
+        private function scalar_absint($value): int
+        {
+        }
+        /**
+         * Sanitize and clip a session ID to its stored column length.
+         *
+         * Callers pass an already string-coerced value; unslashing (where needed)
+         * happens at the call site because the two ingestion paths differ — the
+         * AJAX path unslashes raw $_POST, the submission path receives an envelope
+         * already unslashed at decode time.
+         *
+         * @since 2.0.0
+         *
+         * @param string $value String-coerced raw session ID.
+         *
+         * @return string Sanitized session ID, at most SESSION_ID_MAX_LENGTH chars.
+         */
+        private function clip_session_id(string $value): string
+        {
+        }
+        /**
+         * Sanitize a subfield key to the analytics column contract.
+         *
+         * Keys come from the input name bracket segment (e.g. 'first', 'postal',
+         * a Likert row slug). sanitize_key() bounds the charset; the substr bounds
+         * it to the VARCHAR(64) column so a tampered client cannot overflow.
+         *
+         * @since 2.0.0
+         *
+         * @param mixed $value Raw subKey from the decoded payload.
+         *
+         * @return string Sanitized subfield key, or '' when absent/invalid.
+         */
+        private function sanitize_subfield_key($value): string
+        {
+        }
+        /**
+         * Read a field counter by key and clamp it to its column's upper bound.
+         *
+         * A missing key reads as 0. Counts are clamped so a broken client cannot
+         * overflow the unsigned column.
+         *
+         * @since 2.0.0
+         *
+         * @param array  $field Raw field entry from the decoded payload.
+         * @param string $key   Counter key to read (e.g. 'focusCount').
+         * @param int    $max   Inclusive upper bound (column limit).
+         *
+         * @return int Non-negative count, never above $max.
+         */
+        private function clamp_count(array $field, string $key, int $max): int
+        {
+        }
+        /**
+         * Read and clamp the nullable durationMs value from a field entry.
+         *
+         * Returns null when absent — null (never interacted) is semantically
+         * distinct from 0 (interacted, took 0 ms).
+         *
+         * @since 2.0.0
+         *
+         * @param array $field Raw field entry from the decoded payload.
+         *
+         * @return int|null Clamped duration in ms, or null when not present.
+         */
+        private function clamp_nullable_duration(array $field): ?int
+        {
+        }
+    }
+}
 namespace WPForms\Education\ActiveLayer {
     /**
      * ActiveLayer plugin state and CTA-data helper.
@@ -5983,6 +6701,12 @@ namespace WPForms\Education\ActiveLayer {
          * @since 1.10.0.5
          */
         const INSTALL_ZIP_URL = 'https://downloads.wordpress.org/plugin/activelayer-anti-spam-spam-protection-for-forms-comments.zip';
+        /**
+         * Canonical plugin basename ( 'folder/main-file.php' ) used as the install identity.
+         *
+         * @since 2.0.0
+         */
+        const FILE = self::SLUG . '/' . self::SLUG . '.php';
         /**
          * Admin page slug ActiveLayer registers as its top-level dashboard menu.
          *
@@ -6015,6 +6739,16 @@ namespace WPForms\Education\ActiveLayer {
          * @return bool
          */
         public static function is_activated(): bool
+        {
+        }
+        /**
+         * Whether ActiveLayer is set up — active with a connected API key.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public static function is_set_up(): bool
         {
         }
         /**
@@ -6134,6 +6868,176 @@ namespace WPForms\Education\ActiveLayer {
         }
     }
 }
+namespace WPForms\Education\WPConsent {
+    /**
+     * WPConsent plugin state and CTA-data helper.
+     *
+     * Single source of truth for WPConsent education surfaces: detects
+     * install/active state, exposes the WordPress.org install zip URL, the
+     * post-install onboarding URL, and the data-* attribute payload the inline
+     * install handler understands. Mirrors WPForms\Education\ActiveLayer\Helper.
+     *
+     * @since 2.0.0
+     */
+    class Helper
+    {
+        /**
+         * Lite plugin folder slug.
+         *
+         * @since 2.0.0
+         */
+        const SLUG = 'wpconsent-cookies-banner-privacy-suite';
+        /**
+         * Lite plugin basename.
+         *
+         * @since 2.0.0
+         */
+        const LITE_BASENAME = 'wpconsent-cookies-banner-privacy-suite/wpconsent.php';
+        /**
+         * Pro plugin basename.
+         *
+         * @since 2.0.0
+         */
+        const PRO_BASENAME = 'wpconsent-premium/wpconsent-premium.php';
+        /**
+         * Canonical WordPress.org zip download URL.
+         *
+         * @since 2.0.0
+         */
+        const INSTALL_ZIP_URL = 'https://downloads.wordpress.org/plugin/wpconsent-cookies-banner-privacy-suite.zip';
+        /**
+         * Onboarding wizard admin page slug.
+         *
+         * @since 2.0.0
+         */
+        const ONBOARDING_PAGE = 'wpconsent-onboarding';
+        /**
+         * Cached resolved plugin basename.
+         *
+         * @since 2.0.0
+         *
+         * @var string|null
+         */
+        private static $basename = null;
+        /**
+         * Resolve the installed WPConsent basename (lite or pro), '' if absent.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        public static function get_basename(): string
+        {
+        }
+        /**
+         * Whether the WPConsent plugin folder is present.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public static function is_installed(): bool
+        {
+        }
+        /**
+         * Whether WPConsent (lite or pro) is currently active.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public static function is_activated(): bool
+        {
+        }
+        /**
+         * Whether WPConsent code is loaded.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public static function is_available(): bool
+        {
+        }
+        /**
+         * Onboarding wizard URL.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        public static function get_setup_url(): string
+        {
+        }
+        /**
+         * Data-* payload for the inline install/activate button.
+         *
+         * @since 2.0.0
+         *
+         * @return array
+         */
+        public static function get_install_button_data(): array
+        {
+        }
+    }
+    /**
+     * Records the install/activate source on first-time activation of WPConsent
+     * via WPForms's product education flows. Mirrors the
+     * `<plugin_name>_source` + `<plugin_name>_date` convention used for the
+     * other partner plugins — see
+     * \WPForms\Integrations\UsageTracking\UsageTracking::add_promotion_plugin_data()
+     * for the corresponding reader.
+     *
+     * The two options are picked up by the WPForms Usage Tracking opt-in
+     * payload (weekly POST to wpformsusage.com/v1/track) so installs
+     * originating from WPForms product education flows can be attributed.
+     *
+     * @since 2.0.0
+     */
+    class InstallTracker
+    {
+        /**
+         * Option key — install source ('WPForms' or 'WPForms Lite').
+         *
+         * @since 2.0.0
+         */
+        const SOURCE_OPTION = 'wpconsent_source';
+        /**
+         * Option key — unix timestamp of the first activation through WPForms.
+         *
+         * @since 2.0.0
+         */
+        const DATE_OPTION = 'wpconsent_date';
+        /**
+         * Init.
+         *
+         * @since 2.0.0
+         */
+        public function init()
+        {
+        }
+        /**
+         * Register hooks.
+         *
+         * @since 2.0.0
+         */
+        private function hooks()
+        {
+        }
+        /**
+         * Write `wpconsent_source` and `wpconsent_date` when the activated
+         * plugin is WPConsent. Idempotent — once a source is recorded, later
+         * activations through WPForms do NOT overwrite it.
+         *
+         * @since 2.0.0
+         *
+         * @param string $plugin_basename Path to the activated plugin file relative to the plugins directory.
+         */
+        public function maybe_record_source($plugin_basename)
+        {
+        }
+    }
+}
 namespace WPForms\Lite\Reports {
     /**
      * Generate form submissions reports.
@@ -6211,6 +7115,474 @@ namespace WPForms\Lite\Reports {
         }
     }
 }
+namespace WPForms\SetupWizard {
+    /**
+     * Setup Wizard REST API.
+     *
+     * Exposes the endpoints the SPA calls back into:
+     * - `GET  /hydrate`              Initial fetch of settings + wizard_settings.
+     * - `POST /update`               Persist wizard step state.
+     * - `POST /install-plugins`      License-gated install of addons/cross-product plugins.
+     * - `POST /complete`             Finalize the wizard.
+     * - `GET  /license/key`          Fetch the configured license key.
+     * - `POST /license/verify`       Validate and activate a license key.
+     *
+     * Every route uses `validate_request()` as its `permission_callback`. The
+     * permission callback also hydrates the bound user into the current request
+     * via `wp_set_current_user()` so downstream calls behave as if the admin were
+     * logged in on the WP host.
+     *
+     * @since 2.0.0
+     */
+    class RestApi
+    {
+        /**
+         * REST namespace.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const ROUTE_NAMESPACE = 'wpforms/v1';
+        /**
+         * Route prefix shared by all wizard routes.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const ROUTE_BASE = '/setup-wizard';
+        /**
+         * License API base URL, used when the Pro `WPFORMS_UPDATER_API` constant is
+         * not defined (i.e. in Lite).
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const LICENSE_API_URL_FALLBACK = 'https://wpformsapi.com/license/v1';
+        /**
+         * Minimum accepted license-key length (anti-abuse guard).
+         *
+         * @since 2.0.0
+         *
+         * @var int
+         */
+        private const LICENSE_MIN_KEY_LENGTH = 16;
+        /**
+         * Maximum accepted license-key length (anti-abuse guard).
+         *
+         * @since 2.0.0
+         *
+         * @var int
+         */
+        private const LICENSE_MAX_KEY_LENGTH = 255;
+        /**
+         * Auth service.
+         *
+         * @since 2.0.0
+         *
+         * @var Auth
+         */
+        private $auth;
+        /**
+         * Setup Wizard state service.
+         *
+         * @since 2.0.0
+         *
+         * @var StateManager
+         */
+        private $service;
+        /**
+         * Constructor.
+         *
+         * @since 2.0.0
+         *
+         * @param Auth         $auth    Auth service.
+         * @param StateManager $service State manager.
+         */
+        public function __construct(\WPForms\SetupWizard\Auth $auth, \WPForms\SetupWizard\Service\StateManager $service)
+        {
+        }
+        /**
+         * Register REST routes.
+         *
+         * @since 2.0.0
+         */
+        public function register_routes(): void
+        {
+        }
+        /**
+         * Whether the current request is the Setup Wizard's install-plugins REST call.
+         *
+         * Evaluated as early as `wpforms_loaded`, before the REST route is dispatched
+         * and before the session is authenticated, so it matches the namespaced route
+         * against the request URI rather than relying on the REST dispatcher. Pretty
+         * permalinks carry the route in the URL path; plain permalinks carry it in the
+         * `rest_route` query var, so both forms are checked. The Addons handler reads
+         * this to load its addon and license data in this otherwise non-admin context;
+         * the install action itself stays gated by `validate_request()` and
+         * `wpforms_can_install()`.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public static function is_install_request(): bool
+        {
+        }
+        /**
+         * Sanitize the `plugins` argument for the install-plugins route.
+         *
+         * Coerces to an array of plugin-file strings (`{directory}/{main-file.php}`);
+         * non-string entries and empty values are dropped. `wpforms_sanitize_key()`
+         * preserves the `/` and `.` a plugin file needs. The catalog whitelist in
+         * `PluginCatalog::main_file()` remains the guard against installing an
+         * arbitrary path.
+         *
+         * @since 2.0.0
+         *
+         * @param mixed $value Raw argument value supplied by the SPA.
+         *
+         * @return array
+         */
+        public function sanitize_plugin_files($value): array
+        {
+        }
+        /**
+         * Permission callback for every wizard route.
+         *
+         * Verifies the session token via Auth, hydrates the bound user with
+         * `wp_set_current_user()`, and refreshes the token TTL on success.
+         *
+         * @since 2.0.0
+         *
+         * @param WP_REST_Request $request REST request.
+         *
+         * @return bool|WP_Error True when the request is allowed.
+         */
+        public function validate_request(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * `GET /hydrate` Initial fetch of the wizard state.
+         *
+         * @since 2.0.0
+         *
+         * @param WP_REST_Request $request REST request.
+         *
+         * @return WP_REST_Response
+         * @noinspection PhpUnusedParameterInspection
+         */
+        public function hydrate(\WP_REST_Request $request): \WP_REST_Response
+        {
+        }
+        /**
+         * `POST /update` Replace the wizard_settings blob.
+         *
+         * The request body is the new `wizard_settings` snapshot. The server treats
+         * the contents as opaque and overwrites the previous value wholesale. The
+         * single exception, on Pro, is the `lite_connect.consent` flag: when truthy,
+         * the state manager schedules the Lite Connect entries restore in the
+         * background (see {@see \WPForms\Pro\SetupWizard\Service\StateManager}).
+         *
+         * @since 2.0.0
+         *
+         * @param WP_REST_Request $request REST request.
+         *
+         * @return WP_REST_Response
+         */
+        public function update(\WP_REST_Request $request): \WP_REST_Response
+        {
+        }
+        /**
+         * `POST /install-plugins` Install queued plugins/addons.
+         *
+         * @since 2.0.0
+         *
+         * @param WP_REST_Request $request REST request.
+         *
+         * @return WP_REST_Response
+         */
+        public function install_plugins(\WP_REST_Request $request): \WP_REST_Response
+        {
+        }
+        /**
+         * `POST /complete` Finalize the wizard and resolve every redirect target.
+         *
+         * Now fired once on the SPA's Complete-page mount rather than per-CTA, so
+         * the response carries the redirect URLs for all outcomes up front. The
+         * CTAs navigate using the stored URLs without re-calling the endpoint.
+         *
+         * Delegates to `StateManager::complete()` so the manager can refresh
+         * its `settings` snapshot once post-wizard side effects exist. The SPA owns
+         * the `wizard_settings` blob and is expected to send any completion
+         * metadata (`completed_at`, cleared queues) through `/update` before
+         * invoking this route.
+         *
+         * @since 2.0.0
+         *
+         * @param WP_REST_Request $request REST request.
+         *
+         * @return WP_REST_Response
+         */
+        public function complete(\WP_REST_Request $request): \WP_REST_Response
+        {
+        }
+        /**
+         * `POST /stripe/connect-url` Get the Stripe Connect URL for the wizard.
+         *
+         * Returns a kickoff URL that defers OAuth URL generation to wp-admin context
+         * so the nonce is bound to the correct session.
+         *
+         * @since 2.0.0
+         *
+         * @param WP_REST_Request $request REST request.
+         *
+         * @return WP_REST_Response
+         * @noinspection PhpUnusedParameterInspection
+         */
+        public function stripe_connect_url(\WP_REST_Request $request): \WP_REST_Response
+        {
+        }
+        /**
+         * `GET /license/key` Fetch the configured license key only.
+         *
+         * @since 2.0.0
+         *
+         * @param WP_REST_Request $request REST request.
+         *
+         * @return WP_REST_Response
+         * @noinspection PhpUnusedParameterInspection
+         */
+        public function license_key(\WP_REST_Request $request): \WP_REST_Response
+        {
+        }
+        /**
+         * `POST /license/verify` Validate and activate a license key.
+         *
+         * Verifies the key against the license API and runs the edition-specific
+         * completion step: Pro only stores the verified key, while Lite upgrades
+         * the site to WPForms Pro (install, activate, deactivate Lite).
+         *
+         * @since 2.0.0
+         *
+         * @param WP_REST_Request $request REST request.
+         *
+         * @return WP_REST_Response
+         */
+        public function verify_license(\WP_REST_Request $request): \WP_REST_Response
+        {
+        }
+        /**
+         * Validate a key against the license API and run the edition-specific
+         * completion step.
+         *
+         * The validated key is persisted before the completion step runs, so a valid
+         * key is never lost if a subsequent edition-specific action (e.g. the Lite
+         * Pro install) fails. The Lite and Pro controllers override this seam; the
+         * shared base only verifies and stores the key.
+         *
+         * @since 2.0.0
+         *
+         * @param string $key License key.
+         *
+         * @return array|WP_Error
+         */
+        protected function activate_license(string $key)
+        {
+        }
+        /**
+         * Verify a key against the license API without persisting anything.
+         *
+         * @since 2.0.0
+         *
+         * @param string $key License key.
+         *
+         * @return array|WP_Error Decoded verification response, or `WP_Error` when
+         *                        the key is rejected, the API is unreachable, or the
+         *                        response is malformed.
+         */
+        private function verify_key(string $key)
+        {
+        }
+        /**
+         * Perform a live GET request against the license API.
+         *
+         * Replicates the essentials of the Pro `perform_remote_request()` without
+         * the Pro `License` class or any caching layer.
+         *
+         * @since 2.0.0
+         *
+         * @param string $action API action slug appended to the base URL.
+         * @param string $key    License key.
+         * @param array  $extra  Extra query args merged over the defaults.
+         *
+         * @return array|null Decoded JSON as an associative array, or null on transport/HTTP error.
+         */
+        protected function license_api_request(string $action, string $key, array $extra = []): ?array
+        {
+        }
+        /**
+         * Resolve the license API base URL.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        private function license_api_url(): string
+        {
+        }
+        /**
+         * Guard the key length to block empty, garbage, or oversized payloads.
+         *
+         * @since 2.0.0
+         *
+         * @param string $key License key.
+         *
+         * @return WP_Error|null `WP_Error` when out of bounds, null when acceptable.
+         */
+        private function validate_license_key_size(string $key): ?\WP_Error
+        {
+        }
+        /**
+         * Build an error response from a WP_Error, using its `status` data as the HTTP code.
+         *
+         * @since 2.0.0
+         *
+         * @param WP_Error $error Error to surface to the SPA.
+         *
+         * @return WP_REST_Response
+         */
+        private function error_response(\WP_Error $error): \WP_REST_Response
+        {
+        }
+        /**
+         * Resolve the post-wizard redirect target for a given outcome.
+         *
+         * @since 2.0.0
+         *
+         * @param string $outcome Outcome page: `build`, `import`, `exit`, or `forms`.
+         *
+         * @return string
+         */
+        private function get_redirect_url(string $outcome): string
+        {
+        }
+    }
+}
+namespace WPForms\Lite\SetupWizard {
+    /**
+     * Setup Wizard REST API (Lite).
+     *
+     * Completes license activation by upgrading the site from Lite to Pro: it
+     * resolves the license-keyed Pro package, downloads it, and swaps the active
+     * plugin. Mirrors the proven install flow in
+     * {@see \WPForms\Lite\Admin\Connect::process()}.
+     *
+     * @since 2.0.0
+     */
+    class RestApi extends \WPForms\SetupWizard\RestApi
+    {
+        /**
+         * WPForms Pro plugin basename: the swap target.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const PRO_PLUGIN = 'wpforms/wpforms.php';
+        /**
+         * Validate a key against the license API, then upgrade Lite to Pro.
+         *
+         * The validated key is persisted before the install runs, so a valid key is
+         * never lost if the Pro install fails.
+         *
+         * @since 2.0.0
+         *
+         * @param string $key License key.
+         *
+         * @return array|WP_Error
+         */
+        protected function activate_license(string $key)
+        {
+        }
+        /**
+         * Resolve the license-keyed WPForms Pro download URL.
+         *
+         * Tries the current `get-plugin-updates` action (slug-keyed `package`),
+         * falling back to the legacy `get-plugin-info` action (`download_link`).
+         *
+         * @since 2.0.0
+         *
+         * @param string $key License key.
+         *
+         * @return string Download URL, or an empty string when unavailable.
+         */
+        private function get_pro_package_url(string $key): string
+        {
+        }
+        /**
+         * Pull a `package` URL out of a plugin-updates response.
+         *
+         * Handles both the flat shape (`{ package: … }`) and the slug-keyed shape
+         * (`{ "wpforms-pro": { package: … } }`).
+         *
+         * @since 2.0.0
+         *
+         * @param array|null $updates Decoded plugin-updates response.
+         *
+         * @return string Package URL, or an empty string when absent.
+         */
+        private function extract_package_url(?array $updates): string
+        {
+        }
+        /**
+         * Install WPForms Pro and swap it in for Lite.
+         *
+         * Filesystem prep and the silent install itself are delegated to the shared
+         * `Helpers\Plugin` service so both call sites stay in lockstep; this method
+         * only owns the Pro-specific error message and the Lite-to-Pro swap.
+         *
+         * @since 2.0.0
+         *
+         * @param string $package_url WPForms Pro download URL.
+         *
+         * @return true|WP_Error
+         */
+        private function install_pro(string $package_url)
+        {
+        }
+        /**
+         * Swap the active plugin from Lite to Pro.
+         *
+         * Deactivates Lite (option-only; Lite's loaded code serves the rest of this
+         * request) and activates Pro silently. Silent activation is mandatory: WP's
+         * `plugin_sandbox_scrape()` includes the Pro main file, and the
+         * `function_exists( 'wpforms' )` guard in `wpforms.php` makes it bail without
+         * redeclaring. Pro bootstraps on the next request.
+         *
+         * @since 2.0.0
+         *
+         * @param string $generic_error Fallback user-facing error message.
+         *
+         * @return true|WP_Error
+         */
+        private function swap_to_pro(string $generic_error)
+        {
+        }
+        /**
+         * Whether WPForms Pro is already present under the plugins directory.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        private function is_pro_installed(): bool
+        {
+        }
+    }
+}
 namespace WPForms {
     /**
      * WPForms Class Loader.
@@ -6249,6 +7621,14 @@ namespace WPForms {
          * @since 1.8.6
          */
         private function populate_common(): void
+        {
+        }
+        /**
+         * Populate the Setup Wizard class.
+         *
+         * @since 2.0.0
+         */
+        private function populate_setup_wizard(): void
         {
         }
         /**
@@ -6389,7 +7769,3021 @@ namespace WPForms {
         private function populate_anti_spam(): void
         {
         }
+        /**
+         * Register Form Analytics classes.
+         *
+         * @since 2.0.0
+         */
+        private function populate_analytics(): void
+        {
+        }
     }
+}
+namespace WPForms\SetupChecklist {
+    /**
+     * Setup Checklist AJAX endpoints.
+     *
+     * Handles the actions the checklist page fires from the browser. The checklist
+     * is never dismissed automatically — even once every step is complete — so the
+     * user can keep exploring the addons, integrations, and recommended-plugins
+     * grids; the footer "Complete Setup Checklist" link is the only way to dismiss
+     * it entirely, and it routes here.
+     *
+     * @since 2.0.0
+     */
+    class Ajax
+    {
+        /**
+         * Dismiss AJAX action and its nonce action.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        public const DISMISS_ACTION = 'wpforms_setup_checklist_dismiss';
+        /**
+         * Install-plugin AJAX action (also used as its nonce action).
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        public const INSTALL_PLUGIN_ACTION = 'wpforms_setup_checklist_install_plugin';
+        /**
+         * Checklist model (source of the progress percentage captured at dismissal).
+         *
+         * @since 2.0.0
+         *
+         * @var Checklist
+         */
+        private $checklist;
+        /**
+         * Per-site state store.
+         *
+         * @since 2.0.0
+         *
+         * @var State
+         */
+        private $state;
+        /**
+         * Constructor.
+         *
+         * @since 2.0.0
+         *
+         * @param Checklist $checklist Checklist model.
+         * @param State     $state     Per-site state store.
+         */
+        public function __construct(\WPForms\SetupChecklist\Checklist $checklist, \WPForms\SetupChecklist\State $state)
+        {
+        }
+        /**
+         * Register hooks.
+         *
+         * @since 2.0.0
+         */
+        public function hooks(): void
+        {
+        }
+        /**
+         * Dismiss the checklist for this site and return where to redirect next.
+         *
+         * @since 2.0.0
+         */
+        public function dismiss(): void
+        {
+        }
+        /**
+         * Install a plugin ( a WPForms addon or a recommended WordPress.org plugin ) in place,
+         * reusing the Setup Wizard's install gateway. Addon license access is enforced per plugin
+         * by that gateway, so the endpoint gates only on the install capability.
+         *
+         * @since 2.0.0
+         */
+        public function install_plugin(): void
+        {
+        }
+    }
+    /**
+     * Setup Checklist model.
+     *
+     * Composes the declarative {@see Config} with live {@see CompletionDetector}
+     * results into the shape the menu and the page consume: sections enriched with
+     * per-item completion, per-section completion, and an overall progress summary.
+     * Detection results are memoized for the request so a single page load that asks
+     * for both the sections and the progress runs each check only once.
+     *
+     * @since 2.0.0
+     */
+    class Checklist
+    {
+        /**
+         * Data-model source.
+         *
+         * @since 2.0.0
+         *
+         * @var Config
+         */
+        private $config;
+        /**
+         * Completion detector.
+         *
+         * @since 2.0.0
+         *
+         * @var CompletionDetector
+         */
+        private $detector;
+        /**
+         * Plugin detector (installed/active status for form plugins).
+         *
+         * @since 2.0.0
+         *
+         * @var PluginDetector
+         */
+        private $plugin_detector;
+        /**
+         * Plugin catalog (display names for detected form plugins).
+         *
+         * @since 2.0.0
+         *
+         * @var PluginCatalog
+         */
+        private $plugin_catalog;
+        /**
+         * Memoized enriched sections for the current request.
+         *
+         * @since 2.0.0
+         *
+         * @var array|null
+         */
+        private $sections;
+        /**
+         * Constructor.
+         *
+         * @since 2.0.0
+         *
+         * @param Config             $config          Data-model source.
+         * @param CompletionDetector $detector        Completion detector.
+         * @param PluginDetector     $plugin_detector Plugin detector.
+         * @param PluginCatalog      $plugin_catalog  Plugin catalog.
+         */
+        public function __construct(\WPForms\SetupChecklist\Config $config, \WPForms\SetupChecklist\CompletionDetector $detector, \WPForms\SetupWizard\Service\PluginDetector $plugin_detector, \WPForms\SetupWizard\Service\PluginCatalog $plugin_catalog)
+        {
+        }
+        /**
+         * Sections enriched with completion state.
+         *
+         * @since 2.0.0
+         *
+         * @return array<string, array>
+         */
+        public function get_sections(): array
+        {
+        }
+        /**
+         * Determine whether a section is complete.
+         *
+         * A section needs at least one item. It is complete when any item is done
+         * for `complete_on_any` sections, or when every item is done otherwise.
+         *
+         * @since 2.0.0
+         *
+         * @param int  $completed       Number of completed items in the section.
+         * @param int  $total           Total number of items in the section.
+         * @param bool $complete_on_any Whether a single completed item marks the section complete.
+         *
+         * @return bool
+         */
+        private function is_section_complete(int $completed, int $total, bool $complete_on_any): bool
+        {
+        }
+        /**
+         * Resolve an item before counting: a non-applicable conditional item returns null.
+         *
+         * @since 2.0.0
+         *
+         * @param array $item Conditional item from the config.
+         *
+         * @return array|null The finalised item, or null when it does not apply.
+         */
+        private function resolve_item(array $item): ?array
+        {
+        }
+        /**
+         * Resolve the Lite Connect sub-step.
+         *
+         * @since 2.0.0
+         *
+         * @param array $item Conditional item from the config.
+         *
+         * @return array|null The finalised item, or null when it does not apply.
+         */
+        private function resolve_lite_connect_item(array $item): ?array
+        {
+        }
+        /**
+         * Whether the site has a valid Pro license.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        private function has_valid_license(): bool
+        {
+        }
+        /**
+         * Overall progress summary.
+         *
+         * @since 2.0.0
+         *
+         * @return array{percent:int, completed_sections:int, total_sections:int, completed_items:int, total_items:int}
+         */
+        public function get_progress(): array
+        {
+        }
+    }
+    /**
+     * Setup Checklist completion detector.
+     *
+     * Resolves whether a checklist item is complete, keyed by the item `id` declared
+     * in {@see Config}. Every rule is intentionally cheap — option reads, a cached
+     * plugin scan, or a single light query — and performs no remote calls, so the
+     * page and the menu progress bar can detect state on every load. Rules reuse the
+     * canonical core sources (the form object, settings, the Stripe integration, the
+     * ActiveLayer helper) rather than re-implementing detection.
+     *
+     * @since 2.0.0
+     */
+    class CompletionDetector
+    {
+        /**
+         * Per-site state store (source of the email-settings-saved flag).
+         *
+         * @since 2.0.0
+         *
+         * @var State
+         */
+        private $state;
+        /**
+         * Plugin detector (installed/active status for cross-product plugins).
+         *
+         * @since 2.0.0
+         *
+         * @var PluginDetector
+         */
+        private $plugin_detector;
+        /**
+         * Constructor.
+         *
+         * @since 2.0.0
+         *
+         * @param State          $state           Per-site state store.
+         * @param PluginDetector $plugin_detector Plugin detector.
+         */
+        public function __construct(\WPForms\SetupChecklist\State $state, \WPForms\SetupWizard\Service\PluginDetector $plugin_detector)
+        {
+        }
+        /**
+         * Whether the given checklist item is complete.
+         *
+         * @since 2.0.0
+         *
+         * @param string $item_id Checklist item ID from {@see Config}.
+         *
+         * @return bool
+         */
+        public function is_complete(string $item_id): bool
+        {
+        }
+        /**
+         * Whether the user has built a form — at least one form that was not imported.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        private function is_form_created(): bool
+        {
+        }
+        /**
+         * Whether at least one form has been imported from another form plugin.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        private function is_form_imported(): bool
+        {
+        }
+        /**
+         * WPForms form IDs created by importing from another form plugin.
+         *
+         * @since 2.0.0
+         *
+         * @return int[]
+         */
+        private function get_imported_form_ids(): array
+        {
+        }
+        /**
+         * Whether the Lite Connect checklist item is complete.
+         *
+         * On Lite the item tracks enabling entry backups, so it is complete once Lite
+         * Connect is enabled. On Pro the user has already upgraded, so the item becomes
+         * the entry-restore step and is complete once the backed-up entries have been
+         * restored.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        private function is_lite_connect_complete(): bool
+        {
+        }
+        /**
+         * Whether the user had Lite Connect enabled.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public function had_lite_connect_enabled(): bool
+        {
+        }
+        /**
+         * Whether the Lite Connect entry backups have already been restored.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        private function is_lite_connect_restored(): bool
+        {
+        }
+        /**
+         * Whether the Lite Connect entry restore is currently in progress (scheduled or running,
+         * but not yet done).
+         *
+         * Exposed so the checklist CTA can show a disabled "Import in Progress" state instead
+         * of the actionable button while a restore is under way.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public function is_lite_connect_restore_in_progress(): bool
+        {
+        }
+        /**
+         * Whether WP Mail SMTP is installed and configured with a real mailer.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        private function is_email_deliverability_configured(): bool
+        {
+        }
+        /**
+         * Whether spam protection is in place: ActiveLayer active or CAPTCHA configured.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        private function is_spam_protection_enabled(): bool
+        {
+        }
+        /**
+         * Whether WPConsent is active and its setup wizard (onboarding) is complete.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        private function is_privacy_compliance_configured(): bool
+        {
+        }
+        /**
+         * Whether a payment gateway is connected.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        private function is_payment_gateway_connected(): bool
+        {
+        }
+    }
+    /**
+     * Setup Checklist configuration and data model.
+     *
+     * Single declarative source of the checklist's sections and items. The model is
+     * intentionally ordering- and insertion-friendly: every section and item carries
+     * an `order` weight, and both lists pass through filters so a later iteration can
+     * reorder or insert recommended items without touching this class. Nothing here
+     * performs detection — completion is resolved by {@see CompletionDetector}, keyed
+     * by each item's `id` — and nothing here renders markup.
+     *
+     * @since 2.0.0
+     */
+    class Config
+    {
+        /**
+         * "Create Your First Form" section ID.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const SECTION_CREATE_FORM = 'create_first_form';
+        /**
+         * "Set Up Form Compliance & Protection" section ID.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const SECTION_COMPLIANCE = 'compliance_protection';
+        /**
+         * "Connect to Payment Gateway" section ID.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const SECTION_PAYMENT = 'payment_gateway';
+        /**
+         * Ordered checklist sections, each with its ordered items.
+         *
+         * @since 2.0.0
+         *
+         * @return array<string, array>
+         */
+        public function get_sections(): array
+        {
+        }
+        /**
+         * Items for the "Create Your First Form" section.
+         *
+         * @since 2.0.0
+         *
+         * @return array<string, array>
+         */
+        private function get_create_form_items(): array
+        {
+        }
+        /**
+         * Items for the "Set Up Form Compliance & Protection" section.
+         *
+         * @since 2.0.0
+         *
+         * @return array<string, array>
+         */
+        private function get_compliance_items(): array
+        {
+        }
+        /**
+         * Items for the "Connect to Payment Gateway" section.
+         *
+         * @since 2.0.0
+         *
+         * @return array<string, array>
+         */
+        private function get_payment_items(): array
+        {
+        }
+        /**
+         * Sort a keyed list of sections or items by their `order` weight, ascending.
+         *
+         * @since 2.0.0
+         *
+         * @param array<string, array> $entries Keyed list of entries that each carry an `order`.
+         *
+         * @return array<string, array>
+         */
+        private function sort_by_order(array $entries): array
+        {
+        }
+    }
+    /**
+     * Setup Checklist admin menu item.
+     *
+     * Adds the "Setup Checklist" entry to the top of the WPForms submenu (above "All
+     * Forms"), rendering the section-progress bar inside the menu label. The parent
+     * menu still lands on All Forms — this only adds a sibling link, visible to
+     * admins. Once the checklist is dismissed the link is removed and a direct hit on
+     * its URL redirects to the Forms overview — dismissal is permanent per site.
+     *
+     * The bar's CSS is printed inline on `admin_head`: the menu renders on every
+     * admin screen, but the main WPForms admin stylesheet only loads on WPForms
+     * pages, so a reused stylesheet would leave the bar unstyled everywhere else.
+     *
+     * @since 2.0.0
+     */
+    class Menu
+    {
+        /**
+         * CSS class added to the menu link so the inline styles target only this item.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const ITEM_CLASS = 'wpforms-setup-checklist-menu-item';
+        /**
+         * WPForms parent menu slug the item is attached to.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const PARENT_SLUG = 'wpforms-overview';
+        /**
+         * Checklist model (source of the progress percentage).
+         *
+         * @since 2.0.0
+         *
+         * @var Checklist
+         */
+        private $checklist;
+        /**
+         * Per-site state store (dismissal).
+         *
+         * @since 2.0.0
+         *
+         * @var State
+         */
+        private $state;
+        /**
+         * Constructor.
+         *
+         * @since 2.0.0
+         *
+         * @param Checklist $checklist Checklist model.
+         * @param State     $state     Per-site state store.
+         */
+        public function __construct(\WPForms\SetupChecklist\Checklist $checklist, \WPForms\SetupChecklist\State $state)
+        {
+        }
+        /**
+         * Register hooks.
+         *
+         * @since 2.0.0
+         */
+        public function hooks(): void
+        {
+        }
+        /**
+         * Send a dismissed checklist's page back to the Forms overview.
+         *
+         * @since 2.0.0
+         */
+        public function maybe_redirect_dismissed(): void
+        {
+        }
+        /**
+         * Register the submenu item and the page route under the WPForms menu.
+         *
+         * @since 2.0.0
+         *
+         * @param object $menu WPForms admin menu instance passed by the action.
+         */
+        public function register($menu): void
+        {
+        }
+        /**
+         * Position the item, or hide its link when the checklist is dismissed.
+         *
+         * @since 2.0.0
+         */
+        public function reorder(): void
+        {
+        }
+        /**
+         * Output the inline menu styles on every admin screen the menu shows on.
+         *
+         * @since 2.0.0
+         */
+        public function print_styles(): void
+        {
+        }
+        /**
+         * Build the menu label markup: the title plus the progress bar.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        private function get_menu_title(): string
+        {
+        }
+        /**
+         * Place the checklist item right after "All Forms" in the WPForms submenu.
+         *
+         * @since 2.0.0
+         */
+        private function move_after_overview(): void
+        {
+        }
+    }
+    /**
+     * Setup Checklist admin page controller.
+     *
+     * Builds the page view-model (sections with resolved CTAs, and the promo datasets from
+     * {@see Promos}) and renders it through the `admin/setup-checklist/*` templates.
+     *
+     * @since 2.0.0
+     */
+    class Page
+    {
+        /**
+         * Admin page slug — the stable deep link used by docs, in-product links,
+         * and the wizard hand-off.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        public const SLUG = 'wpforms-setup-checklist';
+        /**
+         * Checklist model.
+         *
+         * @since 2.0.0
+         *
+         * @var Checklist
+         */
+        private $checklist;
+        /**
+         * Promo sections model (features, integrations, growth tools, and install CTAs).
+         *
+         * @since 2.0.0
+         *
+         * @var Promos
+         */
+        private $promos;
+        /**
+         * Constructor.
+         *
+         * @since 2.0.0
+         *
+         * @param Checklist $checklist Checklist model.
+         * @param Promos    $promos    Promo sections model.
+         */
+        public function __construct(\WPForms\SetupChecklist\Checklist $checklist, \WPForms\SetupChecklist\Promos $promos)
+        {
+        }
+        /**
+         * Register hooks, only while the current request is the checklist page.
+         *
+         * @since 2.0.0
+         */
+        public function hooks(): void
+        {
+        }
+        /**
+         * Suppress all admin notices on the checklist page.
+         *
+         * This is a focused onboarding screen — no admin notices belong here, including
+         * WPForms' own (e.g. the Lite Connect "can't reach backup server" warning), which
+         * WordPress otherwise relocates to just after the page's first <h1>, landing inside
+         * the title bar. Runs on `in_admin_header`, before the `admin_notices` hooks fire.
+         *
+         * @since 2.0.0
+         */
+        public function hide_admin_notices(): void
+        {
+        }
+        /**
+         * Get the page's stable admin URL.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        public static function get_url(): string
+        {
+        }
+        /**
+         * Enqueue the page assets.
+         *
+         * @since 2.0.0
+         */
+        public function enqueue_assets(): void
+        {
+        }
+        /**
+         * Render the page.
+         *
+         * @since 2.0.0
+         */
+        public function output(): void
+        {
+        }
+        /**
+         * Build the per-section view-model: completion state plus each item resolved for render.
+         *
+         * @since 2.0.0
+         *
+         * @return array<int, array>
+         */
+        private function view_sections(): array
+        {
+        }
+        /**
+         * Build a single item view-model. The payment gateway item becomes the Stripe hero when
+         * the integration is available, otherwise it renders as a normal item.
+         *
+         * @since 2.0.0
+         *
+         * @param array $item Item enriched with completion state.
+         *
+         * @return array
+         */
+        private function view_item(array $item): array
+        {
+        }
+        /**
+         * Resolve an item's CTAs to their renderable shapes, dropping the ones that resolve empty.
+         *
+         * @since 2.0.0
+         *
+         * @param array $item Item enriched with completion state.
+         *
+         * @return array<int, array>
+         */
+        private function resolve_ctas(array $item): array
+        {
+        }
+        /**
+         * Resolve a CTA to its renderable shape, expanding dynamic ones.
+         *
+         * @since 2.0.0
+         *
+         * @param array $cta CTA data, possibly a dynamic marker (`wpmailsmtp`, `wpconsent`,
+         *                   `captcha`, `activelayer`).
+         *
+         * @return array Renderable CTA data for the item-button template.
+         */
+        private function resolve_cta(array $cta): array
+        {
+        }
+        /**
+         * Build an item-button CTA for an in-place plugin install that reloads on success.
+         *
+         * Shared by the WP Mail SMTP and WPConsent checklist items: when the plugin is already
+         * active it links to the plugin's own setup screen; otherwise it installs or activates
+         * in place through the shared endpoint, then reloads so the row re-evaluates.
+         *
+         * @since 2.0.0
+         *
+         * @param string $file      Plugin main-file path (folder/file.php).
+         * @param string $install   Label when the plugin is absent.
+         * @param string $activate  Label when the plugin is installed but inactive.
+         * @param string $setup     Label when the plugin is already active.
+         * @param string $setup_url Setup screen URL used in the active state.
+         *
+         * @return array
+         */
+        private function plugin_item_cta(string $file, string $install, string $activate, string $setup, string $setup_url): array
+        {
+        }
+        /**
+         * Get the Stripe gateway tile data from the Payments empty state provider.
+         *
+         * @since 2.0.0
+         *
+         * @return array|null Gateway data, or null when the Stripe integration is unavailable.
+         */
+        private function get_stripe_gateway(): ?array
+        {
+        }
+        /**
+         * Resolve a "View All" footer URL.
+         *
+         * @since 2.0.0
+         *
+         * @param string $admin_path    The wp-admin path used on Pro and Elite.
+         * @param string $marketing_url Marketing URL used on the other tiers.
+         * @param string $utm_content   UTM content tag for the marketing URL.
+         *
+         * @return string
+         */
+        private function view_all_url(string $admin_path, string $marketing_url, string $utm_content): string
+        {
+        }
+    }
+    /**
+     * Promo sections model for the Setup Checklist.
+     *
+     * Owns the static promo catalog (features, per-tier integrations, recommended growth
+     * tools) and the logic that turns it into render-ready tiles and cards: license-tier
+     * selection, wizard personalization, and the one-click install/activate CTA that the
+     * checklist's item buttons share. {@see Page} renders what this returns.
+     *
+     * @since 2.0.0
+     */
+    class Promos
+    {
+        /**
+         * Plugin detector (installed/active status for recommended plugins).
+         *
+         * @since 2.0.0
+         *
+         * @var PluginDetector
+         */
+        private $plugin_detector;
+        /**
+         * Plugin catalog (resolves slugs to addon plugin files and display names).
+         *
+         * @since 2.0.0
+         *
+         * @var PluginCatalog
+         */
+        private $plugin_catalog;
+        /**
+         * Constructor.
+         *
+         * @since 2.0.0
+         *
+         * @param PluginDetector $plugin_detector Plugin detector.
+         * @param PluginCatalog  $plugin_catalog  Plugin catalog.
+         */
+        public function __construct(\WPForms\SetupWizard\Service\PluginDetector $plugin_detector, \WPForms\SetupWizard\Service\PluginCatalog $plugin_catalog)
+        {
+        }
+        /**
+         * Render-ready tiles for the "Take Your Forms to the Next Level" feature grid.
+         *
+         * @since 2.0.0
+         *
+         * @return array<int, array>
+         */
+        public function feature_tiles(): array
+        {
+        }
+        /**
+         * Render-ready cards for the integrations grid: tier-selected, personalized, and with
+         * each CTA link resolved.
+         *
+         * @since 2.0.0
+         *
+         * @return array<int, array>
+         */
+        public function integration_cards(): array
+        {
+        }
+        /**
+         * Render-ready tiles for the "Set Up Recommended Growth Tools" grid.
+         *
+         * @since 2.0.0
+         *
+         * @return array<int, array>
+         */
+        public function growth_tool_tiles(): array
+        {
+        }
+        /**
+         * Resolve the one-click install CTA for one or more plugins by their aggregate state.
+         *
+         * The install endpoint installs-or-activates and resolves addon-vs-plugin itself, so this
+         * builds a single CTA for any WordPress.org plugin or WPForms addon, addressed by basename
+         * ( comma-joined for a bundle ). An already-active set is a no-op "Installed" state. Shared
+         * with the checklist's item buttons (WP Mail SMTP, WPConsent).
+         *
+         * @since 2.0.0
+         *
+         * @param array $files Plugin main-file paths (folder/file.php).
+         *
+         * @return array Link parts: `text`, `action`, `plugin`, `external`, `installed`.
+         */
+        public function install_link(array $files): array
+        {
+        }
+        /**
+         * Whether the current license is Pro or Elite — the tiers that install addons in place.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public function is_pro_plus(): bool
+        {
+        }
+        /**
+         * Build the CTA link parts for a "Take Your Forms to the Next Level" feature tile.
+         *
+         * @since 2.0.0
+         *
+         * @param array  $feature     Feature tile (icon, title, description, optional slug).
+         * @param bool   $is_pro_plus Whether the license is Pro or Elite.
+         * @param string $upgrade_url Upgrade link target used on Lite.
+         *
+         * @return array Tile link parts (`link_text`, `link_url`, `link_action`, `link_plugin`, `link_external`).
+         */
+        private function feature_link(array $feature, bool $is_pro_plus, string $upgrade_url): array
+        {
+        }
+        /**
+         * Resolve a single integration entry to its CTA link: upgrade, in-place plugin install,
+         * or in-place addon install.
+         *
+         * @since 2.0.0
+         *
+         * @param array  $integration Integration entry.
+         * @param string $upgrade_url Upgrade link target (paid tiers).
+         *
+         * @return array
+         */
+        private function integration_link(array $integration, string $upgrade_url): array
+        {
+        }
+        /**
+         * Resolve the install CTA for one or more WPForms addons by slug.
+         *
+         * Resolves each slug to its addon plugin file ( an unknown slug bails to the Addons page
+         * rather than rendering a partial install ), then defers to {@see Promos::install_link()}.
+         * Installing in place needs the install capability; a user who lacks it is sent to the
+         * Addons page, while an already-active addon still shows its "Installed" state.
+         *
+         * @since 2.0.0
+         *
+         * @param array $slugs Addon slugs ( one, or several for a bundled feature tile ).
+         *
+         * @return array
+         */
+        private function addon_install_link(array $slugs): array
+        {
+        }
+        /**
+         * The "Install" CTA that opens the Addons page — the fallback used when an in-place
+         * install is unavailable (an unknown slug, or a user who cannot install plugins).
+         *
+         * @since 2.0.0
+         *
+         * @return array
+         */
+        private function addons_page_link(): array
+        {
+        }
+        /**
+         * Resolve an integration slug to its WPForms addon plugin file.
+         *
+         * @since 2.0.0
+         *
+         * @param string $slug Integration slug.
+         *
+         * @return string Plugin file, or empty string when the slug is not a known addon.
+         */
+        private function addon_plugin_file(string $slug): string
+        {
+        }
+        /**
+         * Build an integration grid entry.
+         *
+         * @since 2.0.0
+         *
+         * @param string $slug   Integration slug (also the icon stem: addon-icon-{slug}.png).
+         * @param string $name   Display name.
+         * @param string $tier   Badge to show: '' (none), 'free', 'plus', 'pro', or 'elite'.
+         * @param string $action The 'install' (included in the tier) or 'upgrade' (needs a higher tier).
+         *
+         * @return array
+         */
+        private function integration(string $slug, string $name, string $tier = '', string $action = 'install'): array
+        {
+        }
+        /**
+         * The Uncanny Automator entry — a free wordpress.org plugin installed in place.
+         *
+         * @since 2.0.0
+         *
+         * @return array
+         */
+        private function uncanny_automator_item(): array
+        {
+        }
+        /**
+         * The integrations shown in the promo grid for the current license tier.
+         *
+         * Lite and Basic share one list; Plus, Pro, and Elite each get their own,
+         * reflecting which integrations the tier already includes (Install) versus
+         * which require an upgrade.
+         *
+         * @since 2.0.0
+         *
+         * @return array<int, array>
+         */
+        private function get_integrations(): array
+        {
+        }
+        /**
+         * Personalize the integrations grid from what the user set up in the Setup Wizard.
+         *
+         * The Setup Wizard and this checklist render in separate requests and cannot share
+         * runtime state, so the wizard durably records every addon it installs in the
+         * SetupWizard::OPTION_INSTALLED_ADDONS option (written by
+         * StateManager::record_installed_addons()). This method is the consumer of that record:
+         * it reads the installed addons and reorders the grid so the integrations the user
+         * already set up lead, followed by the curated tier list, capped at 10 total.
+         * Wizard-installed integrations missing from the curated list are rebuilt from the addon
+         * catalog; feature-only addons and unknown plugins are skipped so they never leak into
+         * the promo grid.
+         *
+         * @since 2.0.0
+         *
+         * @param array $curated Curated integrations for the current license tier.
+         *
+         * @return array<int, array>
+         */
+        private function personalize_integrations(array $curated): array
+        {
+        }
+        /**
+         * Build a grid entry for a wizard-installed integration the current tier does not curate.
+         *
+         * @since 2.0.0
+         *
+         * @param string $file Plugin file.
+         *
+         * @return array
+         */
+        private function wizard_integration(string $file): array
+        {
+        }
+        /**
+         * Plugin files for every integration any tier lists — the set the grid recognises,
+         * so wizard-installed feature addons do not leak into the integrations promo.
+         *
+         * @since 2.0.0
+         *
+         * @return array<int, string>
+         */
+        private function known_integration_files(): array
+        {
+        }
+        /**
+         * Resolve an integration entry to its plugin file: an explicit basename (cross-product
+         * plugins like Uncanny Automator) or the WPForms addon file derived from the slug.
+         *
+         * @since 2.0.0
+         *
+         * @param array $integration Integration entry.
+         *
+         * @return string Plugin file, or empty string when it cannot be resolved.
+         */
+        private function integration_plugin_file(array $integration): string
+        {
+        }
+        /**
+         * Addon plugin files the user installed during the Setup Wizard (durable record).
+         *
+         * @since 2.0.0
+         *
+         * @return array<int, string>
+         */
+        private function wizard_installed_addons(): array
+        {
+        }
+        /**
+         * Resolve the license to a promo bucket: plus, pro, elite, or default (Lite + Basic).
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        private function get_license_tier(): string
+        {
+        }
+        /**
+         * Integrations for Lite and Basic (every paid integration is an upgrade).
+         *
+         * @since 2.0.0
+         *
+         * @return array<int, array>
+         */
+        private function get_default_integrations(): array
+        {
+        }
+        /**
+         * Integrations for the Plus tier.
+         *
+         * @since 2.0.0
+         *
+         * @return array<int, array>
+         */
+        private function get_plus_integrations(): array
+        {
+        }
+        /**
+         * Integrations for the Pro tier.
+         *
+         * @since 2.0.0
+         *
+         * @return array<int, array>
+         */
+        private function get_pro_integrations(): array
+        {
+        }
+        /**
+         * Integrations for the Elite tier (everything is included — all Install).
+         *
+         * @since 2.0.0
+         *
+         * @return array<int, array>
+         */
+        private function get_elite_integrations(): array
+        {
+        }
+    }
+    /**
+     * Setup Checklist orchestrator.
+     *
+     * This foundation wires the per-site {@see State} store and assembles the
+     * {@see Checklist} model (sections, items, completion, progress). The menu item,
+     * page rendering, promo grids, and AJAX endpoints are layered on in later parts.
+     *
+     * @since 2.0.0
+     */
+    class SetupChecklist
+    {
+        /**
+         * Checklist model: sections, items, completion, and progress.
+         *
+         * @since 2.0.0
+         *
+         * @var Checklist
+         */
+        private $checklist;
+        /**
+         * Per-site state store: dismissal, progress-at-dismissal, email-saved flag.
+         *
+         * @since 2.0.0
+         *
+         * @var State
+         */
+        private $state;
+        /**
+         * Admin menu item (sidebar entry + progress bar).
+         *
+         * @since 2.0.0
+         *
+         * @var Menu
+         */
+        private $menu;
+        /**
+         * Admin page controller (the checklist page route).
+         *
+         * @since 2.0.0
+         *
+         * @var Page
+         */
+        private $page;
+        /**
+         * AJAX endpoints (the footer dismiss action).
+         *
+         * @since 2.0.0
+         *
+         * @var Ajax
+         */
+        private $ajax;
+        /**
+         * Stripe Connect OAuth-return handler: routes back to the checklist after connect.
+         *
+         * @since 2.0.0
+         *
+         * @var StripeConnect
+         */
+        private $stripe_connect;
+        /**
+         * Initialize the orchestrator.
+         *
+         * Runs on the `init` hook (registered on both Lite and Pro in the Loader). Detection is
+         * intentionally lazy — constructing the model here is cheap, and the actual
+         * completion checks only run when a consumer reads from {@see Checklist}.
+         *
+         * @since 2.0.0
+         */
+        public function init(): void
+        {
+        }
+        /**
+         * Register hooks.
+         *
+         * @since 2.0.0
+         */
+        private function hooks(): void
+        {
+        }
+    }
+    /**
+     * Setup Checklist per-site state.
+     *
+     * Owns the single per-site option that persists what the checklist itself
+     * writes: whether it has been dismissed (and the progress percentage captured at
+     * that moment, for telemetry), and the one-way "the user saved the email
+     * settings" flag that the {@see CompletionDetector} reads for the email
+     * notifications item. Detected plugin/setting state is never stored here — that
+     * is recomputed live on each read.
+     *
+     * @since 2.0.0
+     */
+    class State
+    {
+        /**
+         * Option name storing the checklist state blob.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const OPTION = 'wpforms_setup_checklist';
+        /**
+         * Register hooks.
+         *
+         * @since 2.0.0
+         */
+        public function hooks(): void
+        {
+        }
+        /**
+         * Whether the checklist has been dismissed on this site.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public function is_dismissed(): bool
+        {
+        }
+        /**
+         * Dismiss the checklist, recording the progress percentage at dismissal.
+         *
+         * @since 2.0.0
+         *
+         * @param int $progress_percent Completion percentage at the moment of dismissal.
+         */
+        public function dismiss(int $progress_percent): void
+        {
+        }
+        /**
+         * Progress percentage captured when the checklist was dismissed.
+         *
+         * @since 2.0.0
+         *
+         * @return int
+         */
+        public function get_progress_at_dismissal(): int
+        {
+        }
+        /**
+         * Whether the user has saved the WPForms email settings at least once.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public function is_email_settings_saved(): bool
+        {
+        }
+        /**
+         * Flag email notifications as customized when the Email settings view is saved
+         * with an actual change.
+         *
+         * @since 2.0.0
+         *
+         * @param array $settings     Saved settings (positional placeholder; `$updated` is the signal read).
+         * @param bool  $updated      Whether the settings option actually changed.
+         * @param array $old_settings An old array of plugin settings.
+         *
+         * @noinspection PhpUnusedParameterInspection
+         */
+        public function maybe_flag_email_settings_saved(array $settings, bool $updated, array $old_settings): void
+        {
+        }
+        /**
+         * Persist the email-settings-saved flag once.
+         *
+         * @since 2.0.0
+         */
+        private function set_email_settings_saved(): void
+        {
+        }
+        /**
+         * Read the full state blob.
+         *
+         * @since 2.0.0
+         *
+         * @return array
+         */
+        private function get_all(): array
+        {
+        }
+        /**
+         * Persist the full state blob.
+         *
+         * @since 2.0.0
+         *
+         * @param array $state State blob.
+         */
+        private function update(array $state): void
+        {
+        }
+    }
+}
+namespace WPForms\SetupWizard {
+    /**
+     * Shared Stripe Connect OAuth-return handler.
+     *
+     * Owns the request-lifecycle pattern for connecting Stripe from a wp-admin screen
+     * and routing the user back to that screen instead of the payments settings page:
+     *
+     * 1. Listens for a feature-specific kickoff query argument.
+     * 2. Generates the real OAuth URL in wp-admin context and redirects to wpforms.com,
+     *    storing a per-user "pending" transient.
+     * 3. After OAuth completes, intercepts the Stripe addon's `wp_safe_redirect()` to the
+     *    settings page (via the `wp_redirect` filter) and reroutes to the feature's own
+     *    destination — keyed on the `stripe_connect=complete` return marker plus the
+     *    pending transient, so it never hijacks an unrelated connect (e.g. one started
+     *    from the settings page or by another feature).
+     *
+     * Subclasses supply only the kickoff argument, the pending-transient key, the Stripe
+     * mode, and the destination URL. The Setup Wizard and the Setup Checklist each extend
+     * this with their own values; the lifecycle itself lives here once.
+     *
+     * @since 2.0.0
+     */
+    abstract class AbstractStripeConnect
+    {
+        /**
+         * Query argument that triggers the OAuth kickoff for this feature.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        abstract protected function kickoff_arg(): string;
+        /**
+         * Transient key storing the pending OAuth state for this feature.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        abstract protected function pending_transient(): string;
+        /**
+         * Stripe mode ('live' or 'test') to connect in.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        abstract protected function get_stripe_mode(): string;
+        /**
+         * Destination URL to route to after a successful OAuth handshake.
+         *
+         * Called once the pending transient is consumed; subclasses may also set their
+         * own resume state here before returning the URL.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        abstract protected function get_destination_url(): string;
+        /**
+         * Register hooks.
+         *
+         * @since 2.0.0
+         */
+        public function hooks(): void
+        {
+        }
+        /**
+         * Register feature-specific hooks beyond the shared OAuth lifecycle.
+         *
+         * No-op by default; subclasses override to add their own (e.g. the wizard
+         * injects a forced step into its bridge payload).
+         *
+         * @since 2.0.0
+         */
+        protected function register_extra_hooks(): void
+        {
+        }
+        /**
+         * Handle the Stripe OAuth kickoff request.
+         *
+         * Generates the real OAuth URL in the proper session context and redirects to
+         * wpforms.com. Sets a pending transient so the post-OAuth redirect can route
+         * back to the originating feature.
+         *
+         * @since 2.0.0
+         */
+        public function handle_kickoff(): void
+        {
+        }
+        /**
+         * Intercept the plugin's redirect after successful Stripe OAuth.
+         *
+         * Catches the `wp_safe_redirect()` call in Connect::handle_oauth_handshake()
+         * and reroutes to the feature's destination instead of the Settings page.
+         *
+         * @since 2.0.0
+         *
+         * @param mixed $location Redirect URL.
+         *
+         * @return string
+         */
+        public function intercept_oauth_redirect($location): string
+        {
+        }
+        /**
+         * Handle post-OAuth fallback for cases where the plugin bails early.
+         *
+         * If the plugin's OAuth handler fails (e.g. wp_remote_post error) and never
+         * reaches its redirect, this fallback ensures the user still returns to the
+         * originating feature.
+         *
+         * @since 2.0.0
+         */
+        public function handle_post_oauth(): void
+        {
+        }
+        /**
+         * Determine whether the current request should reroute to this feature.
+         *
+         * Reroutes only on a genuine OAuth return (`stripe_connect=complete`) that this
+         * same user kicked off (matching pending transient) — never an unrelated connect.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        protected function should_reroute(): bool
+        {
+        }
+        /**
+         * Consume the pending transient and return the destination URL.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        protected function consume_pending_and_get_destination(): string
+        {
+        }
+    }
+}
+namespace WPForms\SetupChecklist {
+    /**
+     * Setup Checklist Stripe Connect OAuth handler.
+     *
+     * Routes the user back to the checklist after they connect Stripe from the
+     * payment card, instead of the payments settings page. The whole OAuth
+     * request-lifecycle is reused from {@see AbstractStripeConnect}; this class only
+     * supplies the checklist-specific kickoff argument, pending transient, Stripe
+     * mode, and destination. A checklist-specific transient keeps it isolated from
+     * the wizard's parallel handler, so the two never reroute each other's connects.
+     *
+     * @since 2.0.0
+     */
+    class StripeConnect extends \WPForms\SetupWizard\AbstractStripeConnect
+    {
+        /**
+         * Query argument that triggers the Stripe OAuth kickoff from the checklist.
+         *
+         * Public so {@see Page} can build the Connect button's kickoff URL against the
+         * same contract this handler listens for.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        public const KICKOFF_ARG = 'wpforms_checklist_stripe_kickoff';
+        /**
+         * Transient storing the pending Stripe OAuth state for checklist flows.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const TRANSIENT_PENDING = 'wpforms_setup_checklist_stripe_pending';
+        /**
+         * Query argument that triggers the Stripe OAuth kickoff.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        protected function kickoff_arg(): string
+        {
+        }
+        /**
+         * Transient key storing the pending OAuth state.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        protected function pending_transient(): string
+        {
+        }
+        /**
+         * Get the Stripe mode for checklist connections.
+         *
+         * Mirrors the payments settings: connect in whichever mode the site's Stripe
+         * test/live toggle is currently set to, so a user testing in test mode does not
+         * get pushed into a live connection.
+         *
+         * @since 2.0.0
+         *
+         * @return string 'live' or 'test'.
+         */
+        protected function get_stripe_mode(): string
+        {
+        }
+        /**
+         * Destination after a successful OAuth handshake: back to the checklist page.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        protected function get_destination_url(): string
+        {
+        }
+    }
+}
+namespace WPForms\SetupWizard {
+    /**
+     * Session token authentication for the Setup Wizard.
+     *
+     * Issues an HMAC-SHA512 token bound to the issuing admin's user ID. The token
+     * is stored in a 1-hour transient as `[ 'token' => string, 'user_id' => int ]`,
+     * refreshed on every authenticated request, and verified with `hash_equals()`.
+     * Validating a token returns the bound user ID so the REST layer can hydrate
+     * the cross-origin request via `wp_set_current_user()`.
+     *
+     * @since 2.0.0
+     */
+    class Auth
+    {
+        /**
+         * Transient name storing the active token payload.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const TRANSIENT_TOKEN = 'wpforms_setup_wizard_token';
+        /**
+         * Token lifetime in seconds.
+         *
+         * @since 2.0.0
+         *
+         * @var int
+         */
+        private const TTL = HOUR_IN_SECONDS;
+        /**
+         * Header name the SPA uses to send the token back.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const HEADER = 'X-WPForms-Setup-Wizard-Token';
+        /**
+         * Issue a token bound to the given user ID.
+         *
+         * Reuses the existing token when the stored transient still belongs to the
+         * same user, so a second launch in the same session yields a stable token.
+         *
+         * @since 2.0.0
+         *
+         * @return string The hashed token, raw value to send to the SPA.
+         */
+        public function generate_token(): string
+        {
+        }
+        /**
+         * Refresh the stored token's TTL without changing its value.
+         *
+         * @since 2.0.0
+         *
+         * @param array $stored_token Token currently in use.
+         */
+        private function refresh(array $stored_token): void
+        {
+        }
+        /**
+         * Validate a REST request and return the bound user ID.
+         *
+         * Reads the token from the request header, compares with `hash_equals()`,
+         * and returns the user ID if valid. Returns 0 on failure.
+         *
+         * @since 2.0.0
+         *
+         * @param WP_REST_Request $request REST request.
+         *
+         * @return int Bound user ID, or 0 if the token is missing/invalid.
+         */
+        public function validate_request(\WP_REST_Request $request): int
+        {
+        }
+        /**
+         * Revoke the active token (e.g., on wizard completion).
+         *
+         * @since 2.0.0
+         */
+        public function revoke(): void
+        {
+        }
+        /**
+         * Build the HMAC-SHA512 signature for a token payload.
+         *
+         * @since 2.0.0
+         *
+         * @param int    $user_id User the token is bound to.
+         * @param string $token   Per-request entropy.
+         *
+         * @return string
+         */
+        private function sign(int $user_id, string $token): string
+        {
+        }
+    }
+    /**
+     * POST bridge that hands off to the wizard SPA.
+     *
+     * Renders a tiny auto-submitting HTML form that POSTs `token`, `rest_url`,
+     * `exit_url`, and `restart_url` to the SPA's `startSession` endpoint. The POST
+     * keeps the token out of browser history and out of `Referer`/`X-Forwarded-*`
+     * headers, satisfies the CORS preflight rules expected by the SPA, and hides
+     * the payload from password managers and browser extensions that scan URLs.
+     *
+     * @since 2.0.0
+     */
+    class Bridge
+    {
+        /**
+         * Auth service used to issue the per-launch token.
+         *
+         * @since 2.0.0
+         *
+         * @var Auth
+         */
+        private $auth;
+        /**
+         * Constructor.
+         *
+         * @since 2.0.0
+         *
+         * @param Auth $auth Auth service.
+         */
+        public function __construct(\WPForms\SetupWizard\Auth $auth)
+        {
+        }
+        /**
+         * Render the auto-submit POST form.
+         *
+         * Called from the orchestrator after `maybe_launch()` decides the wizard
+         * should run for the current request. Sends the user's browser to the SPA
+         * with the wizard handshake payload. The caller is responsible for
+         * `exit`-ing after this method returns.
+         *
+         * @since 2.0.0
+         *
+         * @param array $payload Handshake payload sent to the SPA. Keys:
+         *                       `token`, `rest_url`, `exit_url`, `restart_url`.
+         */
+        public function render(array $payload): void
+        {
+        }
+        /**
+         * Build the handshake payload for the current user.
+         *
+         * @since 2.0.0
+         *
+         * @param string $exit_url    Where to send the user on close.
+         * @param string $restart_url Where to send the user on restart.
+         *
+         * @return array
+         */
+        public function build_payload(string $exit_url, string $restart_url): array
+        {
+        }
+        /**
+         * Whether the wizard SPA is reachable and healthy right now.
+         *
+         * Server-side preflight run before the handoff: a top-level form POST
+         * abandons the bridge page, so a client-side timeout cannot recover once the
+         * browser has navigated to a broken SPA. Probing the co-located health route
+         * here lets the orchestrator fall back to the Welcome page instead. The probe
+         * runs on every launch (which is infrequent) and is intentionally not cached,
+         * so a changed handoff URL or a down SPA is reflected immediately.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public function is_spa_reachable(): bool
+        {
+        }
+        /**
+         * Get the SPA health probe URL, co-located with the handoff endpoint.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        private function get_health_url(): string
+        {
+        }
+        /**
+         * Get the SPA endpoint that consumes the handshake POST.
+         *
+         * The `WPFORMS_SETUP_WIZARD_URL` constant overrides the default for local
+         * development against a sail-hosted Product API.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        private function get_handoff_url(): string
+        {
+        }
+    }
+    /**
+     * Failed plugin installs notice for the Setup Wizard.
+     *
+     * The wizard installs cross-product plugins and addons in the background. When
+     * an installation fails, the plugin files and their error messages are parked in a
+     * week-long transient here. After the wizard finishes, a dismissible admin notice
+     * naming the failed regular plugins, each linked to its WordPress.org repository
+     * page, is shown on WPForms admin pages (the form builder excluded) so the user
+     * can install them manually. The transient TTL lets the notice fade on its own
+     * after a week when it is never dismissed, and the next wizard launch clears it so
+     * a fresh run never inherits stale failures.
+     *
+     * Failed addons are handled by the Pro subclass, which adds its own dismissible
+     * notice (see {@see \WPForms\Pro\SetupWizard\FailedInstallsNotice}).
+     *
+     * @since 2.0.0
+     */
+    class FailedInstallsNotice
+    {
+        /**
+         * Transient storing the failed installations as `plugin file => error message`.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const TRANSIENT = 'wpforms_setup_wizard_failed_installs';
+        /**
+         * How long the failed installations survive before the notice disappears on its own.
+         *
+         * @since 2.0.0
+         *
+         * @var int
+         */
+        private const TTL = WEEK_IN_SECONDS;
+        /**
+         * Dismissible notice slug for failed regular plugins.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const NOTICE_SLUG_PLUGINS = 'setup_wizard_failed_installs_plugins';
+        /**
+         * Plugin catalog.
+         *
+         * @since 2.0.0
+         *
+         * @var PluginCatalog
+         */
+        protected $catalog;
+        /**
+         * Constructor.
+         *
+         * @since 2.0.0
+         */
+        public function __construct()
+        {
+        }
+        /**
+         * Record the outcome of an installation run.
+         *
+         * The SPA retries failed installations with follow-up requests, so the
+         * record is merged across runs rather than overwritten: plugins installed
+         * by this run retract their earlier failures, new failures are folded in
+         * keyed by plugin file (a repeated failure updates its message instead of
+         * duplicating), and every write resets the week-long TTL. The record is
+         * cleared once no failures remain.
+         *
+         * @since 2.0.0
+         *
+         * @param array $failed    Failed installs as `plugin file => error message`.
+         * @param array $installed Plugin files successfully installed by this run.
+         */
+        public function record(array $failed, array $installed): void
+        {
+        }
+        /**
+         * Clear the recorded failed installations.
+         *
+         * Called on every wizard launch so a new run starts from a clean slate.
+         *
+         * @since 2.0.0
+         */
+        public function clear(): void
+        {
+        }
+        /**
+         * Register the recorded failures as dismissible admin notices.
+         *
+         * Hooked on `admin_notices` ahead of WPForms\Admin\Notice::display(): defers to
+         * {@see self::display_notices()} only on WPForms admin pages other than the form
+         * builder, and only while failures are still parked in the transient. The
+         * transient is written mid-run by the installation step and cleared on the next
+         * launch, so its presence means the user has returned from a wizard run that
+         * left plugins uninstalled.
+         *
+         * @since 2.0.0
+         */
+        public function maybe_display(): void
+        {
+        }
+        /**
+         * Register the failure notices for an installation run.
+         *
+         * Names the failed regular plugins inline, each linked to its WordPress.org
+         * repository page. The Pro subclass extends this with a separate notice for
+         * the failed addons.
+         *
+         * @since 2.0.0
+         *
+         * @param array $failed Failed installs as `plugin file => error message`.
+         */
+        protected function display_notices(array $failed): void
+        {
+        }
+        /**
+         * Register a single warning notice, skipping an empty message.
+         *
+         * @since 2.0.0
+         *
+         * @param string $message Notice markup.
+         * @param string $slug    Dismissible notice slug.
+         */
+        protected function add_notice(string $message, string $slug): void
+        {
+        }
+        /**
+         * Read the recorded failed installations.
+         *
+         * @since 2.0.0
+         *
+         * @return array Failed installs as `plugin file => error message`.
+         */
+        private function get_failed(): array
+        {
+        }
+        /**
+         * Wrap a plugin label with a link to its WordPress.org repository page.
+         *
+         * Falls back to the plain label when the catalog resolves no repository URL.
+         *
+         * @since 2.0.0
+         *
+         * @param string $plugin Plugin file.
+         *
+         * @return string
+         */
+        private function plugin_link(string $plugin): string
+        {
+        }
+        /**
+         * Message listing the failed regular plugins.
+         *
+         * @since 2.0.0
+         *
+         * @param array $plugins Plugin labels linked to WordPress.org.
+         *
+         * @return string Empty string when no regular plugins failed.
+         */
+        private function plugins_message(array $plugins): string
+        {
+        }
+        /**
+         * Resolve a human-readable label for a failed install.
+         *
+         * Prefers the catalog name (keyed by plugin file), then the addon catalog
+         * name, and finally a humanized form of the identifier itself.
+         *
+         * @since 2.0.0
+         *
+         * @param string $plugin Plugin file or addon slug.
+         *
+         * @return string
+         */
+        protected function format_label(string $plugin): string
+        {
+        }
+    }
+}
+namespace WPForms\SetupWizard\Service {
+    /**
+     * Setup Wizard plugin catalog.
+     *
+     * Single source of truth for the plugins the wizard and Setup Checklist know about:
+     * the cross-product plugins offered on the cross-plugins step, the third-party
+     * form plugins it can import from, the recommended sister plugins promoted in the
+     * Setup Checklist growth-tools promo, and every WPForms addon resolved from the
+     * addons data handler rather than a hard-coded list. Every other collaborator
+     * reads its plugin
+     * metadata from here instead of repeating it — the detector needs the on-disk
+     * files, the installer needs the main file, and the failed-installs notice needs
+     * the display name and the wp.org link.
+     *
+     * Entries are keyed by the WordPress plugin file the SPA sends — the plugin
+     * basename `{directory}/{main-file.php}`, exactly as WordPress identifies a
+     * plugin. The key is the canonical WordPress.org (Lite) file: it is what the
+     * installer installs and what detection reports under.
+     *
+     * Entry shape:
+     * - `name` Display name shown to the user.
+     * - `pro`  Optional Pro variant file shipped under a separate folder. Used only
+     *          to fold Lite + Pro into a single detection result; never installed.
+     *
+     * @since 2.0.0
+     */
+    class PluginCatalog
+    {
+        /**
+         * Regular WordPress.org plugins WPForms installs in place ( everything that is not a
+         * WPForms addon ): the wizard's cross-product plugins plus the Setup Checklist's
+         * recommended growth tools and the ActiveLayer anti-spam plugin. Keyed by the canonical
+         * Lite file, whose directory is the wp.org slug the download URL derives from. Detection
+         * treats them uniformly, so the checklist's recommendations also surface in the wizard's
+         * cross-plugins detection.
+         *
+         * @since 2.0.0
+         *
+         * @var array<string, array{name: string, pro?: string}>
+         */
+        private const CROSS_PLUGINS = ['uncanny-automator/uncanny-automator.php' => ['name' => 'Uncanny Automator', 'pro' => 'uncanny-automator-pro/uncanny-automator-pro.php'], 'wp-mail-smtp/wp_mail_smtp.php' => ['name' => 'WP Mail SMTP', 'pro' => 'wp-mail-smtp-pro/wp_mail_smtp.php'], 'wpconsent-cookies-banner-privacy-suite/wpconsent.php' => ['name' => 'WPConsent'], 'all-in-one-seo-pack/all_in_one_seo_pack.php' => ['name' => 'AIOSEO'], 'universally-language-translation-multilingual-tool/universally.php' => ['name' => 'Universally'], 'duplicator/duplicator.php' => ['name' => 'Duplicator'], 'reviews-feed/sb-reviews.php' => ['name' => 'Reviews Feed'], 'optinmonster/optin-monster-wp-api.php' => ['name' => 'OptinMonster'], 'google-analytics-for-wordpress/googleanalytics.php' => ['name' => 'MonsterInsights'], 'activelayer-anti-spam-spam-protection-for-forms-comments/activelayer-anti-spam-spam-protection-for-forms-comments.php' => ['name' => 'ActiveLayer']];
+        /**
+         * Form plugins the wizard can import submissions/forms from.
+         *
+         * @since 2.0.0
+         *
+         * @var array<string, array{name: string, pro?: string}>
+         */
+        private const FORMS_PLUGINS = ['contact-form-7/wp-contact-form-7.php' => ['name' => 'Contact Form 7'], 'ninja-forms/ninja-forms.php' => ['name' => 'Ninja Forms'], 'pirate-forms/pirate-forms.php' => ['name' => 'Pirate Forms']];
+        /**
+         * Detection files for the cross-product plugins, keyed by plugin file.
+         *
+         * @since 2.0.0
+         *
+         * @return array<string, array<int, string>>
+         */
+        public function cross_plugin_files(): array
+        {
+        }
+        /**
+         * Detection files for the form plugins, keyed by plugin file.
+         *
+         * @since 2.0.0
+         *
+         * @return array<string, array<int, string>>
+         */
+        public function forms_plugin_files(): array
+        {
+        }
+        /**
+         * Resolve the plugin main file the installer should act on.
+         *
+         * The catalog key is the canonical WordPress.org (Lite) file, so a known
+         * plugin file resolves to itself; `wpforms_install_plugin()` derives the
+         * download URL and the already-installed check from it. Returning the empty
+         * string for unknown files keeps the installer pinned to the whitelist.
+         *
+         * @since 2.0.0
+         *
+         * @param string $plugin_file Plugin file the SPA sent.
+         *
+         * @return string Plugin main file, or empty string when the file is unknown.
+         */
+        public function main_file(string $plugin_file): string
+        {
+        }
+        /**
+         * Resolve the display name for a plugin file.
+         *
+         * @since 2.0.0
+         *
+         * @param string $plugin_file Plugin file the SPA sent.
+         *
+         * @return string Display name, or empty string when the file is unknown.
+         */
+        public function name(string $plugin_file): string
+        {
+        }
+        /**
+         * Whether a plugin file is a WPForms addon rather than a regular plugin.
+         *
+         * @since 2.0.0
+         *
+         * @param string $plugin_file Plugin file the SPA sent.
+         *
+         * @return bool
+         */
+        public function is_addon(string $plugin_file): bool
+        {
+        }
+        /**
+         * Resolve the WordPress.org repository URL for a regular plugin.
+         *
+         * The catalog key is the canonical WordPress.org file, so its directory is
+         * the wp.org slug. Addons and unknown files resolve to the empty string:
+         * they have no wp.org repository page.
+         *
+         * @since 2.0.0
+         *
+         * @param string $plugin_file Plugin file the SPA sent.
+         *
+         * @return string Repository URL, or empty string when there is none.
+         */
+        public function wporg_url(string $plugin_file): string
+        {
+        }
+        /**
+         * Build the plugin-file => detection-files map for a catalog group.
+         *
+         * Each entry detects against its own key plus the optional `pro` variant, so
+         * a single plugin file stands in for Lite + Pro builds shipped under
+         * different folders.
+         *
+         * @since 2.0.0
+         *
+         * @param array<string, array{name: string, pro?: string}> $plugins Catalog group.
+         *
+         * @return array<string, array<int, string>>
+         */
+        private function detection_files(array $plugins): array
+        {
+        }
+        /**
+         * Look up a single entry across both plugin groups.
+         *
+         * @since 2.0.0
+         *
+         * @param string $plugin_file Plugin file the SPA sent.
+         *
+         * @return array|null
+         */
+        private function entry(string $plugin_file): ?array
+        {
+        }
+        /**
+         * Resolve a WPForms addon entry from the addons data handler.
+         *
+         * Addons live in a `wpforms-{slug}` directory. The data handler is the source
+         * of truth for every addon, so the catalog asks it instead of duplicating the
+         * full list, which would drift. Only an addon's canonical main file
+         * (`{slug}/{slug}.php`) resolves, keeping the installer pinned to real addons.
+         *
+         * @since 2.0.0
+         *
+         * @param string $plugin_file Plugin file the SPA sent.
+         *
+         * @return array|null Entry with a `name`, or null when the file is not a known addon.
+         */
+        private function addon_entry(string $plugin_file): ?array
+        {
+        }
+    }
+    /**
+     * Setup Wizard plugin detector.
+     *
+     * Reports installed/active status for the two plugin groups the wizard cares
+     * about: cross-product plugins surfaced on the cross-plugins step (WP Mail
+     * SMTP, WPConsent) and form plugins the wizard can import from (Contact
+     * Form 7, Ninja Forms, Pirate Forms). The plugin-file map for
+     * both groups lives in `PluginCatalog`. Lite and Pro variants shipped under
+     * separate folders are folded under a single reporting plugin file: it counts
+     * as installed/active when any variant is.
+     *
+     * @since 2.0.0
+     */
+    class PluginDetector
+    {
+        /**
+         * Plugin catalog.
+         *
+         * @since 2.0.0
+         *
+         * @var PluginCatalog
+         */
+        private $catalog;
+        /**
+         * Constructor.
+         *
+         * @since 2.0.0
+         */
+        public function __construct()
+        {
+        }
+        /**
+         * Report installed/active status for cross-product plugins.
+         *
+         * @since 2.0.0
+         *
+         * @return array<string, array{installed: bool, active: bool}>
+         */
+        public function cross_plugins(): array
+        {
+        }
+        /**
+         * Report installed/active status for forms plugins.
+         *
+         * @since 2.0.0
+         *
+         * @return array<string, array{installed: bool, active: bool}>
+         */
+        public function forms_plugins(): array
+        {
+        }
+        /**
+         * Report installed/active status for a single arbitrary plugin file.
+         *
+         * Catalog-free counterpart to {@see PluginDetector::cross_plugins()} and
+         * {@see PluginDetector::forms_plugins()}: resolves any plugin file
+         * (`{directory}/{main-file.php}`) so single-plugin checks and recommended-plugin
+         * promos can share one detector instead of re-rolling `is_plugin_active()` and
+         * `file_exists()`.
+         *
+         * @since 2.0.0
+         *
+         * @param string $plugin_file Plugin file relative to `WP_PLUGIN_DIR`.
+         *
+         * @return array{installed: bool, active: bool}
+         */
+        public function status(string $plugin_file): array
+        {
+        }
+        /**
+         * Report installed/active status for a plugin-file => detection-files map.
+         *
+         * @since 2.0.0
+         *
+         * @param array<string, array<int, string>> $plugins Reporting plugin file => detection file paths.
+         *
+         * @return array<string, array{installed: bool, active: bool}>
+         */
+        private function inspect_plugins(array $plugins): array
+        {
+        }
+        /**
+         * Report installed/active status across all variants of a single slug.
+         *
+         * Returns `installed: true` if any path is on disk and `active: true` if
+         * any of those installed variants is active. This lets a single plugin file
+         * stand in for Lite and Pro builds shipped under different folders.
+         *
+         * @since 2.0.0
+         *
+         * @param array<int, string> $plugin_files Plugin files relative to `WP_PLUGIN_DIR`.
+         *
+         * @return array{installed: bool, active: bool}
+         */
+        private function inspect_plugin(array $plugin_files): array
+        {
+        }
+    }
+    /**
+     * Setup Wizard install gateway.
+     *
+     * Resolves each SPA plugin file against `PluginCatalog` and hands it to
+     * `wpforms_install_plugin()`, which downloads it from WordPress.org (or just
+     * activates it when already present) and activates it. The outcome is
+     * partitioned into installed/failed for the SPA.
+     *
+     * @since 2.0.0
+     */
+    class PluginInstaller
+    {
+        /**
+         * Plugin catalog.
+         *
+         * @since 2.0.0
+         *
+         * @var PluginCatalog
+         */
+        private $catalog;
+        /**
+         * Constructor.
+         *
+         * @since 2.0.0
+         */
+        public function __construct()
+        {
+        }
+        /**
+         * Install a list of plugin files and partition the outcome for the SPA.
+         *
+         * @since 2.0.0
+         *
+         * @param array $plugin_files Plugin files requested by the SPA.
+         *
+         * @return array {
+         *     Per-plugin install result keyed by the original SPA plugin file.
+         *
+         *     @type array $installed Plugin files installed (or already present) and activated.
+         *     @type array $failed    Plugin files that failed, plugin file => error message.
+         * }
+         */
+        public function install(array $plugin_files): array
+        {
+        }
+    }
+    /**
+     * Setup Wizard settings detector.
+     *
+     * Reports boolean customer-site flags: whether Lite Connect is enabled and whether each
+     * supported payment gateway (Stripe, PayPal Commerce, Square, and the Pro Authorize.Net
+     * addon) is connected for the current payment mode. The wizard's `/hydrate` uses the Lite Connect + Stripe flags; the
+     * setup checklist uses all gateways. Kept separate from `PluginDetector` so `StateManager`
+     * can compose detection collaborators without owning any detection logic itself.
+     *
+     * @since 2.0.0
+     */
+    class SettingsDetector
+    {
+        /**
+         * Whether Lite Connect is enabled on the WPForms Settings page.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public function is_lite_connect_enabled(): bool
+        {
+        }
+        /**
+         * Whether Stripe is configured for the current payment mode on this install.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public function is_stripe_configured(): bool
+        {
+        }
+        /**
+         * Whether PayPal Commerce is connected for the current payment mode.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public function is_paypal_commerce_configured(): bool
+        {
+        }
+        /**
+         * Whether Square is connected for the current payment mode.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public function is_square_configured(): bool
+        {
+        }
+        /**
+         * Whether Authorize.Net is connected for the current payment mode.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public function is_authorize_net_configured(): bool
+        {
+        }
+    }
+    /**
+     * Setup Wizard state manager.
+     *
+     * Single entry point the REST layer talks to. Composes the wizard's
+     * collaborators (`PluginInstaller` for installations, `PluginDetector`
+     * and `SettingsDetector` for live detection) and owns the canonical
+     * state stored in a WordPress transient:
+     * - `settings` is the detected customer-site context the SPA reads on `/hydrate`,
+     *   assembled from `SettingsDetector` (Lite Connect flag, Stripe configured).
+     * - `wizard_settings` is an opaque blob the SPA owns; the manager replaces it
+     *   wholesale on each `/update` and hands it back unchanged on the next hydrate.
+     *   On `/complete` the manager picks the keys listed in {@see self::WPFORMS_SETTINGS_KEYS}
+     *   out of `wizard_settings` — the SPA sends them under their exact
+     *   `wpforms_settings` key (e.g. `lite-connect-enabled`, `gdpr`) — and
+     *   `array_replace`s them into `wpforms_settings` without a per-key if-ladder.
+     *
+     * The hydrate payload is enriched with live `cross_plugins` and
+     * `forms_plugins` arrays from `PluginDetector` on every read.
+     *
+     * @since 2.0.0
+     */
+    class StateManager
+    {
+        /**
+         * Transient name storing the wizard state blob.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const TRANSIENT_STATE = 'wpforms_setup_wizard_state';
+        /**
+         * State lifetime in seconds.
+         *
+         * @since 2.0.0
+         *
+         * @var int
+         */
+        private const TTL = HOUR_IN_SECONDS;
+        /**
+         * `wpforms_settings` keys the SPA is allowed to mirror through `/update`.
+         *
+         * Keys are sent by the SPA verbatim and `array_replace`d into
+         * `wpforms_settings` — no per-key if-ladder. Any other payload keys land in
+         * the opaque `wizard_settings` blob.
+         *
+         * @since 2.0.0
+         *
+         * @var string[]
+         */
+        private const WPFORMS_SETTINGS_KEYS = ['lite-connect-enabled', 'gdpr'];
+        /**
+         * Plugin installer service.
+         *
+         * @since 2.0.0
+         *
+         * @var PluginInstaller
+         */
+        private $installer;
+        /**
+         * Plugin detector service.
+         *
+         * @since 2.0.0
+         *
+         * @var PluginDetector
+         */
+        private $plugin_detector;
+        /**
+         * Settings detector service.
+         *
+         * @since 2.0.0
+         *
+         * @var SettingsDetector
+         */
+        private $settings_detector;
+        /**
+         * Stripe Connect URL provider.
+         *
+         * @since 2.0.0
+         *
+         * @var StripeConnectUrl
+         */
+        private $stripe_connect;
+        /**
+         * Failed installations notice.
+         *
+         * @since 2.0.0
+         *
+         * @var FailedInstallsNotice
+         */
+        private $failed_installs_notice;
+        /**
+         * Constructor.
+         *
+         * @since 2.0.0
+         */
+        public function __construct()
+        {
+        }
+        /**
+         * Instantiate the service collaborators.
+         *
+         * @since 2.0.0
+         */
+        private function load_dependencies(): void
+        {
+        }
+        /**
+         * Get the Stripe Connect kickoff URL for the wizard.
+         *
+         * @since 2.0.0
+         *
+         * @return array{connect_url: string}|WP_Error
+         */
+        public function get_stripe_connect_url()
+        {
+        }
+        /**
+         * Read the full wizard state, initializing the transient on the first call.
+         *
+         * @since 2.0.0
+         *
+         * @return array
+         */
+        public function get_state(): array
+        {
+        }
+        /**
+         * Persist the full wizard state to the transient.
+         *
+         * @since 2.0.0
+         *
+         * @param array $state Full state blob (`settings` + `wizard_settings`).
+         */
+        public function save_state(array $state): void
+        {
+        }
+        /**
+         * Hydrate payload for the SPA's `/hydrate` call.
+         *
+         * Returns the persisted state augmented with live plugin-detection results,
+         * so the SPA always sees the current installed/active status of the
+         * cross-product plugins and the form plugins it can import from.
+         *
+         * @since 2.0.0
+         *
+         * @return array
+         */
+        public function get_hydrate_payload(): array
+        {
+        }
+        /**
+         * Replace the wizard_settings blob with the SPA's latest snapshot.
+         *
+         * The contents are intentionally opaque to the server: whatever the SPA
+         * sends becomes the new `wizard_settings`. Previous values are discarded.
+         * Any keys matching {@see self::WPFORMS_SETTINGS_KEYS} are mirrored into
+         * `wpforms_settings` on the same call so a user's step-level choice
+         * (e.g. Lite Connect on Welcome) persists even if they exit before
+         * reaching `/complete`. `apply_settings()` runs again on `/complete` as
+         * an idempotent safety net.
+         *
+         * @since 2.0.0
+         *
+         * @param array $wizard_settings Wizard-owned state to persist verbatim.
+         *
+         * @return array Refreshed full state.
+         */
+        public function save_wizard_settings(array $wizard_settings): array
+        {
+        }
+        /**
+         * Install queued plugins and fold the result into the wizard state.
+         *
+         * Runs the installer and stores the raw outcome under
+         * `wizard_settings.install_results` so the SPA can render success/failure UI
+         * on its next hydrate. Fresh installed/active status is reported by
+         * `PluginDetector` on the next `/hydrate` call.
+         *
+         * @since 2.0.0
+         *
+         * @param array $plugins Plugin files the SPA asked to install.
+         *
+         * @return array{installed: array, failed: array}
+         */
+        public function install_plugins(array $plugins): array
+        {
+        }
+        /**
+         * Durably record the addon plugin files installed during the wizard.
+         *
+         * @since 2.0.0
+         *
+         * @param array $installed Plugin files installed (or already present) and activated.
+         */
+        private function record_installed_addons(array $installed): void
+        {
+        }
+        /**
+         * Record the outcome of an installation run into the wizard state.
+         *
+         * @since 2.0.0
+         *
+         * @param array{installed: array, failed: array} $result Installer result payload.
+         */
+        private function apply_install_results(array $result): void
+        {
+        }
+        /**
+         * Finalize the wizard for a chosen outcome.
+         *
+         * Stub for now. The intended responsibility is to refresh the `settings`
+         * snapshot so any post-wizard read reflects the customer site after the
+         * installation queue ran (Stripe keys saved, Lite Connect toggled, etc.).
+         *
+         * @since 2.0.0
+         *
+         * @param string $outcome Final outcome: `build`, `import`, or `exit`.
+         */
+        public function complete(string $outcome): void
+        {
+        }
+        /**
+         * Mirror the wizard's chosen settings into `wpforms_settings`.
+         *
+         * The SPA sends option mirrors under their exact `wpforms_settings` keys
+         * (see {@see self::WPFORMS_SETTINGS_KEYS}). We pick those out of
+         * `wizard_settings`, `array_replace` them into the live settings, and let
+         * `wpforms_update_settings()` fire its filter chain — the Lite Connect
+         * integration uses that hook to stamp `lite-connect-enabled-since` on the
+         * first truthy transition. Idempotent: runs on every `/update` so a
+         * mid-wizard exit can't lose a confirmed choice, and again on `/complete`.
+         *
+         * @since 2.0.0
+         */
+        private function apply_settings(): void
+        {
+        }
+        /**
+         * Default state shape returned when the transient is empty.
+         *
+         * @since 2.0.0
+         *
+         * @return array
+         */
+        private function default_state(): array
+        {
+        }
+        /**
+         * Whether the site has at least one WPForms form, of any kind (built or imported).
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        private function has_forms(): bool
+        {
+        }
+        /**
+         * Detect the customer-site context exposed to the SPA.
+         *
+         * Protected so the Pro manager can enrich the snapshot with Pro-only keys.
+         *
+         * @since 2.0.0
+         *
+         * @return array
+         */
+        protected function detect_settings(): array
+        {
+        }
+    }
+    /**
+     * Setup Wizard Stripe Connect URL provider.
+     *
+     * Pure, request-lifecycle-free collaborator the REST layer depends on. Returns
+     * the kickoff URL the SPA sends the browser to; the actual OAuth URL generation
+     * and redirect handling live in the StripeConnect handler, which runs in the
+     * wp-admin context where the nonce is bound to the correct session.
+     *
+     * @since 2.0.0
+     */
+    class StripeConnectUrl
+    {
+        /**
+         * Query argument that triggers the Stripe OAuth kickoff.
+         *
+         * Shared contract between this service, which builds the kickoff URL, and
+         * the StripeConnect handler, which listens for it on `admin_init`.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        public const KICKOFF_ARG = 'wpforms_setup_wizard_stripe_kickoff';
+        /**
+         * Get the Stripe Connect URL for the wizard.
+         *
+         * Returns a kickoff URL rather than the OAuth URL directly. The kickoff URL
+         * defers OAuth URL generation to the wp-admin handler so the nonce is bound
+         * to the correct session context.
+         *
+         * @since 2.0.0
+         *
+         * @return array{connect_url: string}|WP_Error
+         */
+        public function get_connect_url()
+        {
+        }
+    }
+}
+namespace WPForms\SetupWizard {
+    /**
+     * Setup Wizard orchestrator.
+     *
+     * Registers the first-run entry point, REST init, and renders the POST bridge
+     * that hands off to the wizard SPA. Also handles manual `?wpforms_setup_wizard=1`
+     * re-entry and Lite-to-Pro relaunch with preserved state.
+     *
+     * @since 2.0.0
+     */
+    class SetupWizard
+    {
+        /**
+         * Query argument that triggers a manual wizard launch from any admin URL.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const QUERY_ARG = 'wpforms_setup_wizard';
+        /**
+         * Option name storing the plugin version present at first activation.
+         *
+         * Used as the single-write first-activation marker. `add_option()` returns
+         * true only on the very first activation; never expires.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const OPTION_INITIAL_VERSION = 'wpforms_setup_wizard_initial_version';
+        /**
+         * Transient name for the single-shot first-run signal (1h TTL).
+         *
+         * Public so the Welcome page fallback and the StateManager finalizer can
+         * read/clear the same signal.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        public const TRANSIENT_FIRST_RUN = 'wpforms_setup_wizard_first_run';
+        /**
+         * Option name marking the wizard as finished.
+         *
+         * Once set, the wizard never auto-launches again and the Welcome page no
+         * longer redirects to the getting-started screen.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        public const OPTION_COMPLETED = 'wpforms_setup_wizard_completed';
+        /**
+         * Option that durably records the addon plugin files installed during the wizard.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        public const OPTION_INSTALLED_ADDONS = 'wpforms_setup_wizard_installed_addons';
+        /**
+         * Bridge service.
+         *
+         * @since 2.0.0
+         *
+         * @var Bridge
+         */
+        private $bridge;
+        /**
+         * REST API.
+         *
+         * @since 2.0.0
+         *
+         * @var RestApi
+         */
+        private $rest_api;
+        /**
+         * Stripe Connect OAuth handler.
+         *
+         * @since 2.0.0
+         *
+         * @var StripeConnect
+         */
+        private $stripe_connect;
+        /**
+         * Failed installations notice.
+         *
+         * @since 2.0.0
+         *
+         * @var FailedInstallsNotice
+         */
+        private $failed_installs_notice;
+        /**
+         * Initialize the orchestrator.
+         *
+         * Wires services and hooks. The capability gate lives in `maybe_launch()`
+         * and in `RestApi::validate_request()` so this method can also fire on REST
+         * requests where no user is logged in yet.
+         *
+         * @since 2.0.0
+         */
+        public function init(): void
+        {
+        }
+        /**
+         * Load the wizard dependencies.
+         *
+         * Every dependency is resolved to its edition-specific implementation when
+         * one exists (see {@see self::load_dependency()}).
+         *
+         * @since 2.0.0
+         */
+        private function load_dependencies(): void
+        {
+        }
+        /**
+         * Instantiate a wizard class, preferring the edition-specific implementation.
+         *
+         * Pro tries `WPForms\Pro\{Class}`, Lite tries `WPForms\Lite\{Class}`, and
+         * both fall back to the shared `WPForms\{Class}` when no override exists.
+         *
+         * @since 2.0.0
+         *
+         * @param string $dependency Shared class name.
+         * @param array  $args       Constructor arguments.
+         *
+         * @return object
+         */
+        private function load_dependency(string $dependency, array $args = []): object
+        {
+        }
+        /**
+         * Register hooks.
+         *
+         * @since 2.0.0
+         */
+        private function hooks(): void
+        {
+        }
+        /**
+         * Maybe launch the wizard.
+         *
+         * Decides whether to render the POST bridge for the current admin request:
+         * - First-time activation within the 1h launch window.
+         * - Lite-to-Pro relaunch with preserved state.
+         * - Manual launch via the `wpforms_setup_wizard` query argument.
+         *
+         * Auto-launch is suppressed when the user lacks `manage_options`, in WP-CLI,
+         * in network admin, or in local environments (unless explicitly overridden).
+         *
+         * @since 2.0.0
+         */
+        public function maybe_launch(): void
+        {
+        }
+        /**
+         * Strip the manual launch query argument when the current user cannot launch the wizard.
+         *
+         * Acts as the CSRF mitigation for the URL-driven launch: an attacker who
+         * tricks an underprivileged user into following the link gets redirected
+         * to a clean URL without the parameter, so refreshing or sharing the page
+         * no longer attempts to launch the wizard.
+         *
+         * @since 2.0.0
+         */
+        private function strip_manual_launch_arg(): void
+        {
+        }
+        /**
+         * Record the first activation on the first admin pageview of a fresh install.
+         *
+         * The plugin's `init`-hooked services are not loaded during the activation
+         * request itself (the plugin is included inside `activate_plugin()` after
+         * `init` has fired), so first-run is detected lazily here instead of from the
+         * activation hook. A fresh install is one where the migrations base has not
+         * recorded a previous core version — the same signal the Welcome page uses to
+         * tell an initial install from an upgrade. `record_first_activation()` is a
+         * one-shot, so this is a cheap no-op on every subsequent request.
+         *
+         * @since 2.0.0
+         */
+        public function maybe_record_first_activation(): void
+        {
+        }
+        /**
+         * Mark the plugin's first activation.
+         *
+         * Sets `wpforms_setup_wizard_initial_version` and the `first_run` transient
+         * so the next admin pageview triggers the wizard.
+         *
+         * @since 2.0.0
+         *
+         * @return bool True if this call recorded the first activation.
+         */
+        private function record_first_activation(): bool
+        {
+        }
+        /**
+         * Whether the wizard should auto-launch on the current request.
+         *
+         * Side-effect-free predicate shared with the Welcome page so exactly one of
+         * {wizard, Welcome fallback} acts on a fresh install. Static because every
+         * input is global state (options, the first-run transient, the request
+         * context) — it carries no instance state and must be callable from the
+         * legacy Welcome class before the wizard renders.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        public static function will_auto_launch(): bool
+        {
+        }
+        /**
+         * Whether the current request is a context the wizard must never auto-launch in.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        private static function is_excluded_context(): bool
+        {
+        }
+        /**
+         * Whether the current admin page must not be interrupted by the wizard.
+         *
+         * Mirrors the Welcome page exclusions: launching from the block editor breaks
+         * the WPForms Gutenberg block, and the form builder is its own flow.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        private static function is_excluded_page(): bool
+        {
+        }
+        /**
+         * Determine whether the manual launch query argument is present and valid.
+         *
+         * @since 2.0.0
+         *
+         * @return bool
+         */
+        private function is_manual_launch_request(): bool
+        {
+        }
+        /**
+         * Get the URL the wizard should return the user to on exit.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        private function get_exit_url(): string
+        {
+        }
+        /**
+         * Get the URL the wizard should restart from.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        private function get_restart_url(): string
+        {
+        }
+        /**
+         * Get the URL that launches the wizard manually from any admin page.
+         *
+         * Shared with the Welcome page so its "Launch Setup Wizard" notice and the
+         * wizard agree on the query argument without duplicating its name.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        public static function get_manual_launch_url(): string
+        {
+        }
+        /**
+         * Get the Welcome getting-started URL used as the client-side fallback.
+         *
+         * If the external SPA never takes over after the handoff, the bridge sends
+         * the user here instead of leaving them on the spinner.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        private function get_fallback_url(): string
+        {
+        }
+    }
+    /**
+     * Setup Wizard Stripe Connect OAuth handler.
+     *
+     * Routes the user back into the wizard (resumed at the payments step) after
+     * connecting Stripe, instead of the payments settings page. The OAuth
+     * request-lifecycle — kickoff, redirect interception, pending-transient guard —
+     * lives in {@see AbstractStripeConnect}; this class supplies the wizard-specific
+     * kickoff argument, transient, Stripe mode, and destination, and additionally
+     * forces the wizard to resume on the payments step via the bridge payload.
+     *
+     * @since 2.0.0
+     */
+    class StripeConnect extends \WPForms\SetupWizard\AbstractStripeConnect
+    {
+        /**
+         * Transient storing the pending Stripe OAuth state for wizard flows.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const TRANSIENT_PENDING = 'wpforms_setup_wizard_stripe_pending';
+        /**
+         * Transient storing the forced step to resume after OAuth.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const TRANSIENT_FORCE_STEP = 'wpforms_setup_wizard_force_step';
+        /**
+         * Query argument used by the main wizard launcher.
+         *
+         * @since 2.0.0
+         *
+         * @var string
+         */
+        private const WIZARD_ARG = 'wpforms_setup_wizard';
+        /**
+         * Query argument that triggers the Stripe OAuth kickoff.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        protected function kickoff_arg(): string
+        {
+        }
+        /**
+         * Transient key storing the pending OAuth state.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        protected function pending_transient(): string
+        {
+        }
+        /**
+         * Get the Stripe mode for wizard connections.
+         *
+         * By default, the wizard connects in live mode. Define the constant
+         * `WPFORMS_SETUP_WIZARD_STRIPE_TEST_MODE` as true to use test mode
+         * for development/testing.
+         *
+         * @since 2.0.0
+         *
+         * @return string 'live' or 'test'.
+         */
+        protected function get_stripe_mode(): string
+        {
+        }
+        /**
+         * Register wizard-specific hooks beyond the shared OAuth lifecycle.
+         *
+         * @since 2.0.0
+         */
+        protected function register_extra_hooks(): void
+        {
+        }
+        /**
+         * Destination after a successful OAuth handshake: relaunch the wizard, resumed
+         * at the payments step.
+         *
+         * @since 2.0.0
+         *
+         * @return string
+         */
+        protected function get_destination_url(): string
+        {
+        }
+        /**
+         * Inject the forced step into the bridge payload.
+         *
+         * After Stripe OAuth completes, the wizard should resume at the payments
+         * step instead of the welcome screen.
+         *
+         * @since 2.0.0
+         *
+         * @param mixed $payload Bridge payload.
+         *
+         * @return array
+         */
+        public function inject_forced_step($payload): array
+        {
+        }
+    }
+}
+namespace WPForms {
     /**
      * Main WPForms class.
      *
@@ -6888,10 +11282,23 @@ namespace {
     {
     }
     /**
-     * Install addon.
+     * AJAX handler for installing a plugin or addon from the WPForms admin UI.
+     *
+     * Registered on the `wp_ajax_wpforms_install_addon` action and driven by the admin
+     * Addons / Settings pages. It expects a download URL already resolved by the page in
+     * `$_POST['plugin']` and the kind of package in `$_POST['type']` (`addon` by default, or
+     * `plugin`), then downloads, installs, and silently activates it, returning a JSON
+     * response for the browser.
+     *
+     * This is a browser endpoint, not a programmatic API: it does not resolve addon download
+     * URLs or check the license level itself. To install or upgrade a plugin or addon from
+     * PHP, call `wpforms_install_plugin()` instead, which resolves the addon URL and enforces
+     * the license level on your behalf.
      *
      * @since 1.0.0
      * @since 1.6.2.3 Updated the permissions checking.
+     *
+     * @see wpforms_install_plugin()
      *
      * @noinspection HtmlUnknownTarget
      */
@@ -6912,6 +11319,18 @@ namespace {
      * @since 1.0.2
      */
     function wpforms_register_widgets()
+    {
+    }
+    /**
+     * Determine whether the current request is a WordPress REST API request.
+     *
+     * Polyfill for the function introduced in WordPress 6.5.
+     *
+     * @since 2.0.0
+     *
+     * @return bool Whether the current request is a REST API request.
+     */
+    function wp_is_serving_rest_request()
     {
     }
     /**
@@ -6977,6 +11396,16 @@ namespace {
      * @return string
      */
     function wpforms_get_license_key(): string
+    {
+    }
+    /**
+     * Determine whether the current site has a valid (active, non-error) WPForms license.
+     *
+     * @since 2.0.0
+     *
+     * @return bool True when a license key is present and the license is not expired, disabled, or invalid.
+     */
+    function wpforms_is_license_valid(): bool
     {
     }
     /**
