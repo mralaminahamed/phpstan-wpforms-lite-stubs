@@ -3060,6 +3060,18 @@ namespace {
         {
         }
         /**
+         * Check if a value contains a smart tag token.
+         *
+         * @since 1.10.2
+         *
+         * @param mixed $value Value to check.
+         *
+         * @return bool
+         */
+        private function is_smart_tag_value($value)
+        {
+        }
+        /**
          * Sanitize restricted rules.
          *
          * @since 1.6.3
