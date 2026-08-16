@@ -6886,6 +6886,248 @@ namespace WPForms\Education\ActiveLayer {
         }
     }
 }
+namespace WPForms\Education\SugarCalendar {
+    /**
+     * Sugar Calendar plugin state and CTA-data helper.
+     *
+     * Single source of truth for Sugar Calendar education surfaces: detects
+     * install state, exposes the WordPress.org install zip URL, the
+     * post-install onboarding URL, and the data-* attribute payload the promo
+     * banner install handler understands. Mirrors WPForms\Education\WPConsent\Helper.
+     *
+     * @since 2.0.0.3
+     */
+    class Helper
+    {
+        /**
+         * Lite plugin folder slug.
+         *
+         * @since 2.0.0.3
+         */
+        const SLUG = 'sugar-calendar-lite';
+        /**
+         * Pro plugin folder slug.
+         *
+         * @since 2.0.0.3
+         */
+        const PRO_SLUG = 'sugar-calendar';
+        /**
+         * Canonical WordPress.org zip download URL.
+         *
+         * @since 2.0.0.3
+         */
+        const INSTALL_ZIP_URL = 'https://downloads.wordpress.org/plugin/sugar-calendar-lite.zip';
+        /**
+         * WordPress.org plugin page URL.
+         *
+         * @since 2.0.0.3
+         */
+        const WPORG_URL = 'https://wordpress.org/plugins/sugar-calendar-lite/';
+        /**
+         * Onboarding (Getting Started) admin page slug.
+         *
+         * @since 2.0.0.3
+         */
+        const ONBOARDING_PAGE = 'sugar-calendar-getting-started';
+        /**
+         * Form templates categories targeted by the Sugar Calendar promo banners.
+         *
+         * @since 2.0.0.3
+         */
+        const TEMPLATES_CATEGORIES = ['event-planning', 'registrations'];
+        /**
+         * Cached resolved plugin basename.
+         *
+         * @since 2.0.0.3
+         *
+         * @var string|null
+         */
+        private static $basename = null;
+        /**
+         * Resolve the installed Sugar Calendar basename (lite or pro), '' if absent.
+         *
+         * @since 2.0.0.3
+         *
+         * @return string
+         */
+        private static function get_basename(): string
+        {
+        }
+        /**
+         * Whether a Sugar Calendar plugin folder (Lite or Pro) is present.
+         *
+         * @since 2.0.0.3
+         *
+         * @param bool $refresh Whether to resolve the basename again, for callers that changed
+         *                      the installed plugins in the current request.
+         *
+         * @return bool
+         */
+        public static function is_installed(bool $refresh = false): bool
+        {
+        }
+        /**
+         * Onboarding wizard URL.
+         *
+         * @since 2.0.0.3
+         *
+         * @return string
+         */
+        public static function get_setup_url(): string
+        {
+        }
+        /**
+         * Data-* payload for the promo banner install button.
+         *
+         * Only the install state is covered: the banners never render once the
+         * plugin is installed, so there is nothing to activate from them.
+         *
+         * @since 2.0.0.3
+         *
+         * @return array
+         */
+        public static function get_install_button_data(): array
+        {
+        }
+    }
+    /**
+     * Sugar Calendar install attribution and activation-redirect suppression.
+     *
+     * Both options are consumed by the Sugar Calendar plugin itself (see its
+     * Admin\Area::OPTION_REDIRECT and source tracking): the redirect flag must
+     * exist BEFORE activate_plugin() runs inside the wpforms_install_addon AJAX
+     * request, and the source option is written on the wpforms_plugin_activated
+     * hook fired after activation (includes/admin/ajax-actions.php).
+     *
+     * @since 2.0.0.3
+     */
+    class InstallTracker
+    {
+        /**
+         * Sugar Calendar option key — install source.
+         *
+         * @since 2.0.0.3
+         */
+        const SOURCE_OPTION = 'sugar_calendar_source';
+        /**
+         * Sugar Calendar option key — suppress the post-activation setup wizard redirect.
+         *
+         * @since 2.0.0.3
+         */
+        const PREVENT_REDIRECT_OPTION = 'sugar_calendar_prevent_redirect';
+        /**
+         * Own option key — marks the redirect flag as written by us.
+         *
+         * @since 2.0.0.3
+         */
+        const OWN_REDIRECT_OPTION = 'wpforms_sugar_calendar_prevent_redirect';
+        /**
+         * Whether the current request is a Sugar Calendar install started from WPForms.
+         *
+         * @since 2.0.0.3
+         *
+         * @var bool
+         */
+        private $is_own_install = false;
+        /**
+         * Whether this request created the redirect flag.
+         *
+         * @since 2.0.0.3
+         *
+         * @var bool
+         */
+        private $is_redirect_prevented = false;
+        /**
+         * Whether Sugar Calendar was activated in this request.
+         *
+         * @since 2.0.0.3
+         *
+         * @var bool
+         */
+        private $is_activated = false;
+        /**
+         * Init.
+         *
+         * @since 2.0.0.3
+         */
+        public function init()
+        {
+        }
+        /**
+         * Register hooks.
+         *
+         * @since 2.0.0.3
+         */
+        private function hooks()
+        {
+        }
+        /**
+         * Mark the current AJAX request as our own Sugar Calendar install.
+         *
+         * Only arms the redirect suppression: the option itself is written once the files
+         * are in place, so a failed download or unzip does not leave the flag behind and
+         * silently break the wizard of a later manual install.
+         *
+         * @since 2.0.0.3
+         */
+        public function maybe_watch_install()
+        {
+        }
+        /**
+         * Suppress the Sugar Calendar setup wizard redirect once the plugin files are installed.
+         *
+         * Runs inside PluginSilentUpgrader::run(), after the package is installed and before
+         * the AJAX handler activates the plugin. Limited to our own request, so a manual
+         * install from the Plugins page keeps its welcome screen.
+         *
+         * @since 2.0.0.3
+         *
+         * @param WP_Upgrader $upgrader   Upgrader instance.
+         * @param array       $hook_extra Extra arguments passed to hooked filters.
+         */
+        public function maybe_prevent_redirect($upgrader, $hook_extra)
+        {
+        }
+        /**
+         * Record WPForms as the install source when Sugar Calendar Lite is activated.
+         *
+         * @since 2.0.0.3
+         *
+         * @param string $plugin_basename Path to the activated plugin file relative to the plugins directory.
+         */
+        public function maybe_record_source($plugin_basename)
+        {
+        }
+        /**
+         * Remove the redirect flag when our install never reached activation.
+         *
+         * The flag is written before activate_plugin() because Sugar Calendar reads it while
+         * activating, but the request can still end without activation: a WP_Error from
+         * activate_plugin(), or a user who may install plugins but not activate them. Leaving
+         * the flag behind would silently skip the wizard of a later manual activation.
+         *
+         * @since 2.0.0.3
+         */
+        public function maybe_revert_prevent_redirect(): void
+        {
+        }
+        /**
+         * Drop our redirect flag when Sugar Calendar is deleted.
+         *
+         * Sugar Calendar has no uninstall routine and treats the option as a permanent opt-out,
+         * so the flag we wrote for one install would keep suppressing the setup wizard of any
+         * later manual install. A flag stored by somebody else carries no ownership marker and stays.
+         *
+         * @since 2.0.0.3
+         *
+         * @param string $plugin_file Path to the deleted plugin file relative to the plugins directory.
+         * @param bool   $deleted     Whether the deletion succeeded.
+         */
+        public function maybe_clean_prevent_redirect($plugin_file, $deleted = true): void
+        {
+        }
+    }
+}
 namespace WPForms\Education\WPConsent {
     /**
      * WPConsent plugin state and CTA-data helper.
@@ -7597,6 +7839,204 @@ namespace WPForms\Lite\SetupWizard {
          * @return bool
          */
         private function is_pro_installed(): bool
+        {
+        }
+    }
+}
+namespace WPForms\SetupWizard {
+    /**
+     * Setup Wizard launch screen.
+     *
+     * The seam `SetupWizard::maybe_launch()` delegates the launch tail to. The
+     * base implementation keeps the historical behavior: preflight the SPA and
+     * either redirect to the Welcome fallback or render the auto-POST bridge.
+     * The Lite override renders the local Welcome screen instead (the wizard's
+     * first screen must live on the WP site, see #18533).
+     *
+     * @since 2.0.0.3
+     */
+    class Screen
+    {
+        /**
+         * Bridge service.
+         *
+         * @since 2.0.0.3
+         *
+         * @var Bridge
+         */
+        protected $bridge;
+        /**
+         * State manager service (edition-resolved).
+         *
+         * Unused by the base flow; stored because the constructor is shared with
+         * the Lite override, which persists the Welcome consent through it.
+         *
+         * @since 2.0.0.3
+         *
+         * @var StateManager
+         */
+        protected $state_manager;
+        /**
+         * Constructor.
+         *
+         * @since 2.0.0.3
+         *
+         * @param Bridge       $bridge        Bridge service.
+         * @param StateManager $state_manager State manager service.
+         */
+        public function __construct(\WPForms\SetupWizard\Bridge $bridge, \WPForms\SetupWizard\Service\StateManager $state_manager)
+        {
+        }
+        /**
+         * Register hooks.
+         *
+         * The base flow has none; the Lite override registers its AJAX endpoint.
+         *
+         * @since 2.0.0.3
+         */
+        public function hooks(): void
+        {
+        }
+        /**
+         * Launch the wizard for the current request.
+         *
+         * Never exits; `SetupWizard::maybe_launch()` exits after this returns.
+         *
+         * @since 2.0.0.3
+         *
+         * @return bool Whether a real launch happened (as opposed to a fallback redirect).
+         */
+        public function launch(): bool
+        {
+        }
+        /**
+         * Whether the current launch is a mid-wizard re-entry rather than a first launch.
+         *
+         * The Stripe OAuth round-trip returns the user to wp-admin with the manual
+         * launch argument and a forced-step transient; such a launch must resume
+         * in the SPA, not restart at the first screen.
+         *
+         * @since 2.0.0.3
+         *
+         * @return bool
+         */
+        protected function is_resume_request(): bool
+        {
+        }
+        /**
+         * Get the URL the wizard should return the user to on exit.
+         *
+         * @since 2.0.0.3
+         *
+         * @return string
+         */
+        protected function get_exit_url(): string
+        {
+        }
+        /**
+         * Get the URL the wizard should restart from.
+         *
+         * @since 2.0.0.3
+         *
+         * @return string
+         */
+        protected function get_restart_url(): string
+        {
+        }
+        /**
+         * Get the Welcome getting-started URL used as the launch fallback.
+         *
+         * @since 2.0.0.3
+         *
+         * @return string
+         */
+        private function get_fallback_url(): string
+        {
+        }
+    }
+}
+namespace WPForms\Lite\SetupWizard {
+    /**
+     * Setup Wizard launch screen (Lite).
+     *
+     * Renders the Welcome screen locally instead of handing off to the SPA
+     * sight-unseen: the first screen must live on the WP site (#18533). The
+     * consent is persisted through the same StateManager path the SPA's
+     * `/update` uses, so the mirror into `wpforms_settings` (and the consent
+     * timestamp stamping) stays identical. The handoff happens on the CTA via
+     * AJAX, carrying the `first_screen_completed` flag the SPA uses to skip its
+     * own welcome.
+     *
+     * @since 2.0.0.3
+     */
+    class Screen extends \WPForms\SetupWizard\Screen
+    {
+        /**
+         * Nonce action for the first-screen AJAX endpoint.
+         *
+         * @since 2.0.0.3
+         *
+         * @var string
+         */
+        private const NONCE_ACTION = 'wpforms_setup_wizard_screen';
+        /**
+         * Register hooks.
+         *
+         * @since 2.0.0.3
+         */
+        public function hooks(): void
+        {
+        }
+        /**
+         * Render the local Welcome document instead of the bridge handoff.
+         *
+         * No SPA preflight here: the local screen always renders, and
+         * reachability is checked at CTA time by `handle_update()`, which surfaces
+         * an inline error instead of a redirect.
+         *
+         * @since 2.0.0.3
+         *
+         * @return bool Whether a real launch happened (as opposed to a fallback redirect).
+         */
+        public function launch(): bool
+        {
+        }
+        /**
+         * `wp_ajax` handler: save the Lite Connect consent and return the handoff data.
+         *
+         * @since 2.0.0.3
+         */
+        public function handle_update(): void
+        {
+        }
+        /**
+         * Render the Welcome view.
+         *
+         * @since 2.0.0.3
+         *
+         * @return string
+         */
+        private function get_view(): string
+        {
+        }
+        /**
+         * JS configuration printed into the shell as JSON.
+         *
+         * @since 2.0.0.3
+         *
+         * @return array
+         */
+        private function get_js_config(): array
+        {
+        }
+        /**
+         * Compiled asset URLs for the shell template.
+         *
+         * @since 2.0.0.3
+         *
+         * @return array{css: string[], js: string[]}
+         */
+        private function get_assets(): array
         {
         }
     }
@@ -9476,6 +9916,17 @@ namespace WPForms\SetupWizard {
         {
         }
         /**
+         * Send the security headers shared by the wizard's standalone documents.
+         *
+         * Used by both the bridge handoff page and the Lite Welcome screen, so a
+         * future hardening pass only needs to change this one place.
+         *
+         * @since 2.0.0.3
+         */
+        public static function send_standalone_document_headers(): void
+        {
+        }
+        /**
          * Build the handshake payload for the current user.
          *
          * @since 2.0.0
@@ -9486,6 +9937,24 @@ namespace WPForms\SetupWizard {
          * @return array
          */
         public function build_payload(string $exit_url, string $restart_url): array
+        {
+        }
+        /**
+         * Get the handoff form data for a client-side submit.
+         *
+         * The Lite Welcome screen POSTs the handshake from JS after its AJAX
+         * round-trip, so it needs the form action and payload rather than a
+         * rendered document.
+         *
+         * @since 2.0.0.3
+         *
+         * @param string $exit_url    Where to send the user on close.
+         * @param string $restart_url Where to send the user on restart.
+         * @param array  $extra       Extra handshake fields merged over the payload.
+         *
+         * @return array{action: string, payload: array}
+         */
+        public function get_handoff_data(string $exit_url, string $restart_url, array $extra = []): array
         {
         }
         /**
@@ -10024,6 +10493,22 @@ namespace WPForms\SetupWizard\Service {
         public function install(array $plugin_files): array
         {
         }
+        /**
+         * Suppress a freshly activated cross-plugin's own "just activated" redirect.
+         *
+         * A handful of cross-plugins arm their own onboarding redirect on
+         * activation and check it on `admin_init` at a priority earlier than the
+         * wizard's own launch hook (`PHP_INT_MAX`), hijacking the request back to
+         * their own wizard instead of ours when the user navigates back to the
+         * Setup Wizard.
+         *
+         * @since 2.0.0.3
+         *
+         * @param string $plugin_file Plugin file just installed and activated.
+         */
+        private function suppress_activation_redirect(string $plugin_file): void
+        {
+        }
     }
     /**
      * Setup Wizard settings detector.
@@ -10086,6 +10571,16 @@ namespace WPForms\SetupWizard\Service {
          * @return bool
          */
         public function is_authorize_net_configured(): bool
+        {
+        }
+        /**
+         * Whether Mercado Pago is connected for the current payment mode.
+         *
+         * @since 2.0.0.3
+         *
+         * @return bool
+         */
+        public function is_mercado_pago_configured(): bool
         {
         }
     }
@@ -10418,7 +10913,7 @@ namespace WPForms\SetupWizard {
          *
          * @var string
          */
-        private const QUERY_ARG = 'wpforms_setup_wizard';
+        public const QUERY_ARG = 'wpforms_setup_wizard';
         /**
          * Option name storing the plugin version present at first activation.
          *
@@ -10505,6 +11000,14 @@ namespace WPForms\SetupWizard {
          * @var FailedInstallsNotice
          */
         private $failed_installs_notice;
+        /**
+         * Launch screen.
+         *
+         * @since 2.0.0.3
+         *
+         * @var Screen
+         */
+        private $screen;
         /**
          * Initialize the orchestrator.
          *
@@ -10688,26 +11191,6 @@ namespace WPForms\SetupWizard {
         {
         }
         /**
-         * Get the URL the wizard should return the user to on exit.
-         *
-         * @since 2.0.0
-         *
-         * @return string
-         */
-        private function get_exit_url(): string
-        {
-        }
-        /**
-         * Get the URL the wizard should restart from.
-         *
-         * @since 2.0.0
-         *
-         * @return string
-         */
-        private function get_restart_url(): string
-        {
-        }
-        /**
          * Get the URL that launches the wizard manually from any admin page.
          *
          * Shared with the Welcome page so its "Launch Setup Wizard" notice and the
@@ -10718,19 +11201,6 @@ namespace WPForms\SetupWizard {
          * @return string
          */
         public static function get_manual_launch_url(): string
-        {
-        }
-        /**
-         * Get the Welcome getting-started URL used as the client-side fallback.
-         *
-         * If the external SPA never takes over after the handoff, the bridge sends
-         * the user here instead of leaving them on the spinner.
-         *
-         * @since 2.0.0
-         *
-         * @return string
-         */
-        private function get_fallback_url(): string
         {
         }
     }
@@ -10759,11 +11229,14 @@ namespace WPForms\SetupWizard {
         /**
          * Transient storing the forced step to resume after OAuth.
          *
+         * Public so the launch screen can consult it to distinguish a mid-wizard
+         * resume (Stripe OAuth return) from a first launch.
+         *
          * @since 2.0.0
          *
          * @var string
          */
-        private const TRANSIENT_FORCE_STEP = 'wpforms_setup_wizard_force_step';
+        public const TRANSIENT_FORCE_STEP = 'wpforms_setup_wizard_force_step';
         /**
          * Query argument used by the main wizard launcher.
          *
@@ -11525,6 +11998,40 @@ namespace {
     {
     }
     /**
+     * Determine whether the current user is entitled to view forms.
+     *
+     * The capability is enforced in Pro only, where Access Controls can grant it. In Lite every
+     * capability check collapses to manage_options, which would leave editors and authors without
+     * a form to embed at all.
+     *
+     * @since 2.0.0.3
+     *
+     * @return bool
+     */
+    function wpforms_current_user_can_view_forms(): bool
+    {
+    }
+    /**
+     * Add the author restriction the current user's view capabilities imply to form query arguments.
+     *
+     * Page builders assemble their form list from an editor preview, which is a frontend request, and
+     * from admin-ajax, whose classification depends on the request's HTTP referer. The Pro owner-scoping
+     * filter ( wpforms_get_multiple_forms_args ) is not registered in either context, so a caller there
+     * scopes the query itself instead of relying on the filter.
+     *
+     * Callers are expected to have consulted wpforms_current_user_can_view_forms() first. A user holding
+     * neither half of the view_forms category gets no restriction from this function.
+     *
+     * @since 2.0.0.3
+     *
+     * @param array $args Form query arguments to add the author restriction to.
+     *
+     * @return array
+     */
+    function wpforms_get_viewable_forms_args(array $args = []): array
+    {
+    }
+    /**
      * Search for posts editable by the user.
      *
      * @since 1.7.9
@@ -12080,6 +12587,105 @@ namespace {
      * @return string
      */
     function wpforms_esc_unselected_choices($formatted_field)
+    {
+    }
+    /**
+     * Sanitize HTML produced for an entry field value before it is displayed.
+     *
+     * Entry surfaces pass the value through the `wpforms_html_field_value` filter, whose callbacks may
+     * return markup built from stored submission data. Sanitize on output, mirroring the entry
+     * single-View screen, so event-handler attributes and <script> cannot survive to the browser.
+     *
+     * Callers that render a field value known to be built as an iframe by the plugin itself pass
+     * `$is_iframe_allowed`, which widens the allowlist for that single call only.
+     * Use wpforms_is_entry_field_value_iframe_allowed() to decide, so the allowance is granted per
+     * field rather than per screen.
+     *
+     * @since 2.0.0.3
+     *
+     * @param string $value             Field value HTML.
+     * @param bool   $is_iframe_allowed Whether the iframe tag is allowed in the value.
+     *
+     * @return string
+     */
+    function wpforms_esc_entry_field_value($value, bool $is_iframe_allowed = \false): string
+    {
+    }
+    /**
+     * Add the `data-src` attribute to the list of attributes kses validates as a URI.
+     *
+     * Makes kses run wp_kses_bad_protocol() on `data-src`, stripping `javascript:` and `data:` URIs.
+     *
+     * @since 2.0.0.3
+     *
+     * @param array|mixed $uri_attributes List of attributes treated as URIs by kses.
+     *
+     * @return array
+     */
+    function wpforms_add_data_src_uri_attribute($uri_attributes): array
+    {
+    }
+    /**
+     * Neutralize all HTML tags in a value by entity-encoding it.
+     *
+     * Neither half of this does the job alone. Wp_strip_all_tags() relies on strip_tags(), which leaves a
+     * tag intact when whitespace follows the opening bracket: `< iframe data-src="https://evil.test">`
+     * passes through untouched and can then be parsed back into a real tag by a later kses call. Escaping
+     * with esc_html() alone closes that hole, but it also stops removing genuine markup, so a submitted
+     * `<b>hi</b>` reaches the screen as visible `<b>hi</b>` rather than `hi`, including on the front-end
+     * Entry Preview.
+     *
+     * Running both in this order gives each half the case it handles well: strip_tags() deletes what really
+     * parses as a tag (and wp_strip_all_tags() drops `<script>`/`<style>` contents with it), then esc_html()
+     * makes the leftovers inert. A spaced-out fake tag therefore survives as text instead of becoming markup,
+     * while legitimate bare-angle-bracket content such as `5 < 10 and 20 > 15` still round-trips unchanged —
+     * unlike wp_kses() with an empty allowlist, which matches any `<...>` span against its tag grammar
+     * (accepting a bare digit run like `10` as a tag name) and silently destroys it to `5  15`.
+     *
+     * The (string) cast is required because several call sites may pass null or an array element.
+     * Callers that hand the result to another escaper must make sure it does not re-encode the entities
+     * produced here.
+     *
+     * @since 2.0.0.3
+     *
+     * @param mixed $value Value to neutralize.
+     *
+     * @return string
+     */
+    function wpforms_neutralize_html_tags($value): string
+    {
+    }
+    /**
+     * Determine whether an entry field value may legitimately contain an iframe.
+     *
+     * Only the Rich Text and Geolocation Map values are rendered as an iframe, and the plugin builds
+     * that markup itself from a URL it escapes. Every other field value is stored submission data, so
+     * granting the allowance per field instead of per screen keeps a stored iframe from surviving to the
+     * entry screens, where the field-value script copies `data-src` into `src`.
+     *
+     * @since 2.0.0.3
+     *
+     * @param array $field Entry field data.
+     *
+     * @return bool
+     */
+    function wpforms_is_entry_field_value_iframe_allowed(array $field): bool
+    {
+    }
+    /**
+     * Allow additional tags for the entry field value sanitization.
+     *
+     * The `data-src` attribute is safe to allow only because the sink URL-validates it: the calling
+     * context registers wpforms_add_data_src_uri_attribute() so kses rejects unsafe protocols in it.
+     *
+     * @since 2.0.0.3
+     *
+     * @param array|mixed $tags    List of allowed HTML.
+     * @param string      $context Context name.
+     *
+     * @return array
+     */
+    function wpforms_get_allowed_html_tags_for_entry_field_value($tags, string $context): array
     {
     }
     /**
