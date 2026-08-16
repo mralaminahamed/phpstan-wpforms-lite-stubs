@@ -1,8 +1,8 @@
 <?php
 /**
- * Generated stub declarations for WPForms.
+ * Generated stub declarations for WPForms Lite.
  * @see https://wpforms.com
- * @see https://github.com/mralaminahamed/phpstan-wpforms-stubs
+ * @see https://github.com/mralaminahamed/phpstan-wpforms-lite-stubs
  */
 
 /**
@@ -10,7 +10,7 @@
  *
  * @since 1.0.0
  */
-\define('WPFORMS_VERSION', '1.10.0.5');
+\define('WPFORMS_VERSION', '1.10.1');
 /**
  * Plugin Folder Path.
  *

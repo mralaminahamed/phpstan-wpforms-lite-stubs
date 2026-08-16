@@ -1,8 +1,8 @@
 <?php
 /**
- * Generated stub declarations for WPForms.
+ * Generated stub declarations for WPForms Lite.
  * @see https://wpforms.com
- * @see https://github.com/mralaminahamed/phpstan-wpforms-stubs
+ * @see https://github.com/mralaminahamed/phpstan-wpforms-lite-stubs
  */
 
 namespace {
@@ -1957,6 +1957,36 @@ namespace {
         {
         }
         /**
+         * Get the preview panel HTML for a new field.
+         *
+         * Builds the same markup that field_new() produces for the preview panel,
+         * so it can be reused outside the single-field AJAX handler.
+         *
+         * @since 1.10.1
+         *
+         * @param array $field Prepared field data (filters already applied).
+         *
+         * @return string Preview HTML.
+         */
+        public function get_new_field_preview_html(array $field): string
+        {
+        }
+        /**
+         * Get the options panel HTML for a new field.
+         *
+         * Builds the same markup that field_new() produces for the options panel,
+         * so it can be reused outside the single-field AJAX handler.
+         *
+         * @since 1.10.1
+         *
+         * @param array $field Prepared field data (filters already applied).
+         *
+         * @return string Options HTML.
+         */
+        public function get_new_field_options_html(array $field): string
+        {
+        }
+        /**
          * Display the field input elements on the frontend
          * according to the render engine setting.
          *
@@ -3052,6 +3082,19 @@ namespace {
          * @return bool
          */
         private function is_restricted_email($email, $field)
+        {
+        }
+        /**
+         * Check if the email address is allowed by the field filter (denylist/allowlist).
+         *
+         * @since 1.10.1
+         *
+         * @param string $email Email address to check.
+         * @param array  $field Field configuration data.
+         *
+         * @return bool True if the email is allowed, false if it is restricted.
+         */
+        public function is_email_allowed(string $email, array $field): bool
         {
         }
         /**
@@ -6665,6 +6708,46 @@ namespace {
      * @since 1.0.0
      */
     function wpforms_save_form()
+    {
+    }
+    /**
+     * Begin AI auto-save revision tracking for a form save.
+     *
+     * Bypasses WP's revision dedup so the upcoming `wp_update_post` is guaranteed
+     * to produce a revision row, and captures the latest existing revision ID as
+     * the "before" marker. The companion `wpforms_ai_revision_tracking_finalize()`
+     * uses that marker to identify the freshly created revision after the save.
+     *
+     * @since 1.10.1
+     *
+     * @param int $form_id Form post ID.
+     *
+     * @return int Latest revision ID before the upcoming save (0 if none).
+     */
+    function wpforms_ai_revision_tracking_start(int $form_id): int
+    {
+    }
+    /**
+     * Finalize AI auto-save revision tracking after a form save.
+     *
+     * Identifies the just-created revision (the difference between the latest
+     * revision ID before and after the save) and writes a `revision_id => source`
+     * entry into a map-style postmeta on the parent form. Storing the marker on
+     * the form post — rather than on the revision itself — sidesteps a WP quirk
+     * where the high-level meta API can silently no-op on revision posts.
+     *
+     * The map is pruned to currently-existing revision IDs so it doesn't grow
+     * unbounded as WP rotates out older revisions per `WP_POST_REVISIONS`.
+     *
+     * @since 1.10.1
+     *
+     * @param int    $form_id                 Saved form post ID.
+     * @param int    $prev_latest_revision_id Revision ID captured before the save.
+     * @param string $source                  Source key identifying which AI feature
+     *                                        triggered this checkpoint (e.g. `smart_edit`,
+     *                                        `choices`).
+     */
+    function wpforms_ai_revision_tracking_finalize(int $form_id, int $prev_latest_revision_id, string $source): void
     {
     }
     /**
