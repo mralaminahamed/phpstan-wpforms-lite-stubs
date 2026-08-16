@@ -1262,6 +1262,40 @@ namespace {
         {
         }
         /**
+         * Sanitize a value for safe use as an email header.
+         *
+         * Replaces line breaks with a space to prevent email header (CRLF) injection,
+         * using the same strategy as the email subject. Address and CC slots use this
+         * method so their commas (recipient separators) are preserved.
+         *
+         * @since 1.10.2.1
+         *
+         * @param string $value Header value to sanitize.
+         *
+         * @return string Header value with line breaks replaced by spaces.
+         */
+        private function sanitize_email_header(string $value): string
+        {
+        }
+        /**
+         * Sanitize a value for safe use as an email header display name.
+         *
+         * On top of neutralizing line breaks, this strips the characters wp_mail()
+         * treats as address-list delimiters when it re-parses the assembled header:
+         * commas (it splits Reply-To/Cc/Bcc on them) and angle brackets (address
+         * delimiters). RFC quoting is not enough because wp_mail() ignores it, so a
+         * comma left in a display name would inject an extra recipient.
+         *
+         * @since 1.10.2.1
+         *
+         * @param string $name Display name to sanitize.
+         *
+         * @return string Display name safe to embed in a From/Reply-To header.
+         */
+        private function sanitize_email_header_name(string $name): string
+        {
+        }
+        /**
          * Build the email.
          *
          * @since 1.1.3
