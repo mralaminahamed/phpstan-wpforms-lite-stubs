@@ -719,6 +719,24 @@ namespace {
         {
         }
         /**
+         * Whether the Setup Wizard kill switch suppresses this redirect too.
+         *
+         * The `wpforms_setup_wizard_disabled` option, the
+         * `WPFORMS_SETUP_WIZARD_DISABLED` constant, and the
+         * `wpforms_setup_wizard_setup_wizard_is_disabled` filter disable the whole
+         * first-run experience, not only the wizard, so provisioning flows get zero
+         * unintended screens from a single switch. Guarded so the page degrades to
+         * its legacy behaviour if the wizard class is unavailable.
+         *
+         * @since 2.0.0.2
+         *
+         * @return bool
+         * @noinspection ClassConstantCanBeUsedInspection
+         */
+        private function is_setup_wizard_disabled(): bool
+        {
+        }
+        /**
          * Output a notice offering to launch the Setup Wizard manually.
          *
          * Shown on the Welcome page so users who landed here as the wizard fallback
@@ -10443,6 +10461,19 @@ namespace WPForms\SetupWizard {
          */
         public const OPTION_INSTALLED_ADDONS = 'wpforms_setup_wizard_installed_addons';
         /**
+         * Option name flagging the wizard as disabled entirely.
+         *
+         * The persisted form of the kill switch, for provisioning flows that
+         * install WPForms in a single request (AJAX, REST, WP-CLI) and cannot
+         * register the `wpforms_setup_wizard_setup_wizard_is_disabled` filter on the later
+         * pageviews where the wizard actually launches. Read by `is_disabled()`.
+         *
+         * @since 2.0.0.2
+         *
+         * @var string
+         */
+        public const OPTION_DISABLED = 'wpforms_setup_wizard_disabled';
+        /**
          * Bridge service.
          *
          * @since 2.0.0
@@ -10531,6 +10562,10 @@ namespace WPForms\SetupWizard {
          *
          * Auto-launch is suppressed when the user lacks `manage_options`, in WP-CLI,
          * in network admin, or in local environments (unless explicitly overridden).
+         * Both launch paths are suppressed when the wizard is disabled via the
+         * `wpforms_setup_wizard_disabled` option, the
+         * `WPFORMS_SETUP_WIZARD_DISABLED` constant, or the
+         * `wpforms_setup_wizard_setup_wizard_is_disabled` filter.
          *
          * @since 2.0.0
          */
@@ -10593,6 +10628,30 @@ namespace WPForms\SetupWizard {
          * @return bool
          */
         public static function will_auto_launch(): bool
+        {
+        }
+        /**
+         * Whether the Setup Wizard is disabled entirely.
+         *
+         * A kill switch for hosts and agencies that provision WPForms
+         * programmatically: when disabled, the whole first-run experience stands
+         * down — the wizard never launches (neither the first-run auto-launch nor
+         * the manual `wpforms_setup_wizard` query argument), and the Welcome page
+         * suppresses its fallback activation redirect as well (see
+         * `WPForms_Welcome::redirect()`). Public and static for the same reason as
+         * `will_auto_launch()`: it carries no instance state and is consumed by
+         * the Welcome page before the wizard renders.
+         *
+         * Three inputs serve different deployment shapes: the option persists a
+         * decision made in a single provisioning request, the constant serves
+         * wp-config-level control, and the filter is the runtime override that
+         * can force either direction.
+         *
+         * @since 2.0.0.2
+         *
+         * @return bool
+         */
+        public static function is_disabled(): bool
         {
         }
         /**
