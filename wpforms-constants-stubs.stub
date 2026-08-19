@@ -10,7 +10,7 @@
  *
  * @since 1.0.0
  */
-\define('WPFORMS_VERSION', '2.0.0.4');
+\define('WPFORMS_VERSION', '2.0.0.5');
 /**
  * Plugin Folder Path.
  *

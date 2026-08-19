@@ -2007,6 +2007,21 @@ namespace {
         {
         }
         /**
+         * Fetch choices from the configured dynamic source (post type or taxonomy) for use in the builder preview.
+         *
+         * Returns a flat, 0-based array of [ 'label' => string ] items.
+         * Returns an empty array when no matching source is configured.
+         *
+         * @since 2.0.0.5
+         *
+         * @param array $field Field settings.
+         *
+         * @return array
+         */
+        protected function get_dynamic_preview_choices(array $field): array
+        {
+        }
+        /**
          * Helper function to create common field options that are used frequently
          * in the field preview.
          *
@@ -2353,6 +2368,33 @@ namespace {
          * @return bool
          */
         protected function is_dynamic_choices(array $field): bool
+        {
+        }
+        /**
+         * Whether a field uses Image Choices.
+         *
+         * Image and Icon Choices are mutually exclusive, and neither of them
+         * applies to dynamically populated choices.
+         *
+         * @since 2.0.0.5
+         *
+         * @param array $field Field settings.
+         *
+         * @return bool
+         */
+        protected function is_image_choices(array $field): bool
+        {
+        }
+        /**
+         * Whether a field uses Icon Choices.
+         *
+         * @since 2.0.0.5
+         *
+         * @param array $field Field settings.
+         *
+         * @return bool
+         */
+        protected function is_icon_choices(array $field): bool
         {
         }
         /**
@@ -2793,6 +2835,21 @@ namespace {
          * @return bool True, if the "Add Other Choice" option is enabled, false otherwise.
          */
         protected function has_other_choice(array $field): bool
+        {
+        }
+        /**
+         * Get the choices limit notice HTML for the field builder preview.
+         *
+         * Renders a warning when more choices exist than are shown in the preview.
+         *
+         * @since 2.0.0.5
+         *
+         * @param int $total      Total number of choices available.
+         * @param int $slice_size Maximum number of choices shown in the preview.
+         *
+         * @return string
+         */
+        protected function field_preview_choices_limit_notice(int $total, int $slice_size): string
         {
         }
     }
