@@ -728,7 +728,7 @@ namespace {
          * unintended screens from a single switch. Guarded so the page degrades to
          * its legacy behaviour if the wizard class is unavailable.
          *
-         * @since 2.0.0.2
+         * @since 2.0.1
          *
          * @return bool
          * @noinspection ClassConstantCanBeUsedInspection
@@ -6952,50 +6952,50 @@ namespace WPForms\Education\SugarCalendar {
      * post-install onboarding URL, and the data-* attribute payload the promo
      * banner install handler understands. Mirrors WPForms\Education\WPConsent\Helper.
      *
-     * @since 2.0.0.3
+     * @since 2.0.1
      */
     class Helper
     {
         /**
          * Lite plugin folder slug.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         const SLUG = 'sugar-calendar-lite';
         /**
          * Pro plugin folder slug.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         const PRO_SLUG = 'sugar-calendar';
         /**
          * Canonical WordPress.org zip download URL.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         const INSTALL_ZIP_URL = 'https://downloads.wordpress.org/plugin/sugar-calendar-lite.zip';
         /**
          * WordPress.org plugin page URL.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         const WPORG_URL = 'https://wordpress.org/plugins/sugar-calendar-lite/';
         /**
          * Onboarding (Getting Started) admin page slug.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         const ONBOARDING_PAGE = 'sugar-calendar-getting-started';
         /**
          * Form templates categories targeted by the Sugar Calendar promo banners.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         const TEMPLATES_CATEGORIES = ['event-planning', 'registrations'];
         /**
          * Cached resolved plugin basename.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @var string|null
          */
@@ -7003,7 +7003,7 @@ namespace WPForms\Education\SugarCalendar {
         /**
          * Resolve the installed Sugar Calendar basename (lite or pro), '' if absent.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @return string
          */
@@ -7013,7 +7013,7 @@ namespace WPForms\Education\SugarCalendar {
         /**
          * Whether a Sugar Calendar plugin folder (Lite or Pro) is present.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @param bool $refresh Whether to resolve the basename again, for callers that changed
          *                      the installed plugins in the current request.
@@ -7026,7 +7026,7 @@ namespace WPForms\Education\SugarCalendar {
         /**
          * Onboarding wizard URL.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @return string
          */
@@ -7039,7 +7039,7 @@ namespace WPForms\Education\SugarCalendar {
          * Only the install state is covered: the banners never render once the
          * plugin is installed, so there is nothing to activate from them.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @return array
          */
@@ -7056,32 +7056,32 @@ namespace WPForms\Education\SugarCalendar {
      * request, and the source option is written on the wpforms_plugin_activated
      * hook fired after activation (includes/admin/ajax-actions.php).
      *
-     * @since 2.0.0.3
+     * @since 2.0.1
      */
     class InstallTracker
     {
         /**
          * Sugar Calendar option key — install source.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         const SOURCE_OPTION = 'sugar_calendar_source';
         /**
          * Sugar Calendar option key — suppress the post-activation setup wizard redirect.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         const PREVENT_REDIRECT_OPTION = 'sugar_calendar_prevent_redirect';
         /**
          * Own option key — marks the redirect flag as written by us.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         const OWN_REDIRECT_OPTION = 'wpforms_sugar_calendar_prevent_redirect';
         /**
          * Whether the current request is a Sugar Calendar install started from WPForms.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @var bool
          */
@@ -7089,7 +7089,7 @@ namespace WPForms\Education\SugarCalendar {
         /**
          * Whether this request created the redirect flag.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @var bool
          */
@@ -7097,7 +7097,7 @@ namespace WPForms\Education\SugarCalendar {
         /**
          * Whether Sugar Calendar was activated in this request.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @var bool
          */
@@ -7105,7 +7105,7 @@ namespace WPForms\Education\SugarCalendar {
         /**
          * Init.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         public function init()
         {
@@ -7113,7 +7113,7 @@ namespace WPForms\Education\SugarCalendar {
         /**
          * Register hooks.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         private function hooks()
         {
@@ -7125,7 +7125,7 @@ namespace WPForms\Education\SugarCalendar {
          * are in place, so a failed download or unzip does not leave the flag behind and
          * silently break the wizard of a later manual install.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         public function maybe_watch_install()
         {
@@ -7137,7 +7137,7 @@ namespace WPForms\Education\SugarCalendar {
          * the AJAX handler activates the plugin. Limited to our own request, so a manual
          * install from the Plugins page keeps its welcome screen.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @param WP_Upgrader $upgrader   Upgrader instance.
          * @param array       $hook_extra Extra arguments passed to hooked filters.
@@ -7148,7 +7148,7 @@ namespace WPForms\Education\SugarCalendar {
         /**
          * Record WPForms as the install source when Sugar Calendar Lite is activated.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @param string $plugin_basename Path to the activated plugin file relative to the plugins directory.
          */
@@ -7163,7 +7163,7 @@ namespace WPForms\Education\SugarCalendar {
          * activate_plugin(), or a user who may install plugins but not activate them. Leaving
          * the flag behind would silently skip the wizard of a later manual activation.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         public function maybe_revert_prevent_redirect(): void
         {
@@ -7175,7 +7175,7 @@ namespace WPForms\Education\SugarCalendar {
          * so the flag we wrote for one install would keep suppressing the setup wizard of any
          * later manual install. A flag stored by somebody else carries no ownership marker and stays.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @param string $plugin_file Path to the deleted plugin file relative to the plugins directory.
          * @param bool   $deleted     Whether the deletion succeeded.
@@ -7910,14 +7910,14 @@ namespace WPForms\SetupWizard {
      * The Lite override renders the local Welcome screen instead (the wizard's
      * first screen must live on the WP site, see #18533).
      *
-     * @since 2.0.0.3
+     * @since 2.0.1
      */
     class Screen
     {
         /**
          * Bridge service.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @var Bridge
          */
@@ -7928,7 +7928,7 @@ namespace WPForms\SetupWizard {
          * Unused by the base flow; stored because the constructor is shared with
          * the Lite override, which persists the Welcome consent through it.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @var StateManager
          */
@@ -7936,7 +7936,7 @@ namespace WPForms\SetupWizard {
         /**
          * Constructor.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @param Bridge       $bridge        Bridge service.
          * @param StateManager $state_manager State manager service.
@@ -7949,7 +7949,7 @@ namespace WPForms\SetupWizard {
          *
          * The base flow has none; the Lite override registers its AJAX endpoint.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         public function hooks(): void
         {
@@ -7959,7 +7959,7 @@ namespace WPForms\SetupWizard {
          *
          * Never exits; `SetupWizard::maybe_launch()` exits after this returns.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @return bool Whether a real launch happened (as opposed to a fallback redirect).
          */
@@ -7973,7 +7973,7 @@ namespace WPForms\SetupWizard {
          * launch argument and a forced-step transient; such a launch must resume
          * in the SPA, not restart at the first screen.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @return bool
          */
@@ -7983,7 +7983,7 @@ namespace WPForms\SetupWizard {
         /**
          * Get the URL the wizard should return the user to on exit.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @return string
          */
@@ -7993,7 +7993,7 @@ namespace WPForms\SetupWizard {
         /**
          * Get the URL the wizard should restart from.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @return string
          */
@@ -8003,7 +8003,7 @@ namespace WPForms\SetupWizard {
         /**
          * Get the Welcome getting-started URL used as the launch fallback.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @return string
          */
@@ -8025,14 +8025,14 @@ namespace WPForms\Lite\SetupWizard {
      * every hydrate, so it survives refreshes and resume handshakes without
      * depending on a session.
      *
-     * @since 2.0.0.3
+     * @since 2.0.1
      */
     class Screen extends \WPForms\SetupWizard\Screen
     {
         /**
          * Nonce action for the first-screen AJAX endpoint.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @var string
          */
@@ -8040,7 +8040,7 @@ namespace WPForms\Lite\SetupWizard {
         /**
          * Register hooks.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         public function hooks(): void
         {
@@ -8052,7 +8052,7 @@ namespace WPForms\Lite\SetupWizard {
          * reachability is checked at CTA time by `handle_update()`, which surfaces
          * an inline error instead of a redirect.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @return bool Whether a real launch happened (as opposed to a fallback redirect).
          */
@@ -8062,7 +8062,7 @@ namespace WPForms\Lite\SetupWizard {
         /**
          * `wp_ajax` handler: save the Lite Connect consent and return the handoff data.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         public function handle_update(): void
         {
@@ -8075,7 +8075,7 @@ namespace WPForms\Lite\SetupWizard {
          * only consumed inside the bridge payload filter, so an abandoned OAuth return
          * leaves it armed for every administrator on the site.
          *
-         * @since 2.0.0.4
+         * @since 2.0.1
          *
          * @return bool
          */
@@ -8085,7 +8085,7 @@ namespace WPForms\Lite\SetupWizard {
         /**
          * Render the Welcome view.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @return string
          */
@@ -8095,7 +8095,7 @@ namespace WPForms\Lite\SetupWizard {
         /**
          * JS configuration printed into the shell as JSON.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @return array
          */
@@ -8105,7 +8105,7 @@ namespace WPForms\Lite\SetupWizard {
         /**
          * Compiled asset URLs for the shell template.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @return array{css: string[], js: string[]}
          */
@@ -9994,7 +9994,7 @@ namespace WPForms\SetupWizard {
          * Used by both the bridge handoff page and the Lite Welcome screen, so a
          * future hardening pass only needs to change this one place.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          */
         public static function send_standalone_document_headers(): void
         {
@@ -10019,7 +10019,7 @@ namespace WPForms\SetupWizard {
          * round-trip, so it needs the form action and payload rather than a
          * rendered document.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @param string $exit_url    Where to send the user on close.
          * @param string $restart_url Where to send the user on restart.
@@ -10272,7 +10272,7 @@ namespace WPForms\SetupWizard\Service {
      * Suppression is permanent and never restored: WPForms' own onboarding is the one
      * the user chose, and each plugin's wizard stays reachable from its own admin menu.
      *
-     * @since 2.0.0.4
+     * @since 2.0.1
      */
     class CrossPluginOnboarding
     {
@@ -10289,7 +10289,7 @@ namespace WPForms\SetupWizard\Service {
          * degrades silently to an unsuppressed redirect, so re-verify these citations
          * when touching this list.
          *
-         * @since 2.0.0.4
+         * @since 2.0.1
          *
          * @var array<string, array{op: string, flag?: string}>
          */
@@ -10333,7 +10333,7 @@ namespace WPForms\SetupWizard\Service {
          * Called by `SetupWizard::hooks()` only for the wizard's own install request,
          * so simply being loaded does not arm the listener.
          *
-         * @since 2.0.0.4
+         * @since 2.0.1
          */
         public function hooks(): void
         {
@@ -10345,7 +10345,7 @@ namespace WPForms\SetupWizard\Service {
          * WPForms addon activation and from third-party code, so the value is
          * validated rather than type-hinted.
          *
-         * @since 2.0.0.4
+         * @since 2.0.1
          *
          * @param string $plugin_basename Path to the activated plugin file relative to the plugins directory.
          *
@@ -10360,7 +10360,7 @@ namespace WPForms\SetupWizard\Service {
          * Every operation is best-effort: a failed write cannot break the install that
          * triggered it, and every entry is idempotent under re-activation.
          *
-         * @since 2.0.0.4
+         * @since 2.0.1
          *
          * @param array $entry Registry entry for the activated plugin.
          */
@@ -10377,7 +10377,7 @@ namespace WPForms\SetupWizard\Service {
          * version still triggers its `update_1_0_5()` cache clear, and
          * includes/class-wpconsent-install.php:79 stamps the real version afterwards.
          *
-         * @since 2.0.0.4
+         * @since 2.0.1
          */
         private function seed_wpconsent(): void
         {
@@ -10768,7 +10768,7 @@ namespace WPForms\SetupWizard\Service {
         /**
          * Whether Mercado Pago is connected for the current payment mode.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @return bool
          */
@@ -11155,7 +11155,7 @@ namespace WPForms\SetupWizard {
          * register the `wpforms_setup_wizard_setup_wizard_is_disabled` filter on the later
          * pageviews where the wizard actually launches. Read by `is_disabled()`.
          *
-         * @since 2.0.0.2
+         * @since 2.0.1
          *
          * @var string
          */
@@ -11195,7 +11195,7 @@ namespace WPForms\SetupWizard {
         /**
          * Launch screen.
          *
-         * @since 2.0.0.3
+         * @since 2.0.1
          *
          * @var Screen
          */
@@ -11203,7 +11203,7 @@ namespace WPForms\SetupWizard {
         /**
          * Cross-plugin onboarding suppression service.
          *
-         * @since 2.0.0.4
+         * @since 2.0.1
          *
          * @var CrossPluginOnboarding
          */
@@ -11350,7 +11350,7 @@ namespace WPForms\SetupWizard {
          * wp-config-level control, and the filter is the runtime override that
          * can force either direction.
          *
-         * @since 2.0.0.2
+         * @since 2.0.1
          *
          * @return bool
          */
@@ -12204,7 +12204,7 @@ namespace {
      * capability check collapses to manage_options, which would leave editors and authors without
      * a form to embed at all.
      *
-     * @since 2.0.0.3
+     * @since 2.0.1
      *
      * @return bool
      */
@@ -12222,7 +12222,7 @@ namespace {
      * Callers are expected to have consulted wpforms_current_user_can_view_forms() first. A user holding
      * neither half of the view_forms category gets no restriction from this function.
      *
-     * @since 2.0.0.3
+     * @since 2.0.1
      *
      * @param array $args Form query arguments to add the author restriction to.
      *
@@ -12257,6 +12257,7 @@ namespace {
      * `value` and `label` which is the post ID and post title respectively.
      *
      * @since 1.7.9
+     * @since 2.0.1 Each item also carries the page permalink in `customProperties.permalink`.
      *
      * @param string $search_term The search term.
      * @param array  $args        Optional. An array of arguments.
@@ -12496,6 +12497,45 @@ namespace {
      * @return bool
      */
     function wpforms_debug(): bool
+    {
+    }
+    /**
+     * Replace sensitive values with a placeholder, to keep credentials out of debug output and logs.
+     *
+     * Matching is exact-key and case-insensitive: only the keys listed below (and any added via the filter)
+     * are redacted, so non-secret lookalikes like `password-strength` keep their real values. A sensitive
+     * key holding an array or an object is redacted as a whole, so a credential stored under a generic
+     * child key (e.g. `'token' => [ 'value' => 'secret' ]`) does not slip through.
+     * Empty values are left as they are — redacting them would wrongly suggest that a credential
+     * is configured.
+     *
+     * Arrays and objects are copied, never redacted in place, so the caller keeps its own data intact.
+     * Objects are traversed through their accessible properties only: a credential kept in a private
+     * or protected property is out of reach and is still printed by `print_r()`.
+     *
+     * @since 2.0.1
+     *
+     * @param mixed $data Data to redact. Arrays and objects are traversed, any other type is returned as it is.
+     *
+     * @return mixed Data with sensitive values replaced by `[redacted]`.
+     */
+    function wpforms_debug_redact_sensitive_data($data)
+    {
+    }
+    /**
+     * Redact the sensitive values of a single array or object, recursively.
+     *
+     * Internal helper of `wpforms_debug_redact_sensitive_data()`, which is the function to call.
+     *
+     * @since 2.0.1
+     *
+     * @param mixed    $value Value to redact.
+     * @param string[] $keys  Sensitive array keys, lowercase.
+     * @param int      $depth Current nesting level.
+     *
+     * @return mixed Value with sensitive data replaced by `[redacted]`.
+     */
+    function wpforms_debug_redact_sensitive_data_value($value, array $keys, int $depth = 0)
     {
     }
     /**
@@ -12801,7 +12841,7 @@ namespace {
      * Use wpforms_is_entry_field_value_iframe_allowed() to decide, so the allowance is granted per
      * field rather than per screen.
      *
-     * @since 2.0.0.3
+     * @since 2.0.1
      *
      * @param string $value             Field value HTML.
      * @param bool   $is_iframe_allowed Whether the iframe tag is allowed in the value.
@@ -12816,7 +12856,7 @@ namespace {
      *
      * Makes kses run wp_kses_bad_protocol() on `data-src`, stripping `javascript:` and `data:` URIs.
      *
-     * @since 2.0.0.3
+     * @since 2.0.1
      *
      * @param array|mixed $uri_attributes List of attributes treated as URIs by kses.
      *
@@ -12846,7 +12886,7 @@ namespace {
      * Callers that hand the result to another escaper must make sure it does not re-encode the entities
      * produced here.
      *
-     * @since 2.0.0.3
+     * @since 2.0.1
      *
      * @param mixed $value Value to neutralize.
      *
@@ -12863,7 +12903,7 @@ namespace {
      * granting the allowance per field instead of per screen keeps a stored iframe from surviving to the
      * entry screens, where the field-value script copies `data-src` into `src`.
      *
-     * @since 2.0.0.3
+     * @since 2.0.1
      *
      * @param array $field Entry field data.
      *
@@ -12878,7 +12918,7 @@ namespace {
      * The `data-src` attribute is safe to allow only because the sink URL-validates it: the calling
      * context registers wpforms_add_data_src_uri_attribute() so kses rejects unsafe protocols in it.
      *
-     * @since 2.0.0.3
+     * @since 2.0.1
      *
      * @param array|mixed $tags    List of allowed HTML.
      * @param string      $context Context name.
@@ -13242,6 +13282,34 @@ namespace {
      * @param int    $size  Icon font size in pixels.
      */
     function wpforms_get_icon_svg(string $icon, string $style, int $size): string
+    {
+    }
+    /**
+     * Get the list of scalar values stored in a field value.
+     *
+     * Malformed entries can store a list of files where a string is expected.
+     *
+     * @since 2.0.1
+     *
+     * @param mixed $value Field value.
+     *
+     * @return array
+     */
+    function wpforms_get_field_value_list($value): array
+    {
+    }
+    /**
+     * Flatten a field value to a string.
+     *
+     * Multi-value entry field values are stored as newline-separated strings.
+     *
+     * @since 2.0.1
+     *
+     * @param mixed $value Field value.
+     *
+     * @return string
+     */
+    function wpforms_flatten_field_value($value): string
     {
     }
     /**
