@@ -413,16 +413,6 @@ namespace {
         {
         }
         /**
-         * Get the HTML for the "NEW!" badge.
-         *
-         * @since 1.7.8
-         *
-         * @return string
-         */
-        private function get_new_badge_html(): string
-        {
-        }
-        /**
          * Output inline styles for the admin menu.
          *
          * @since 1.7.8
@@ -566,7 +556,7 @@ namespace {
          *
          * @var array
          */
-        private const PAGES = ['wpforms-about', 'wpforms-addons', 'wpforms-analytics', 'wpforms-community', 'wpforms-entries', 'wpforms-overview', 'wpforms-payments', 'wpforms-settings', 'wpforms-setup-checklist', 'wpforms-smtp', 'wpforms-templates', 'wpforms-tools', 'wpforms-wpconsent', 'wpforms-sugar-calendar', 'wpforms-duplicator', 'wpforms-uncanny-automator'];
+        private const PAGES = ['wpforms-about', 'wpforms-addons', 'wpforms-analytics', 'wpforms-dashboard', 'wpforms-community', 'wpforms-entries', 'wpforms-overview', 'wpforms-payments', 'wpforms-settings', 'wpforms-setup-checklist', 'wpforms-smtp', 'wpforms-templates', 'wpforms-tools', 'wpforms-wpconsent', 'wpforms-sugar-calendar', 'wpforms-duplicator', 'wpforms-uncanny-automator'];
         /**
          * Primary class constructor.
          *
@@ -1353,6 +1343,19 @@ namespace {
         {
         }
         /**
+         * Replace every {all_fields} tag, honoring its exclusion parameters.
+         *
+         * @since 2.0.2
+         *
+         * @param string $message       Message.
+         * @param bool   $is_html_email Toggle to use HTML or plaintext.
+         *
+         * @return string
+         */
+        private function replace_all_fields_tag(string $message, bool $is_html_email): string
+        {
+        }
+        /**
          * Send the email.
          *
          * @since 1.1.3
@@ -1416,12 +1419,14 @@ namespace {
          * Process the all fields smart tag if present.
          *
          * @since 1.1.3
+         * @since 2.0.2 The `$exclude` parameter was added.
          *
-         * @param bool $is_html_email Toggle to use HTML or plaintext.
+         * @param bool  $is_html_email Toggle to use HTML or plaintext.
+         * @param array $exclude       Exclusion options as returned by AllFieldsTag::parse().
          *
          * @return string
          */
-        public function wpforms_html_field_value($is_html_email = \true)
+        public function wpforms_html_field_value($is_html_email = \true, array $exclude = [])
         {
         }
         /**
@@ -1509,6 +1514,7 @@ namespace {
      */
     abstract class WPForms_Field
     {
+        use \WPForms\Forms\Fields\Traits\MoveButtons;
         use \WPForms\Forms\Fields\Traits\MultiFieldMenu;
         use \WPForms\Forms\Fields\Traits\ReadOnlyField;
         /**
@@ -8115,6 +8121,7 @@ namespace WPForms\Lite\SetupWizard {
     }
 }
 namespace WPForms {
+    // Pro symbol; every usage below is guarded by is_pro() at runtime.
     /**
      * WPForms Class Loader.
      *
@@ -8314,7 +8321,7 @@ namespace WPForms\SetupChecklist {
     /**
      * Setup Checklist AJAX endpoints.
      *
-     * Handles the actions the checklist page fires from the browser. The checklist
+     * Handles the dismiss action the checklist page fires from the browser. The checklist
      * is never dismissed automatically — even once every step is complete — so the
      * user can keep exploring the addons, integrations, and recommended-plugins
      * grids; the footer "Complete Setup Checklist" link is the only way to dismiss
@@ -8332,14 +8339,6 @@ namespace WPForms\SetupChecklist {
          * @var string
          */
         public const DISMISS_ACTION = 'wpforms_setup_checklist_dismiss';
-        /**
-         * Install-plugin AJAX action (also used as its nonce action).
-         *
-         * @since 2.0.0
-         *
-         * @var string
-         */
-        public const INSTALL_PLUGIN_ACTION = 'wpforms_setup_checklist_install_plugin';
         /**
          * Checklist model (source of the progress percentage captured at dismissal).
          *
@@ -8381,16 +8380,6 @@ namespace WPForms\SetupChecklist {
          * @since 2.0.0
          */
         public function dismiss(): void
-        {
-        }
-        /**
-         * Install a plugin ( a WPForms addon or a recommended WordPress.org plugin ) in place,
-         * reusing the Setup Wizard's install gateway. Addon license access is enforced per plugin
-         * by that gateway, so the endpoint gates only on the install capability.
-         *
-         * @since 2.0.0
-         */
-        public function install_plugin(): void
         {
         }
     }
@@ -9059,6 +9048,17 @@ namespace WPForms\SetupChecklist {
         {
         }
         /**
+         * Build the ActiveLayer checklist CTA: set up when active, otherwise install or activate
+         * in place — or, when the user cannot do either, the out-of-band fallback.
+         *
+         * @since 2.0.2
+         *
+         * @return array Renderable CTA data, or an empty array when ActiveLayer is unavailable.
+         */
+        private function activelayer_cta(): array
+        {
+        }
+        /**
          * Build an item-button CTA for an in-place plugin install that reloads on success.
          *
          * Shared by the WP Mail SMTP and WPConsent checklist items: when the plugin is already
@@ -9076,6 +9076,27 @@ namespace WPForms\SetupChecklist {
          * @return array
          */
         private function plugin_item_cta(string $file, string $install, string $activate, string $setup, string $setup_url): array
+        {
+        }
+        /**
+         * Build the out-of-band CTA for a wordpress.org plugin the user cannot install in place.
+         *
+         * An installed-but-inactive plugin can still be activated from the Plugins screen — multisite
+         * site admins keep `activate_plugins` while losing `install_plugins` — so a user who holds that
+         * capability is sent there. Everyone else gets the plugin's wordpress.org page, which stays
+         * useful when file modifications are disabled and the install must happen out of band. Neither
+         * shape carries `action` or `reload`, so the install JS ignores it and it navigates normally.
+         *
+         * @since 2.0.2
+         *
+         * @param string $file         Plugin main-file path (folder/file.php).
+         * @param bool   $is_installed Whether the plugin is already on disk.
+         * @param string $install      Label when the plugin is absent.
+         * @param string $activate     Label when the plugin is installed but inactive.
+         *
+         * @return array
+         */
+        private function plugin_fallback_cta(string $file, bool $is_installed, string $install, string $activate): array
         {
         }
         /**
@@ -9106,15 +9127,16 @@ namespace WPForms\SetupChecklist {
     /**
      * Promo sections model for the Setup Checklist.
      *
-     * Owns the static promo catalog (features, per-tier integrations, recommended growth
-     * tools) and the logic that turns it into render-ready tiles and cards: license-tier
-     * selection, wizard personalization, and the one-click install/activate CTA that the
-     * checklist's item buttons share. {@see Page} renders what this returns.
+     * Owns the static recommended growth tools catalog, delegating the feature tiles
+     * catalog to {@see FeatureTiles} and the integrations catalog to {@see IntegrationCards},
+     * plus the one-click install/activate CTA that the checklist's item buttons share.
+     * {@see Page} renders what this returns.
      *
      * @since 2.0.0
      */
     class Promos
     {
+        use \WPForms\Admin\Addons\InstallLinks;
         /**
          * Plugin detector (installed/active status for recommended plugins).
          *
@@ -9171,258 +9193,6 @@ namespace WPForms\SetupChecklist {
          * @return array<int, array>
          */
         public function growth_tool_tiles(): array
-        {
-        }
-        /**
-         * Resolve the one-click install CTA for one or more plugins by their aggregate state.
-         *
-         * The install endpoint installs-or-activates and resolves addon-vs-plugin itself, so this
-         * builds a single CTA for any WordPress.org plugin or WPForms addon, addressed by basename
-         * ( comma-joined for a bundle ). An already-active set is a no-op "Installed" state. Shared
-         * with the checklist's item buttons (WP Mail SMTP, WPConsent).
-         *
-         * @since 2.0.0
-         *
-         * @param array $files Plugin main-file paths (folder/file.php).
-         *
-         * @return array Link parts: `text`, `action`, `plugin`, `external`, `installed`.
-         */
-        public function install_link(array $files): array
-        {
-        }
-        /**
-         * Whether the current license is Pro or Elite — the tiers that install addons in place.
-         *
-         * @since 2.0.0
-         *
-         * @return bool
-         */
-        public function is_pro_plus(): bool
-        {
-        }
-        /**
-         * Build the CTA link parts for a "Take Your Forms to the Next Level" feature tile.
-         *
-         * @since 2.0.0
-         *
-         * @param array  $feature     Feature tile (icon, title, description, optional slug).
-         * @param bool   $is_pro_plus Whether the license is Pro or Elite.
-         * @param string $upgrade_url Upgrade link target used on Lite.
-         *
-         * @return array Tile link parts (`link_text`, `link_url`, `link_action`, `link_plugin`, `link_external`).
-         */
-        private function feature_link(array $feature, bool $is_pro_plus, string $upgrade_url): array
-        {
-        }
-        /**
-         * Resolve a single integration entry to its CTA link: upgrade, in-place plugin install,
-         * or in-place addon install.
-         *
-         * @since 2.0.0
-         *
-         * @param array  $integration Integration entry.
-         * @param string $upgrade_url Upgrade link target (paid tiers).
-         *
-         * @return array
-         */
-        private function integration_link(array $integration, string $upgrade_url): array
-        {
-        }
-        /**
-         * Resolve the install CTA for one or more WPForms addons by slug.
-         *
-         * Resolves each slug to its addon plugin file ( an unknown slug bails to the Addons page
-         * rather than rendering a partial install ), then defers to {@see Promos::install_link()}.
-         * Installing in place needs the install capability; a user who lacks it is sent to the
-         * Addons page, while an already-active addon still shows its "Installed" state.
-         *
-         * @since 2.0.0
-         *
-         * @param array $slugs Addon slugs ( one, or several for a bundled feature tile ).
-         *
-         * @return array
-         */
-        private function addon_install_link(array $slugs): array
-        {
-        }
-        /**
-         * The "Install" CTA that opens the Addons page — the fallback used when an in-place
-         * install is unavailable (an unknown slug, or a user who cannot install plugins).
-         *
-         * @since 2.0.0
-         *
-         * @return array
-         */
-        private function addons_page_link(): array
-        {
-        }
-        /**
-         * Resolve an integration slug to its WPForms addon plugin file.
-         *
-         * @since 2.0.0
-         *
-         * @param string $slug Integration slug.
-         *
-         * @return string Plugin file, or empty string when the slug is not a known addon.
-         */
-        private function addon_plugin_file(string $slug): string
-        {
-        }
-        /**
-         * Build an integration grid entry.
-         *
-         * @since 2.0.0
-         *
-         * @param string $slug   Integration slug (also the icon stem: addon-icon-{slug}.png).
-         * @param string $name   Display name.
-         * @param string $tier   Badge to show: '' (none), 'free', 'plus', 'pro', or 'elite'.
-         * @param string $action The 'install' (included in the tier) or 'upgrade' (needs a higher tier).
-         *
-         * @return array
-         */
-        private function integration(string $slug, string $name, string $tier = '', string $action = 'install'): array
-        {
-        }
-        /**
-         * The Uncanny Automator entry — a free wordpress.org plugin installed in place.
-         *
-         * @since 2.0.0
-         *
-         * @return array
-         */
-        private function uncanny_automator_item(): array
-        {
-        }
-        /**
-         * The integrations shown in the promo grid for the current license tier.
-         *
-         * Lite and Basic share one list; Plus, Pro, and Elite each get their own,
-         * reflecting which integrations the tier already includes (Install) versus
-         * which require an upgrade.
-         *
-         * @since 2.0.0
-         *
-         * @return array<int, array>
-         */
-        private function get_integrations(): array
-        {
-        }
-        /**
-         * Personalize the integrations grid from what the user set up in the Setup Wizard.
-         *
-         * The Setup Wizard and this checklist render in separate requests and cannot share
-         * runtime state, so the wizard durably records every addon it installs in the
-         * SetupWizard::OPTION_INSTALLED_ADDONS option (written by
-         * StateManager::record_installed_addons()). This method is the consumer of that record:
-         * it reads the installed addons and reorders the grid so the integrations the user
-         * already set up lead, followed by the curated tier list, capped at 10 total.
-         * Wizard-installed integrations missing from the curated list are rebuilt from the addon
-         * catalog; feature-only addons and unknown plugins are skipped so they never leak into
-         * the promo grid.
-         *
-         * @since 2.0.0
-         *
-         * @param array $curated Curated integrations for the current license tier.
-         *
-         * @return array<int, array>
-         */
-        private function personalize_integrations(array $curated): array
-        {
-        }
-        /**
-         * Build a grid entry for a wizard-installed integration the current tier does not curate.
-         *
-         * @since 2.0.0
-         *
-         * @param string $file Plugin file.
-         *
-         * @return array
-         */
-        private function wizard_integration(string $file): array
-        {
-        }
-        /**
-         * Plugin files for every integration any tier lists — the set the grid recognises,
-         * so wizard-installed feature addons do not leak into the integrations promo.
-         *
-         * @since 2.0.0
-         *
-         * @return array<int, string>
-         */
-        private function known_integration_files(): array
-        {
-        }
-        /**
-         * Resolve an integration entry to its plugin file: an explicit basename (cross-product
-         * plugins like Uncanny Automator) or the WPForms addon file derived from the slug.
-         *
-         * @since 2.0.0
-         *
-         * @param array $integration Integration entry.
-         *
-         * @return string Plugin file, or empty string when it cannot be resolved.
-         */
-        private function integration_plugin_file(array $integration): string
-        {
-        }
-        /**
-         * Addon plugin files the user installed during the Setup Wizard (durable record).
-         *
-         * @since 2.0.0
-         *
-         * @return array<int, string>
-         */
-        private function wizard_installed_addons(): array
-        {
-        }
-        /**
-         * Resolve the license to a promo bucket: plus, pro, elite, or default (Lite + Basic).
-         *
-         * @since 2.0.0
-         *
-         * @return string
-         */
-        private function get_license_tier(): string
-        {
-        }
-        /**
-         * Integrations for Lite and Basic (every paid integration is an upgrade).
-         *
-         * @since 2.0.0
-         *
-         * @return array<int, array>
-         */
-        private function get_default_integrations(): array
-        {
-        }
-        /**
-         * Integrations for the Plus tier.
-         *
-         * @since 2.0.0
-         *
-         * @return array<int, array>
-         */
-        private function get_plus_integrations(): array
-        {
-        }
-        /**
-         * Integrations for the Pro tier.
-         *
-         * @since 2.0.0
-         *
-         * @return array<int, array>
-         */
-        private function get_pro_integrations(): array
-        {
-        }
-        /**
-         * Integrations for the Elite tier (everything is included — all Install).
-         *
-         * @since 2.0.0
-         *
-         * @return array<int, array>
-         */
-        private function get_elite_integrations(): array
         {
         }
     }
@@ -11531,7 +11301,7 @@ namespace WPForms {
          *
          * @var string[]
          */
-        private const HEARTBEAT_ALLOWED_SCREEN_IDS = ['wpforms_page_wpforms-entries'];
+        private const HEARTBEAT_ALLOWED_SCREEN_IDS = ['wpforms_page_wpforms-entries', 'wpforms_page_wpforms-dashboard'];
         /**
          * One is the loneliest number that you'll ever do.
          *
@@ -13746,6 +13516,31 @@ namespace {
      * @return string
      */
     function wpforms_get_ip(): string
+    {
+    }
+    /**
+     * Get the visitor's preferred language tag from the request, e.g. `pt-br` from
+     * `pt-BR,pt;q=0.9,en-US;q=0.8`.
+     *
+     * Read from the request header rather than a form field, so it cannot be spoofed from the
+     * client. Only the highest-quality tag is kept: a translation is chosen by one language,
+     * and the rest of the list would be user data with no use for it.
+     *
+     * Only the parts the translation lookup reads are kept, so `ca-valencia` is stored as `ca`
+     * and resolves to the same translation. That also keeps what a client can put in the table
+     * bounded: the free-form subtag a tag may legally carry is where an unlimited number of
+     * distinct values would otherwise come from, and nothing ever reads it.
+     *
+     * Sites behind a proxy that normalizes the header, and multilingual plugins that hold a
+     * better signal in a cookie or a URL prefix, can supply the tag through the filter below.
+     * A filtered value goes through the same shape and the same trimming, so a hook can neither
+     * put arbitrary text in the entry nor store more of a tag than the header path would.
+     *
+     * @since 2.0.2
+     *
+     * @return string Lowercase language tag, or an empty string when the request carries none.
+     */
+    function wpforms_get_visitor_language(): string
     {
     }
     /**
