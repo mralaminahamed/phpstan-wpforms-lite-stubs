@@ -1826,6 +1826,22 @@ namespace {
         {
         }
         /**
+         * Encode shortcode delimiters in the input values that population has changed.
+         *
+         * A form rendered before do_shortcode() runs on the_content has its markup re-scanned,
+         * so a raw `[` in a submitted value executes. Browsers decode the entities back.
+         *
+         * @since 2.0.2.1
+         *
+         * @param array $properties Field properties after population.
+         * @param array $original   Field properties before population.
+         *
+         * @return array Modified field properties.
+         */
+        protected function encode_shortcode_delimiters(array $properties, array $original): array
+        {
+        }
+        /**
          * Init and return field default settings.
          *
          * @since 1.9.4
@@ -5807,7 +5823,7 @@ namespace {
          *
          * @since 1.9.0
          */
-        public const CUSTOM_TABLES = ['wpforms_payments' => \WPForms\Db\Payments\Payment::class, 'wpforms_payment_meta' => \WPForms\Db\Payments\Meta::class, 'wpforms_tasks_meta' => \WPForms\Tasks\Meta::class, 'wpforms_logs' => \WPForms\Logger\Repository::class, 'wpforms_analytics_snapshots' => \WPForms\Db\Analytics\Snapshots::class, 'wpforms_analytics_forms' => \WPForms\Db\Analytics\Forms::class];
+        public const CUSTOM_TABLES = ['wpforms_payments' => \WPForms\Db\Payments\Payment::class, 'wpforms_payment_meta' => \WPForms\Db\Payments\Meta::class, 'wpforms_tasks_meta' => \WPForms\Tasks\Meta::class, 'wpforms_logs' => \WPForms\Logger\Repository::class, 'wpforms_analytics_snapshots' => \WPForms\Db\Analytics\Snapshots::class, 'wpforms_analytics_forms' => \WPForms\Db\Analytics\Forms::class, 'wpforms_product_events_queue' => \WPForms\Db\ProductEvents\Queue::class];
         /**
          * Primary class constructor.
          *
@@ -12786,6 +12802,23 @@ namespace {
      * @return string|false Sanitized markup, or false on failure.
      */
     function wpforms_sanitize_svg_markup(string $markup)
+    {
+    }
+    /**
+     * Encode the shortcode delimiters in a value that is rendered into re-scanned markup.
+     *
+     * A form rendered before do_shortcode() runs on the_content has its markup re-scanned, so a raw
+     * `[` in a visitor-supplied value executes. The three-digit entities are deliberate:
+     * unescape_invalid_shortcodes() maps `&#91;` and `&#93;` back to brackets at the end of every
+     * do_shortcode() call, while a browser decodes either form and posts the character back unchanged.
+     *
+     * @since 2.0.2.1
+     *
+     * @param mixed $value Value to encode.
+     *
+     * @return string
+     */
+    function wpforms_encode_shortcode_delimiters($value): string
     {
     }
     /**
