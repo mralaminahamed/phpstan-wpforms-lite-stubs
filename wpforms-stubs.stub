@@ -7453,6 +7453,108 @@ namespace WPForms\Lite\Reports {
         {
         }
     }
+    /**
+     * Rolling window of daily form submission counts for Lite.
+     *
+     * Lite does not store entries, so there is no table to query for a period-scoped
+     * submission count. Instead, every submission bumps a per-day counter kept in a
+     * single non-autoloaded option, trimmed to the last MAX_DAYS days.
+     *
+     * @since 2.0.2.2
+     */
+    class EntriesWindow
+    {
+        /**
+         * Option holding the rolling window.
+         *
+         * @since 2.0.2.2
+         */
+        public const OPTION = 'wpforms_entries_count_daily';
+        /**
+         * Number of days kept in the window.
+         *
+         * @since 2.0.2.2
+         */
+        private const MAX_DAYS = 30;
+        /**
+         * Record a single submission in today's UTC bucket and prune expired buckets.
+         *
+         * Must be called before the lifetime `wpforms_entries_count` post meta is incremented:
+         * a first-ever window is seeded in create() from the pre-submission lifetime count.
+         *
+         * @since 2.0.2.2
+         */
+        public function record(): void
+        {
+        }
+        /**
+         * Total number of submissions recorded over the last given number of days.
+         *
+         * Returns null while the window is too young to cover the requested period, so that
+         * the caller can omit the metric instead of reporting a misleading partial count.
+         *
+         * Reads the window, which also creates it, so a site that has never received a
+         * submission becomes measurable starting from its first usage tracking check-in.
+         *
+         * @since 2.0.2.2
+         *
+         * @param int $days Number of days to sum.
+         *
+         * @return int|null Submissions count, or null when the window is not mature yet.
+         */
+        public function get_total(int $days): ?int
+        {
+        }
+        /**
+         * Whether the window has been collecting data for at least the given number of days.
+         *
+         * @since 2.0.2.2
+         *
+         * @param array $window Window as returned by get_window().
+         * @param int   $days   Number of days the period spans.
+         *
+         * @return bool
+         */
+        private function is_mature(array $window, int $days): bool
+        {
+        }
+        /**
+         * Get the stored window in a guaranteed shape, creating it when it is missing.
+         *
+         * @since 2.0.2.2
+         *
+         * @return array Window as `[ 'since' => <unix ts>, 'days' => [ 'YYYY-MM-DD' => <int> ] ]`.
+         */
+        private function get_window(): array
+        {
+        }
+        /**
+         * Build a new empty window.
+         *
+         * A site without lifetime entries has received nothing since activation, so the
+         * activation date is a truthful window start; otherwise the window starts now.
+         *
+         * @since 2.0.2.2
+         *
+         * @return array
+         */
+        private function create(): array
+        {
+        }
+        /**
+         * Lifetime number of submissions, summed from the per-form `wpforms_entries_count` post meta.
+         *
+         * This is the only count Lite keeps outside of this window, so it is shared with the
+         * usage tracking payload rather than queried again there.
+         *
+         * @since 2.0.2.2
+         *
+         * @return int
+         */
+        public static function get_lifetime_total(): int
+        {
+        }
+    }
 }
 namespace WPForms\SetupWizard {
     /**
@@ -9816,7 +9918,7 @@ namespace WPForms\SetupWizard {
         {
         }
         /**
-         * Whether the wizard SPA is reachable and healthy right now.
+         * Whether the wizard SPA is reachable and healthy, and can reach this site.
          *
          * Server-side preflight run before the handoff: a top-level form POST
          * abandons the bridge page, so a client-side timeout cannot recover once the
@@ -9835,11 +9937,26 @@ namespace WPForms\SetupWizard {
         /**
          * Get the SPA health probe URL, co-located with the handoff endpoint.
          *
+         * The URL carries this site's wizard REST base, so the product API also
+         * verifies that it can connect back to the site. Every SPA call is proxied
+         * over that path, and a site the product API cannot reach would otherwise
+         * pass the probe, hand off, and fail on the SPA's first request.
+         *
          * @since 2.0.0
          *
          * @return string
          */
         private function get_health_url(): string
+        {
+        }
+        /**
+         * Get this site's wizard REST base, the URL the SPA's calls are proxied to.
+         *
+         * @since 2.0.2.2
+         *
+         * @return string
+         */
+        private function get_rest_url(): string
         {
         }
         /**
@@ -10559,6 +10676,16 @@ namespace WPForms\SetupWizard\Service {
          * @return bool
          */
         public function is_mercado_pago_configured(): bool
+        {
+        }
+        /**
+         * Whether Paystack is connected for the current payment mode.
+         *
+         * @since 2.0.2.2
+         *
+         * @return bool
+         */
+        public function is_paystack_configured(): bool
         {
         }
     }
