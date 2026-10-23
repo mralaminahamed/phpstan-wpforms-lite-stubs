@@ -1648,6 +1648,14 @@ namespace {
         {
         }
         /**
+         * The other option builder assets.
+         *
+         * @since 2.0.3
+         */
+        public function other_option_builder_assets(): void
+        {
+        }
+        /**
          * All systems go. Used by subclasses. Required.
          *
          * @since 1.0.0
@@ -2447,6 +2455,23 @@ namespace {
         {
         }
         /**
+         * Validate the Other choice free-text value.
+         *
+         * When the Other choice is selected, its text input is required, but a
+         * whitespace-only value passes the client-side required check. Enforce a
+         * non-empty trimmed value server-side. Read-only fields are skipped because
+         * saving a read-only field strips the required flag.
+         *
+         * @since 2.0.3
+         *
+         * @param int          $field_id     Field ID.
+         * @param string|array $field_submit Submitted value.
+         * @param array        $form_data    Form data.
+         */
+        protected function validate_other_choice_value($field_id, $field_submit, array $form_data): void
+        {
+        }
+        /**
          * Filter a choice-field submission to only include configured allowlist values.
          *
          * Provides a defense-in-depth layer for format() methods. When show_values is
@@ -2826,13 +2851,42 @@ namespace {
         /**
          * Get formatted price after label.
          *
+         * The amount is expected in the current currency's format, as the field properties carry it in
+         * `data-amount`; a stored value must be converted with `sanitize_form_amount()` before the call.
+         *
          * @since 1.9.2
          *
-         * @param float $amount Amount.
+         * @param float|string $amount Amount in the current currency's format.
          *
          * @return string
          */
         protected function get_price_after_label($amount): string
+        {
+        }
+        /**
+         * Sanitize an amount stored in the form data, parsing it with the form's saved currency.
+         *
+         * @since 2.0.3
+         *
+         * @param mixed      $amount    Stored amount, cast to a string.
+         * @param array|null $form_data Form data and settings, when available in the calling context.
+         *
+         * @return string Sanitized amount with a dot as the decimal separator.
+         */
+        protected function sanitize_form_amount($amount, ?array $form_data = \null): string
+        {
+        }
+        /**
+         * Get the label of the payment choice whose amount matches a prefilled value.
+         *
+         * @since 2.0.3
+         *
+         * @param string $raw_value Raw prefilled value.
+         * @param array  $choices   Field choices.
+         *
+         * @return string|null
+         */
+        protected function get_payment_choice_label_by_amount($raw_value, array $choices)
         {
         }
         /**
@@ -2899,6 +2953,22 @@ namespace {
         {
         }
         /**
+         * Adjust builder preview container classes.
+         *
+         * Adds size-{small|medium|large} to the Checkbox field container in the Builder
+         * when the "Add Other Choice" option is enabled.
+         *
+         * @since 2.0.3
+         *
+         * @param string $css   Existing class string.
+         * @param array  $field Field data and settings.
+         *
+         * @return string
+         */
+        public function preview_field_class($css, $field): string
+        {
+        }
+        /**
          * Define additional field properties.
          *
          * @since 1.4.5
@@ -2954,6 +3024,126 @@ namespace {
          * @param array $form_data    Form data.
          */
         public function validate($field_id, $field_submit, $form_data)
+        {
+        }
+        /**
+         * Render the "Other" text input field.
+         *
+         * Generates HTML for the text input that allows users to enter custom text
+         * when the "Other" choice is selected.
+         *
+         * @since 2.0.3
+         *
+         * @param array  $field     Field data and settings.
+         * @param array  $choice    Current choice data.
+         * @param string $key       Choice key.
+         * @param string $label     Choice label.
+         * @param array  $form_data Form data and settings.
+         *
+         * @return string HTML for the Other input field, or empty string if not applicable.
+         */
+        private function render_other_input(array $field, array $choice, string $key, string $label, array $form_data): string
+        {
+        }
+        /**
+         * Format the "Other" option data for storage.
+         *
+         * Processes the custom text entered for the Other choice and adds it to the
+         * field data with proper formatting.
+         *
+         * @since 2.0.3
+         *
+         * @param array  &$data               Field data array (passed by reference).
+         * @param array  $field               Field settings.
+         * @param string $other_submitted_raw Raw submitted Other value.
+         */
+        private function format_other_option(array &$data, array $field, string $other_submitted_raw): void
+        {
+        }
+        /**
+         * Build the final value string including the formatted Other choice.
+         *
+         * @since 2.0.3
+         *
+         * @param string $current_value Current value string.
+         * @param string $other_label   Other choice label.
+         * @param string $other_value   Submitted Other value.
+         *
+         * @return string
+         */
+        private function build_value_with_other(string $current_value, string $other_label, string $other_value): string
+        {
+        }
+        /**
+         * Format the Other label and value into a single string.
+         *
+         * @since 2.0.3
+         *
+         * @param string $label Other choice label.
+         * @param string $value Submitted value.
+         *
+         * @return string
+         */
+        private function format_other_label_value(string $label, string $value): string
+        {
+        }
+        /**
+         * Prepare field data for export with proper handling of the Other choice.
+         *
+         * This method normalizes checkbox field data when the Other choice is selected
+         * to ensure proper export functionality with multiple columns. It stores both
+         * the normalized value for matching and the full formatted value for display.
+         *
+         * @since 2.0.3
+         *
+         * @param array|mixed $field Entry field data.
+         *
+         * @return array Modified field data.
+         */
+        public function prepare_field_for_export($field): array
+        {
+        }
+        /**
+         * Find the Other choice in the field choices.
+         *
+         * @since 2.0.3
+         *
+         * @param array $field Field settings.
+         *
+         * @return array|null Array with 'key' and 'label', or null if not found.
+         */
+        private function find_other_choice(array $field): ?array
+        {
+        }
+        /**
+         * Return choice value, including the typed Other text if applicable.
+         *
+         * It overrides the parent method because with Show Values enabled the parent
+         * returns raw values, where the Other line holds the static configured value
+         * and silently drops the typed custom text.
+         *
+         * @since 2.0.3
+         *
+         * @param array $field     Field settings.
+         * @param array $form_data Form data.
+         *
+         * @return string
+         */
+        protected function get_choices_value(array $field, array $form_data): string
+        {
+        }
+        /**
+         * Replace the Other choice's static value line with the formatted typed text.
+         *
+         * @since 2.0.3
+         *
+         * @param string $value     Raw values string, one value per line.
+         * @param array  $field     Entry field data.
+         * @param array  $form_data Form data.
+         *
+         * @return string
+         */
+        private function replace_other_raw_value(string $value, array $field, array $form_data): string
         {
         }
         /**
@@ -4438,14 +4628,6 @@ namespace {
         {
         }
         /**
-         * Enqueue assets for the builder.
-         *
-         * @since 1.9.8.3
-         */
-        public function builder_assets()
-        {
-        }
-        /**
          * Adjust builder preview container classes.
          *
          * Adds size-{small|medium|large} to the Radio field container in the Builder
@@ -4603,6 +4785,24 @@ namespace {
          *                     or null if the "Other" choice is not enabled.
          */
         private function get_other_choice_value(array $field): ?string
+        {
+        }
+        /**
+         * Format the field value for smart tags.
+         *
+         * Prefixes the Other option value with its label (e.g. "Other: text"),
+         * so the `{field_id}` smart tag output is consistent with the Checkboxes field.
+         *
+         * @since 2.0.3
+         *
+         * @param string|mixed $value     Field value.
+         * @param int          $field_id  Field ID.
+         * @param array        $fields    List of fields.
+         * @param string       $field_key Field key to get the value from.
+         *
+         * @return string
+         */
+        public function smart_tags_formatted_field_value($value, $field_id, $fields, $field_key): string
         {
         }
         /**
@@ -12916,6 +13116,21 @@ namespace {
     {
     }
     /**
+     * Expand inline DOCTYPE entity declarations in SVG markup and drop the DOCTYPE.
+     *
+     * SVG-sanitize strips the DOCTYPE first, which leaves Illustrator-style
+     * references like `&ns_extend;` undefined and the file refused.
+     *
+     * @since 2.0.3
+     *
+     * @param string $markup SVG markup.
+     *
+     * @return string Markup with entities expanded and DOCTYPE removed, or the original markup.
+     */
+    function wpforms_expand_svg_doctype_entities(string $markup): string
+    {
+    }
+    /**
      * Sanitize an SVG markup string, stripping scripts, event handlers and other
      * potentially malicious markup.
      *
@@ -13240,6 +13455,22 @@ namespace {
      * @return string
      */
     function wpforms_flatten_field_value($value): string
+    {
+    }
+    /**
+     * Check if a field type supports the "Other" choice option.
+     *
+     * This function determines whether a given field type can have an "Other" choice
+     * that allows users to enter custom text. By default, Radio and Checkbox fields
+     * support this feature.
+     *
+     * @since 2.0.3
+     *
+     * @param array $field Field data.
+     *
+     * @return bool True if a field type supports the Other option, false otherwise.
+     */
+    function wpforms_field_supports_other_choice(array $field): bool
     {
     }
     /**
