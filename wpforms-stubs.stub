@@ -3643,7 +3643,7 @@ namespace {
          * @param string   $email_pattern Email pattern.
          * @param callable $callback      Punycode callback.
          *
-         * @return string
+         * @return string Transformed pattern, or an empty string when Punycode rejects a label.
          */
         private function transform_punycode($email_pattern, callable $callback)
         {
@@ -5007,6 +5007,7 @@ namespace {
      */
     class WPForms_Field_Text extends \WPForms_Field
     {
+        use \WPForms\Forms\Fields\Traits\TextLengthLimit;
         /**
          * Primary class constructor.
          *
@@ -5139,6 +5140,7 @@ namespace {
      */
     class WPForms_Field_Textarea extends \WPForms_Field
     {
+        use \WPForms\Forms\Fields\Traits\TextLengthLimit;
         /**
          * Primary class constructor.
          *
@@ -12668,12 +12670,15 @@ namespace {
      * Log helper.
      *
      * @since 1.0.0
+     * @since 2.0.4 Added the return value.
      *
      * @param string $title   Title of a log message.
      * @param mixed  $message Content of a log message.
      * @param array  $args    Expected keys: type, form_id, meta, parent, force.
+     *
+     * @return bool True when the record was handed to the logger for the shutdown write, false when it was dropped.
      */
-    function wpforms_log($title = '', $message = '', $args = [])
+    function wpforms_log($title = '', $message = '', $args = []): bool
     {
     }
     /**
