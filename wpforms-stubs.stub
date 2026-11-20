@@ -996,7 +996,7 @@ namespace WPForms {
          *
          * @since 1.8.0
          */
-        const CLASSES = ['WPForms\Pro\Admin\Entries\DefaultScreen' => '1.8.2', 'WPForms\Pro\Integrations\AI\AI' => '1.9.4', 'WPForms\Pro\Integrations\AI\Helpers' => '1.9.4', 'WPForms_Install_Skin' => '1.9.5', 'WPForms_Install_Silent_Skin' => '1.5.6.1', 'WPForms\Helpers\PluginSilentUpgraderSkin' => '1.9.5'];
+        const CLASSES = ['WPForms\Pro\Admin\Entries\DefaultScreen' => '1.8.2', 'WPForms\Pro\Integrations\AI\AI' => '1.9.4', 'WPForms\Pro\Integrations\AI\Helpers' => '1.9.4', 'WPForms_Install_Skin' => '1.9.5', 'WPForms_Install_Silent_Skin' => '1.5.6.1', 'WPForms\Helpers\PluginSilentUpgraderSkin' => '1.9.5', 'WPForms\Integrations\Elementor\RestApi' => '2.0.5', 'WPForms\Integrations\Elementor\ThemesData' => '2.0.5', 'WPForms\Integrations\Elementor\Controls\WPFormsThemes' => '2.0.5', 'WPForms\Lite\Integrations\Elementor\ThemesData' => '2.0.5', 'WPForms\Pro\Integrations\Elementor\RestApi' => '2.0.5', 'WPForms\Pro\Integrations\Elementor\StockPhotos' => '2.0.5', 'WPForms\Pro\Integrations\Elementor\ThemesData' => '2.0.5'];
         /**
          * Inform clients that the class is removed.
          *
@@ -1084,6 +1084,84 @@ namespace WPForms\Pro\Admin\Entries {
      * @deprecated 1.8.2
      */
     class DefaultScreen extends \WPForms\Removed
+    {
+    }
+}
+namespace WPForms\Integrations\Elementor {
+    /**
+     * Rest API for the Elementor Modern widget.
+     * Its routes are served by "WPForms\Integrations\Elementor\LegacyThemesRoutes".
+     *
+     * @since 1.9.6
+     * @deprecated 2.0.5
+     */
+    class RestApi extends \WPForms\Removed
+    {
+    }
+    /**
+     * Themes data for the Elementor Modern widget.
+     * Replaced with "WPForms\Integrations\Gutenberg\ThemesData", which holds the widget's themes now.
+     *
+     * @since 1.9.6
+     * @deprecated 2.0.5
+     */
+    class ThemesData extends \WPForms\Removed
+    {
+    }
+}
+namespace WPForms\Integrations\Elementor\Controls {
+    /**
+     * Themes control of the Elementor editor.
+     * Replaced with the front-end themes editor, opened from the widget's Form Theme section.
+     *
+     * @since 1.9.6
+     * @deprecated 2.0.5
+     */
+    class WPFormsThemes extends \WPForms\Removed
+    {
+    }
+}
+namespace WPForms\Lite\Integrations\Elementor {
+    /**
+     * Themes data for the Elementor widget in Lite.
+     * Replaced with "WPForms\Lite\Integrations\Gutenberg\ThemesData".
+     *
+     * @since 1.9.6
+     * @deprecated 2.0.5
+     */
+    class ThemesData extends \WPForms\Removed
+    {
+    }
+}
+namespace WPForms\Pro\Integrations\Elementor {
+    /**
+     * Rest API for the Elementor widget in Pro.
+     * Its routes are served by "WPForms\Integrations\Elementor\LegacyThemesRoutes" and "WPForms\Pro\Integrations\Gutenberg\RestApi".
+     *
+     * @since 1.9.6
+     * @deprecated 2.0.5
+     */
+    class RestApi extends \WPForms\Removed
+    {
+    }
+    /**
+     * Stock photos for the Elementor widget in Pro.
+     * Replaced with "WPForms\Pro\Integrations\Gutenberg\StockPhotos".
+     *
+     * @since 1.9.6
+     * @deprecated 2.0.5
+     */
+    class StockPhotos extends \WPForms\Removed
+    {
+    }
+    /**
+     * Themes data for the Elementor widget in Pro.
+     * Replaced with "WPForms\Pro\Integrations\Gutenberg\ThemesData".
+     *
+     * @since 1.9.6
+     * @deprecated 2.0.5
+     */
+    class ThemesData extends \WPForms\Removed
     {
     }
 }
@@ -1250,6 +1328,7 @@ namespace {
          * Get the email from address.
          *
          * @since 1.1.3
+         * @since 2.0.5 Smart tags are processed in the `notification-from` context, so an invalid resolved address falls back to the admin email.
          *
          * @return string The email from address.
          */
@@ -1407,12 +1486,14 @@ namespace {
          *
          * @since 1.1.3
          * @since 1.6.0 Deprecated 2 params: $sanitize, $linebreaks.
+         * @since 2.0.5 Added the `$context` parameter.
          *
          * @param string $content String that may contain tags.
+         * @param string $context Smart tag processing context.
          *
          * @return string|mixed
          */
-        public function process_tag($content = '')
+        public function process_tag($content = '', $context = 'email')
         {
         }
         /**
@@ -1629,6 +1710,14 @@ namespace {
          * @var FrontendBase
          */
         protected $frontend_obj;
+        /**
+         * Rendered dynamic choice IDs keyed by form, field and dynamic source, then by choice ID.
+         *
+         * @since 2.0.5
+         *
+         * @var array
+         */
+        private $dynamic_choice_ids = [];
         /**
          * Primary class constructor.
          *
@@ -2441,6 +2530,50 @@ namespace {
         {
         }
         /**
+         * Get the IDs of the dynamic choices the field renders, as array keys.
+         *
+         * Validation and formatting read this list so they accept exactly what the visitor was shown.
+         *
+         * @since 2.0.5
+         *
+         * @param array $field     Field settings.
+         * @param array $form_data Form data and settings.
+         *
+         * @return array
+         */
+        protected function get_dynamic_choice_ids(array $field, array $form_data): array
+        {
+        }
+        /**
+         * Get the post titles or term names of the submitted IDs that are among the rendered choices, in submission order.
+         *
+         * An empty submission returns early, so no choice list is built for it.
+         *
+         * @since 2.0.5
+         *
+         * @param array $ids       Submitted choice IDs.
+         * @param array $field     Field settings.
+         * @param array $form_data Form data and settings.
+         *
+         * @return array
+         */
+        protected function get_submitted_dynamic_choice_labels(array $ids, array $field, array $form_data): array
+        {
+        }
+        /**
+         * Get the plain post title or term name of a rendered dynamic choice.
+         *
+         * @since 2.0.5
+         *
+         * @param int   $id    Post or term ID.
+         * @param array $field Field settings.
+         *
+         * @return string|null
+         */
+        private function get_dynamic_choice_label(int $id, array $field)
+        {
+        }
+        /**
          * Determine whether the submission uses the associative "Other" form.
          *
          * The Other choice submits as an array with an `other` key carrying the free-text value.
@@ -2648,8 +2781,8 @@ namespace {
         /**
          * Validate a dynamic post-type choice submission.
          *
-         * Each submitted ID must cast to a positive integer AND map to a post of the
-         * field's configured `dynamic_post_type`.
+         * Each submitted ID must cast to a positive integer AND be one of the posts
+         * the field renders as choices.
          *
          * @since 1.10.0.5
          *
@@ -2666,8 +2799,8 @@ namespace {
         /**
          * Validate a dynamic taxonomy choice submission.
          *
-         * Each submitted ID must cast to a positive integer AND map to a term in the
-         * field's configured `dynamic_taxonomy`.
+         * Each submitted ID must cast to a positive integer AND be one of the terms
+         * the field renders as choices.
          *
          * @since 1.10.0.5
          *
@@ -6287,6 +6420,14 @@ namespace WPForms\Access {
         {
         }
         /**
+         * Map form meta caps on demand; Lite access is `manage_options` only.
+         *
+         * @since 2.0.5
+         */
+        public function enable_meta_caps(): void
+        {
+        }
+        /**
          * Check permissions for currently logged in user.
          *
          * @since 1.5.8
@@ -6974,6 +7115,96 @@ namespace WPForms\Analytics {
         {
         }
     }
+    /**
+     * Deletes all analytics data collected for a form.
+     *
+     * @since 2.0.5
+     */
+    class Reset
+    {
+        /**
+         * Initialize.
+         *
+         * @since 2.0.5
+         */
+        public function init(): void
+        {
+        }
+        /**
+         * Register hooks.
+         *
+         * @since 2.0.5
+         */
+        private function hooks(): void
+        {
+        }
+        /**
+         * Drop the analytics data of permanently deleted forms, which nothing can reach any more.
+         *
+         * @since 2.0.5
+         *
+         * @param array $ids Deleted form IDs.
+         */
+        public function delete_forms_data($ids): void
+        {
+        }
+        /**
+         * Delete every analytics row of a form and clear the caches that serve them.
+         *
+         * @since 2.0.5
+         *
+         * @param int $form_id Form ID.
+         *
+         * @return bool False when the deletion failed and was rolled back.
+         */
+        public function reset_form(int $form_id): bool
+        {
+        }
+        /**
+         * Delete every analytics row of a form in one transaction, leaving the caches to the caller.
+         *
+         * @since 2.0.5
+         *
+         * @param int $form_id Form ID.
+         *
+         * @return bool False when the deletion failed and was rolled back.
+         */
+        private function delete_form_rows(int $form_id): bool
+        {
+        }
+        /**
+         * Delete the form's rows from the form-level analytics tables.
+         *
+         * @since 2.0.5
+         *
+         * @param int $form_id Form ID.
+         *
+         * @throws RuntimeException When a DELETE fails, so the surrounding transaction rolls back.
+         */
+        protected function delete_rows(int $form_id): void
+        {
+        }
+        /**
+         * Run prepared DELETEs in order, stopping at the first one the database refuses.
+         *
+         * @since 2.0.5
+         *
+         * @param array $queries Prepared queries.
+         *
+         * @throws RuntimeException When a DELETE fails, so the surrounding transaction rolls back.
+         */
+        protected function run_queries(array $queries): void
+        {
+        }
+        /**
+         * Clear the caches that would keep serving the deleted figures.
+         *
+         * @since 2.0.5
+         */
+        protected function clear_caches(): void
+        {
+        }
+    }
 }
 namespace WPForms\Education\ActiveLayer {
     /**
@@ -7579,6 +7810,24 @@ namespace WPForms\Education\WPConsent {
         }
     }
 }
+namespace WPForms\Lite\Frontend {
+    /**
+     * Front-end Form Themes editor, Lite.
+     *
+     * @since 2.0.5
+     */
+    class ThemesEditor extends \WPForms\Frontend\ThemesEditor
+    {
+        /**
+         * Initialize.
+         *
+         * @since 2.0.5
+         */
+        public function init(): void
+        {
+        }
+    }
+}
 namespace WPForms\Lite\Reports {
     /**
      * Generate form submissions reports.
@@ -7763,12 +8012,15 @@ namespace WPForms\SetupWizard {
      * Setup Wizard REST API.
      *
      * Exposes the endpoints the SPA calls back into:
-     * - `GET  /hydrate`              Initial fetch of settings + wizard_settings.
+     * - `POST /hydrate`              Initial fetch of settings + wizard_settings.
      * - `POST /update`               Persist wizard step state.
      * - `POST /install-plugins`      License-gated install of addons/cross-product plugins.
      * - `POST /complete`             Finalize the wizard.
-     * - `GET  /license/key`          Fetch the configured license key.
+     * - `POST /stripe/connect-url`   Get the Stripe Connect URL for the wizard.
+     * - `POST /license/key`          Fetch the configured license key.
      * - `POST /license/verify`       Validate and activate a license key.
+     * - `POST /health`               Confirm the hosted wizard's key reaches this site.
+     * - `POST /revoke`               Retire the key the request was sealed with.
      *
      * Every route uses `validate_request()` as its `permission_callback`. The
      * permission callback also hydrates the bound user into the current request
@@ -7783,18 +8035,20 @@ namespace WPForms\SetupWizard {
          * REST namespace.
          *
          * @since 2.0.0
+         * @since 2.0.5.1 Public, so `Auth` measures sealed endpoints from the same route.
          *
          * @var string
          */
-        private const ROUTE_NAMESPACE = 'wpforms/v1';
+        public const ROUTE_NAMESPACE = 'wpforms/v1';
         /**
          * Route prefix shared by all wizard routes.
          *
          * @since 2.0.0
+         * @since 2.0.5.1 Public, so `Auth` measures sealed endpoints from the same route.
          *
          * @var string
          */
-        private const ROUTE_BASE = '/setup-wizard';
+        public const ROUTE_BASE = '/setup-wizard';
         /**
          * License API base URL, used when the Pro `WPFORMS_UPDATER_API` constant is
          * not defined (i.e. in Lite).
@@ -7856,6 +8110,64 @@ namespace WPForms\SetupWizard {
         {
         }
         /**
+         * Authenticate a sealed wizard request before WordPress validates its params.
+         *
+         * WordPress checks required args and sanitizes them before the permission callback
+         * runs, and a sealed body carries only `c`, so the params are replaced with the
+         * opened plaintext here.
+         *
+         * @since 2.0.5.1
+         *
+         * @param mixed           $result  Response to replace the requested version with.
+         * @param WP_REST_Server  $server  Server instance.
+         * @param WP_REST_Request $request Request used to generate the response.
+         *
+         * @return mixed
+         * @noinspection PhpUnusedParameterInspection
+         */
+        public function filter_rest_pre_dispatch($result, $server, $request)
+        {
+        }
+        /**
+         * Seal a successful answer to a verified wizard request.
+         *
+         * @since 2.0.5.1
+         *
+         * @param WP_HTTP_Response $response Result to send to the client.
+         * @param WP_REST_Server   $server   Server instance.
+         * @param WP_REST_Request  $request  Request used to generate the response.
+         *
+         * @return WP_HTTP_Response
+         * @noinspection PhpUnusedParameterInspection
+         */
+        public function filter_rest_post_dispatch($response, $server, $request)
+        {
+        }
+        /**
+         * Whether a route belongs to the wizard; WordPress matches routes case-insensitively.
+         *
+         * @since 2.0.5.1
+         *
+         * @param string $route Requested route.
+         *
+         * @return bool
+         */
+        private static function is_wizard_route(string $route): bool
+        {
+        }
+        /**
+         * Get the query keys a wizard request may carry: those this site's own REST base carries.
+         *
+         * Parsed with parse_str(), the way PHP fills `$_GET`, so mangled keys still match.
+         *
+         * @since 2.0.5.1
+         *
+         * @return array
+         */
+        private static function allowed_query_keys(): array
+        {
+        }
+        /**
          * Whether the current request is the Setup Wizard's install-plugins REST call.
          *
          * Evaluated as early as `wpforms_loaded`, before the REST route is dispatched
@@ -7895,8 +8207,8 @@ namespace WPForms\SetupWizard {
         /**
          * Permission callback for every wizard route.
          *
-         * Verifies the session token via Auth, hydrates the bound user with
-         * `wp_set_current_user()`, and refreshes the token TTL on success.
+         * Reads the user `filter_rest_pre_dispatch()` verified for this request and hydrates
+         * it with `wp_set_current_user()`.
          *
          * @since 2.0.0
          *
@@ -7908,7 +8220,35 @@ namespace WPForms\SetupWizard {
         {
         }
         /**
-         * `GET /hydrate` Initial fetch of the wizard state.
+         * `POST /health` Answer whether the hosted wizard's key reaches this site.
+         *
+         * It answers the authentication question and nothing else, so a site too slow to
+         * assemble the hydrate payload can still hand off.
+         *
+         * @since 2.0.5.1
+         *
+         * @return WP_REST_Response
+         */
+        public function health(): \WP_REST_Response
+        {
+        }
+        /**
+         * `POST /revoke` Retire the key, on exit or on a switch to another site.
+         *
+         * The request is sealed like any other; the answer is a 204 with no body, which
+         * the post-dispatch filter leaves unsealed.
+         *
+         * @since 2.0.5.1
+         *
+         * @param WP_REST_Request $request REST request.
+         *
+         * @return WP_REST_Response
+         */
+        public function revoke(\WP_REST_Request $request): \WP_REST_Response
+        {
+        }
+        /**
+         * `POST /hydrate` Initial fetch of the wizard state.
          *
          * @since 2.0.0
          *
@@ -7989,7 +8329,7 @@ namespace WPForms\SetupWizard {
         {
         }
         /**
-         * `GET /license/key` Fetch the configured license key only.
+         * `POST /license/key` Fetch the configured license key only.
          *
          * @since 2.0.0
          *
@@ -8224,6 +8564,16 @@ namespace WPForms\Lite\SetupWizard {
         private function is_pro_installed(): bool
         {
         }
+        /**
+         * Whether the Pro on disk speaks the v2 transport, judged by the file that implements it.
+         *
+         * @since 2.0.5.1
+         *
+         * @return bool
+         */
+        private function is_pro_transport_ready(): bool
+        {
+        }
     }
 }
 namespace WPForms\SetupWizard {
@@ -8231,8 +8581,8 @@ namespace WPForms\SetupWizard {
      * Setup Wizard launch screen.
      *
      * The seam `SetupWizard::maybe_launch()` delegates the launch tail to. The
-     * base implementation keeps the historical behavior: preflight the SPA and
-     * either redirect to the Welcome fallback or render the auto-POST bridge.
+     * base implementation starts a hosted wizard session and either redirects to
+     * the Welcome fallback or renders the auto-POST bridge.
      * The Lite override renders the local Welcome screen instead (the wizard's
      * first screen must live on the WP site, see #18533).
      *
@@ -8290,6 +8640,16 @@ namespace WPForms\SetupWizard {
          * @return bool Whether a real launch happened (as opposed to a fallback redirect).
          */
         public function launch(): bool
+        {
+        }
+        /**
+         * Log why the hosted wizard session could not be started.
+         *
+         * @since 2.0.5.1
+         *
+         * @param WP_Error $error Error returned by the session request.
+         */
+        protected function log_session_failure(\WP_Error $error): void
         {
         }
         /**
@@ -8398,7 +8758,7 @@ namespace WPForms\Lite\SetupWizard {
          *
          * Distinguishes a real mid-wizard re-entry from a stale StripeConnect
          * force-step transient: that transient is site-wide, lives for an hour and is
-         * only consumed inside the bridge payload filter, so an abandoned OAuth return
+         * cleared only once a hosted wizard session starts, so an abandoned OAuth return
          * leaves it armed for every administrator on the site.
          *
          * @since 2.0.1
@@ -9935,20 +10295,18 @@ namespace WPForms\SetupChecklist {
 }
 namespace WPForms\SetupWizard {
     /**
-     * Session token authentication for the Setup Wizard.
+     * Per-launch key authentication for the Setup Wizard.
      *
-     * Issues an HMAC-SHA512 token bound to the issuing admin's user ID. The token
-     * is stored in a 1-hour transient as `[ 'token' => string, 'user_id' => int ]`,
-     * refreshed on every authenticated request, and verified with `hash_equals()`.
-     * Validating a token returns the bound user ID so the REST layer can hydrate
-     * the cross-origin request via `wp_set_current_user()`.
+     * Each launch mints a raw key bound to the launching admin and retires the previous
+     * one. The hosted wizard receives the derived wire key server to server and seals
+     * every call with it, so a request is authentic only when its body opens.
      *
      * @since 2.0.0
      */
     class Auth
     {
         /**
-         * Transient name storing the active token payload.
+         * Transient name storing the active key as `[ 'raw' => hex, 'user_id' => int, 'issued_at' => int ]`, for its hard cap.
          *
          * @since 2.0.0
          *
@@ -9956,7 +10314,7 @@ namespace WPForms\SetupWizard {
          */
         private const TRANSIENT_TOKEN = 'wpforms_setup_wizard_token';
         /**
-         * Token lifetime in seconds.
+         * Idle lifetime of a key in seconds, refreshed by every verified call.
          *
          * @since 2.0.0
          *
@@ -9964,53 +10322,121 @@ namespace WPForms\SetupWizard {
          */
         private const TTL = HOUR_IN_SECONDS;
         /**
-         * Header name the SPA uses to send the token back.
+         * Transient name prefix of a key's idle clock.
          *
-         * @since 2.0.0
+         * Kept apart from the key row, so a verified call refreshing it cannot write back a
+         * key that a newer launch or a revoke has replaced.
+         *
+         * @since 2.0.5.1
          *
          * @var string
          */
-        private const HEADER = 'X-WPForms-Setup-Wizard-Token';
+        private const TRANSIENT_SEEN = 'wpforms_setup_wizard_seen_';
         /**
-         * Issue a token bound to the given user ID.
+         * How long a key stays valid from the moment it was minted, whatever the activity.
          *
-         * Reuses the existing token when the stored transient still belongs to the
-         * same user, so a second launch in the same session yields a stable token.
+         * @since 2.0.5.1
+         *
+         * @var int
+         */
+        private const MAX_LIFETIME = 2 * HOUR_IN_SECONDS;
+        /**
+         * How far a request timestamp may be from this site's clock, either way.
+         *
+         * @since 2.0.5.1
+         *
+         * @var int
+         */
+        public const SIGNATURE_WINDOW = 15 * 60;
+        /**
+         * Option name prefix of a claimed nonce.
+         *
+         * @since 2.0.5.1
+         *
+         * @var string
+         */
+        private const NONCE_PREFIX = 'wpforms_sw_nonce_';
+        /**
+         * Requests verified in this PHP request, keyed by the request object.
+         *
+         * @since 2.0.5.1
+         *
+         * @var SplObjectStorage
+         */
+        private $verified;
+        /**
+         * Constructor.
+         *
+         * @since 2.0.5.1
+         */
+        public function __construct()
+        {
+        }
+        /**
+         * Mint a new key for the current user, retiring any previous one.
+         *
+         * The caller must check that the current user is permitted to launch the wizard.
+         *
+         * @since 2.0.5.1
+         *
+         * @return string Wire key for the hosted wizard, or an empty string without a current user.
+         */
+        public function mint(): string
+        {
+        }
+        /**
+         * Issue a token bound to the current user.
          *
          * @since 2.0.0
+         * @deprecated 2.0.5.1
          *
-         * @return string The hashed token, raw value to send to the SPA.
+         * @return string Always an empty string.
          */
         public function generate_token(): string
         {
         }
         /**
-         * Refresh the stored token's TTL without changing its value.
+         * Verify a sealed request and return the bound user ID.
          *
-         * @since 2.0.0
+         * The body is opened before the timestamp is checked, so only a caller holding the
+         * key can learn that its clock is off.
          *
-         * @param array $stored_token Token currently in use.
+         * @since 2.0.5.1
+         *
+         * @param WP_REST_Request $request REST request.
+         *
+         * @return int|WP_Error The bound user ID, or a WP_Error coded `auth_failed` or `clock_skew`.
          */
-        private function refresh(array $stored_token): void
+        public function verify(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * Get what verify() established for a request, if it passed.
+         *
+         * @since 2.0.5.1
+         *
+         * @param WP_REST_Request $request REST request.
+         *
+         * @return array|null `user_id`, `params`, `nonce`, `endpoint` and `wire_key`, or null when unverified.
+         */
+        public function verified(\WP_REST_Request $request): ?array
         {
         }
         /**
          * Validate a REST request and return the bound user ID.
          *
-         * Reads the token from the request header, compares with `hash_equals()`,
-         * and returns the user ID if valid. Returns 0 on failure.
-         *
          * @since 2.0.0
+         * @deprecated 2.0.5.1
          *
          * @param WP_REST_Request $request REST request.
          *
-         * @return int Bound user ID, or 0 if the token is missing/invalid.
+         * @return int Bound user ID, or 0 if the request is not verified.
          */
         public function validate_request(\WP_REST_Request $request): int
         {
         }
         /**
-         * Revoke the active token (e.g., on wizard completion).
+         * Revoke the active key (e.g., on wizard completion or exit).
          *
          * @since 2.0.0
          */
@@ -10018,34 +10444,121 @@ namespace WPForms\SetupWizard {
         {
         }
         /**
-         * Build the HMAC-SHA512 signature for a token payload.
+         * Revoke a key only while it is still the current one.
          *
-         * @since 2.0.0
+         * A launch that failed must not delete the key a newer launch minted meanwhile.
          *
-         * @param int    $user_id User the token is bound to.
-         * @param string $token   Per-request entropy.
+         * @since 2.0.5.1
+         *
+         * @param string $wire_key Wire key the caller minted.
+         */
+        public function revoke_key(string $wire_key): void
+        {
+        }
+        /**
+         * Get the stored key with its wire key, or null when the row is missing or malformed.
+         *
+         * @since 2.0.5.1
+         *
+         * @return array|null `raw`, `user_id`, `issued_at` and `wire_key`.
+         */
+        private function get_stored_key(): ?array
+        {
+        }
+        /**
+         * Whether a stored raw key has the shape mint() writes, so a corrupted row fails closed without a hex2bin() warning.
+         *
+         * @since 2.0.5.1
+         *
+         * @param mixed $raw Stored raw key.
+         *
+         * @return bool
+         */
+        private static function is_raw_key($raw): bool
+        {
+        }
+        /**
+         * Get the transient name of a key's idle clock.
+         *
+         * @since 2.0.5.1
+         *
+         * @param string $raw_hex Raw key, hex.
          *
          * @return string
          */
-        private function sign(int $user_id, string $token): string
+        private static function seen_name(string $raw_hex): string
+        {
+        }
+        /**
+         * Get the endpoint a request was sealed for, from the route it asked for.
+         *
+         * The route is the same under pretty permalinks and `?rest_route=`.
+         *
+         * @since 2.0.5.1
+         *
+         * @param string $route Requested route.
+         *
+         * @return string
+         */
+        private static function endpoint(string $route): string
+        {
+        }
+        /**
+         * Claim a nonce, which succeeds once per nonce.
+         *
+         * A plain INSERT fails on the duplicate option name, so two concurrent replays
+         * cannot both claim it; add_option() checks first and would let both through.
+         *
+         * @since 2.0.5.1
+         *
+         * @param string $nonce   Request nonce.
+         * @param int    $expires When the claim may be swept.
+         *
+         * @return bool
+         */
+        private function claim_nonce(string $nonce, int $expires): bool
+        {
+        }
+        /**
+         * Delete expired nonce claims now and then.
+         *
+         * @since 2.0.5.1
+         */
+        private function maybe_sweep_nonces(): void
+        {
+        }
+        /**
+         * Delete expired nonce claims.
+         *
+         * @since 2.0.5.1
+         */
+        private function sweep_nonces(): void
+        {
+        }
+        /**
+         * Get the one error every failed check returns, so a refusal does not say which check it tripped.
+         *
+         * @since 2.0.5.1
+         *
+         * @return WP_Error
+         */
+        public function get_refusal(): \WP_Error
         {
         }
     }
     /**
-     * POST bridge that hands off to the wizard SPA.
+     * Hands off to the hosted wizard.
      *
-     * Renders a tiny auto-submitting HTML form that POSTs `token`, `rest_url`,
-     * `exit_url`, and `restart_url` to the SPA's `startSession` endpoint. The POST
-     * keeps the token out of browser history and out of `Referer`/`X-Forwarded-*`
-     * headers, satisfies the CORS preflight rules expected by the SPA, and hides
-     * the payload from password managers and browser extensions that scan URLs.
+     * The per-launch key goes to the wizard server to server and comes back as a
+     * single-use ticket; the browser carries only the ticket, so the key never
+     * reaches the page, its history or a browser extension.
      *
      * @since 2.0.0
      */
     class Bridge
     {
         /**
-         * Auth service used to issue the per-launch token.
+         * Auth service used to mint the per-launch key.
          *
          * @since 2.0.0
          *
@@ -10063,19 +10576,18 @@ namespace WPForms\SetupWizard {
         {
         }
         /**
-         * Render the auto-submit POST form.
+         * Render the auto-submit POST form that carries the ticket to the wizard.
          *
-         * Called from the orchestrator after `maybe_launch()` decides the wizard
-         * should run for the current request. Sends the user's browser to the SPA
-         * with the wizard handshake payload. The caller is responsible for
-         * `exit`-ing after this method returns.
+         * The caller is responsible for `exit`-ing after this method returns.
          *
          * @since 2.0.0
+         * @since 2.0.5.1 Takes the ticket. A payload array is deprecated and read for its `ticket` key.
          *
-         * @param array $payload Handshake payload sent to the SPA. Keys:
-         *                       `token`, `rest_url`, `exit_url`, `restart_url`.
+         * @param string|array $ticket Ticket from `request_session()`, or a payload carrying it.
+         *
+         * @noinspection PhpMissingParamTypeInspection
          */
-        public function render(array $payload): void
+        public function render($ticket): void
         {
         }
         /**
@@ -10090,14 +10602,41 @@ namespace WPForms\SetupWizard {
         {
         }
         /**
-         * Build the handshake payload for the current user.
+         * Trade a freshly minted key for a ticket with the hosted wizard.
          *
-         * @since 2.0.0
+         * The wizard proves this site holds the key with a sealed call back before it
+         * answers, so a failure here also covers an unreachable wizard or site.
+         *
+         * @since 2.0.5.1
          *
          * @param string $exit_url    Where to send the user on close.
          * @param string $restart_url Where to send the user on restart.
          *
-         * @return array
+         * @return string|WP_Error The ticket, or why the hosted wizard cannot be used.
+         */
+        public function request_session(string $exit_url, string $restart_url)
+        {
+        }
+        /**
+         * Get why the hosted wizard must not be launched, checked before any key is minted.
+         *
+         * @since 2.0.5.1
+         *
+         * @return WP_Error|null The refusal, or null when the launch may proceed.
+         */
+        private function get_launch_refusal(): ?\WP_Error
+        {
+        }
+        /**
+         * Build the handshake payload for the current user.
+         *
+         * @since 2.0.0
+         * @deprecated 2.0.5.1
+         *
+         * @param string $exit_url    Where to send the user on close.
+         * @param string $restart_url Where to send the user on restart.
+         *
+         * @return array The `ticket` for `render()`, or an empty array when the hosted wizard cannot be used.
          */
         public function build_payload(string $exit_url, string $restart_url): array
         {
@@ -10105,31 +10644,38 @@ namespace WPForms\SetupWizard {
         /**
          * Get the handoff form data for a client-side submit.
          *
-         * The Lite Welcome screen POSTs the handshake from JS after its AJAX
-         * round-trip, so it needs the form action and payload rather than a
-         * rendered document.
+         * The Lite Welcome screen POSTs the handoff from JS after its AJAX round-trip,
+         * so it needs the form action and the ticket rather than a rendered document.
          *
          * @since 2.0.1
+         * @deprecated 2.0.5.1
          *
          * @param string $exit_url    Where to send the user on close.
          * @param string $restart_url Where to send the user on restart.
          *
-         * @return array{action: string, payload: array}
+         * @return array `action` and a `payload` carrying the ticket, or an empty array when the hosted wizard cannot be used.
          */
         public function get_handoff_data(string $exit_url, string $restart_url): array
         {
         }
         /**
-         * Whether the wizard SPA is reachable and healthy, and can reach this site.
+         * Start a hosted wizard session and get its handoff form data for a client-side submit.
          *
-         * Server-side preflight run before the handoff: a top-level form POST
-         * abandons the bridge page, so a client-side timeout cannot recover once the
-         * browser has navigated to a broken SPA. Probing the co-located health route
-         * here lets the orchestrator fall back to the Welcome page instead. The probe
-         * runs on every launch (which is infrequent) and is intentionally not cached,
-         * so a changed handoff URL or a down SPA is reflected immediately.
+         * @since 2.0.5.1
+         *
+         * @param string $exit_url    Where to send the user on close.
+         * @param string $restart_url Where to send the user on restart.
+         *
+         * @return array|WP_Error `action` and `payload`, or why the hosted wizard cannot be used.
+         */
+        public function request_handoff_data(string $exit_url, string $restart_url)
+        {
+        }
+        /**
+         * Whether the hosted wizard may be launched.
          *
          * @since 2.0.0
+         * @deprecated 2.0.5.1
          *
          * @return bool
          */
@@ -10137,18 +10683,25 @@ namespace WPForms\SetupWizard {
         {
         }
         /**
-         * Get the SPA health probe URL, co-located with the handoff endpoint.
+         * Whether the key may be sent to a handoff URL: https, or plain http only on a local or development site.
          *
-         * The URL carries this site's wizard REST base, so the product API also
-         * verifies that it can connect back to the site. Every SPA call is proxied
-         * over that path, and a site the product API cannot reach would otherwise
-         * pass the probe, hand off, and fail on the SPA's first request.
+         * @since 2.0.5.1
          *
-         * @since 2.0.0
+         * @param string $url Handoff URL.
+         *
+         * @return bool
+         */
+        private function is_secure_handoff_url(string $url): bool
+        {
+        }
+        /**
+         * Get the wizard's session endpoint, next to the handoff endpoint.
+         *
+         * @since 2.0.5.1
          *
          * @return string
          */
-        private function get_health_url(): string
+        private function get_session_url(): string
         {
         }
         /**
@@ -10165,13 +10718,23 @@ namespace WPForms\SetupWizard {
          * Get the SPA endpoint that consumes the handshake POST.
          *
          * The `WPFORMS_SETUP_WIZARD_URL` constant overrides the default for local
-         * development against a sail-hosted Product API.
+         * development against a locally hosted wizard.
          *
          * @since 2.0.0
          *
          * @return string
          */
         private function get_handoff_url(): string
+        {
+        }
+        /**
+         * Get the handoff URL the `WPFORMS_SETUP_WIZARD_URL` constant sets, if any.
+         *
+         * @since 2.0.5
+         *
+         * @return string|null
+         */
+        protected function get_handoff_url_override(): ?string
         {
         }
     }
@@ -11620,12 +12183,197 @@ namespace WPForms\SetupWizard {
          * step instead of the welcome screen.
          *
          * @since 2.0.0
+         * @since 2.0.5.1 Leaves the transient in place for `clear_forced_step()`.
          *
          * @param mixed $payload Bridge payload.
          *
          * @return array
          */
         public function inject_forced_step($payload): array
+        {
+        }
+        /**
+         * Clear the forced step once the hosted wizard has started a session.
+         *
+         * @since 2.0.5.1
+         */
+        public function clear_forced_step(): void
+        {
+        }
+    }
+}
+namespace WPForms\SetupWizard\Transport {
+    /**
+     * AES-256-GCM sealing for the v2 transport between the hosted wizard and this site.
+     *
+     * The hosted wizard implements the same construction byte for byte, so nothing here
+     * can change without a matching wizard release.
+     *
+     * Lite's `RestApi::is_pro_transport_ready()` detects a transport-ready Pro by this file's path,
+     * so moving or renaming it needs a matching change there.
+     *
+     * @since 2.0.5.1
+     */
+    class Cipher
+    {
+        /**
+         * OpenSSL cipher name.
+         *
+         * @since 2.0.5.1
+         *
+         * @var string
+         */
+        private const ALGORITHM = 'aes-256-gcm';
+        /**
+         * HKDF info string the AEAD key is derived under.
+         *
+         * @since 2.0.5.1
+         *
+         * @var string
+         */
+        private const KEY_INFO = 'wpforms-setup-wizard/v2/aead';
+        /**
+         * Protocol label that opens every associated-data string.
+         *
+         * @since 2.0.5.1
+         *
+         * @var string
+         */
+        private const LABEL = 'wpforms-setup-wizard/2';
+        /**
+         * Nonce length in bytes.
+         *
+         * @since 2.0.5.1
+         *
+         * @var int
+         */
+        private const NONCE_BYTES = 12;
+        /**
+         * GCM tag length in bytes.
+         *
+         * @since 2.0.5.1
+         *
+         * @var int
+         */
+        private const TAG_LENGTH = 16;
+        /**
+         * Get the wire key the hosted wizard receives for a raw key.
+         *
+         * Only the raw key is stored, so a database copy without the salts yields no key.
+         *
+         * @since 2.0.5.1
+         *
+         * @param int    $user_id User the key is bound to.
+         * @param string $raw     Raw key bytes.
+         *
+         * @return string
+         */
+        public static function wire_key(int $user_id, string $raw): string
+        {
+        }
+        /**
+         * Get the AEAD key for a wire key.
+         *
+         * @since 2.0.5.1
+         *
+         * @param string $wire_key Wire key.
+         *
+         * @return string
+         */
+        public static function aead_key(string $wire_key): string
+        {
+        }
+        /**
+         * Get a fresh nonce.
+         *
+         * @since 2.0.5.1
+         *
+         * @return string 24 lowercase hex characters.
+         */
+        public static function nonce(): string
+        {
+        }
+        /**
+         * Get the associated data a request is sealed under.
+         *
+         * @since 2.0.5.1
+         *
+         * @param string $endpoint  Route below the wizard's REST base.
+         * @param string $timestamp Request timestamp.
+         * @param string $nonce     Request nonce.
+         *
+         * @return string
+         */
+        public static function request_aad(string $endpoint, string $timestamp, string $nonce): string
+        {
+        }
+        /**
+         * Get the associated data a response is sealed under.
+         *
+         * @since 2.0.5.1
+         *
+         * @param string $endpoint       Route below the wizard's REST base.
+         * @param string $request_nonce  Nonce of the request being answered.
+         * @param string $response_nonce Nonce of the response.
+         *
+         * @return string
+         */
+        public static function response_aad(string $endpoint, string $request_nonce, string $response_nonce): string
+        {
+        }
+        /**
+         * Whether this host can seal and open bodies.
+         *
+         * Neither WordPress nor the plugin requires the OpenSSL extension.
+         *
+         * @since 2.0.5.1
+         *
+         * @return bool
+         */
+        public static function is_supported(): bool
+        {
+        }
+        /**
+         * Seal a plaintext.
+         *
+         * @since 2.0.5.1
+         *
+         * @param string $wire_key  Wire key.
+         * @param string $plaintext Plaintext.
+         * @param string $aad       Associated data.
+         * @param string $nonce     Nonce.
+         *
+         * @return string Base64 of the ciphertext followed by the tag, or an empty string on failure.
+         */
+        public static function seal(string $wire_key, string $plaintext, string $aad, string $nonce): string
+        {
+        }
+        /**
+         * Open a sealed body.
+         *
+         * @since 2.0.5.1
+         *
+         * @param string $wire_key Wire key.
+         * @param string $sealed   Base64 of the ciphertext followed by the tag.
+         * @param string $aad      Associated data.
+         * @param string $nonce    Nonce.
+         *
+         * @return string The plaintext, or an empty string when the body does not authenticate. Every
+         *                sealed body is JSON, so callers must never treat an empty string as a body.
+         */
+        public static function open(string $wire_key, string $sealed, string $aad, string $nonce): string
+        {
+        }
+        /**
+         * Get the IV bytes for a nonce.
+         *
+         * @since 2.0.5.1
+         *
+         * @param string $nonce Nonce.
+         *
+         * @return string The IV, or an empty string when the nonce is not 24 lowercase hex characters.
+         */
+        private static function iv(string $nonce): string
         {
         }
     }
@@ -11936,22 +12684,6 @@ namespace {
     {
     }
     /**
-     * Upgrade a link used within the various admin pages.
-     *
-     * Previously was only included as a method in wpforms-lite.php, but made
-     * available globally in 1.3.9.
-     *
-     * @since 1.3.9
-     *
-     * @param string $medium  URL parameter: utm_medium.
-     * @param string $content URL parameter: utm_content.
-     *
-     * @return string
-     */
-    function wpforms_admin_upgrade_link($medium = 'link', $content = '')
-    {
-    }
-    /**
      * Check the current PHP version and display a notice if on unsupported PHP.
      *
      * @since 1.4.0.1
@@ -11962,19 +12694,6 @@ namespace {
      * @noinspection HtmlUnknownTarget
      */
     function wpforms_check_php_version()
-    {
-    }
-    /**
-     * Get an upgrade modal text.
-     *
-     * @since 1.4.4
-     *
-     * @param string $type Either "pro" or "elite". Default is "pro".
-     *
-     * @return string
-     * @noinspection HtmlUnknownTarget
-     */
-    function wpforms_get_upgrade_modal_text($type = 'pro')
     {
     }
     /**
@@ -12726,6 +13445,37 @@ namespace {
     {
     }
     /**
+     * Upgrade a link used within the various admin pages.
+     *
+     * Previously was only included as a method in wpforms-lite.php, but made
+     * available globally in 1.3.9.
+     *
+     * @since 1.3.9
+     * @since 2.0.5 Moved from `includes/admin/admin.php`, so the front-end themes editor can use it.
+     *
+     * @param string $medium  URL parameter: utm_medium.
+     * @param string $content URL parameter: utm_content.
+     *
+     * @return string
+     */
+    function wpforms_admin_upgrade_link($medium = 'link', $content = '')
+    {
+    }
+    /**
+     * Get an upgrade modal text.
+     *
+     * @since 1.4.4
+     * @since 2.0.5 Moved from `includes/admin/admin.php`, so the front-end themes editor can use it.
+     *
+     * @param string $type Either "pro" or "elite". Default is "pro".
+     *
+     * @return string
+     * @noinspection HtmlUnknownTarget
+     */
+    function wpforms_get_upgrade_modal_text($type = 'pro')
+    {
+    }
+    /**
      * Decode special characters, both alpha- (<) and numeric-based (').
      * Sanitize recursively, preserve new lines.
      * Handle all the possible mixed variations of < and `&lt;` that can be processed into tags.
@@ -13044,6 +13794,18 @@ namespace {
      * @return array
      */
     function wpforms_get_allowed_html_tags_for_entry_field_value($tags, string $context): array
+    {
+    }
+    /**
+     * Remove every `data-*` attribute from a kses allowlist.
+     *
+     * @since 2.0.5
+     *
+     * @param array $tags Allowed HTML tags and attributes.
+     *
+     * @return array
+     */
+    function wpforms_strip_data_attributes_from_allowed_html(array $tags): array
     {
     }
     /**
